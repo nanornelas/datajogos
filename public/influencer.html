@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard do Influencer</title>
+    <link rel="stylesheet" href="/style.css">
+    <style>
+        /* Estilos específicos para o dashboard do influencer */
+        .statement-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        .statement-table th, .statement-table td {
+            border: 1px solid #333;
+            padding: 10px;
+            text-align: left;
+            font-size: 0.9em;
+        }
+        .statement-table th {
+            background-color: #2a2a2a;
+            color: #B0B0B0;
+        }
+        .statement-table tr:nth-child(even) {
+            background-color: #222;
+        }
+        .commission-cpa { color: #00BCD4; font-weight: bold; } /* Ciano */
+        .commission-ngr { color: #4CAF50; font-weight: bold; } /* Verde */
+        .commission-ngr_debit { color: #E53935; font-weight: bold; } /* Vermelho para débito */
+    </style>
+</head>
+<body>
+
+    <div class="main-content-wrapper" style="padding-top: 30px;">
+        <div class="page-container" style="max-width: 800px; display: block;">
+            <h1>Dashboard do Influencer</h1>
+            <p style="text-align: center;">Use o código abaixo para convidar novos jogadores e ganhar comissões!</p>
+
+            <!-- Seção do Código de Afiliação -->
+            <div style="margin-top: 30px;">
+                <label style="display: block; margin-bottom: 5px; color: #B0B0B0;">Seu Código de Referência:</label>
+                <div style="display: flex; gap: 10px;">
+                    <input type="text" id="referral-code-input" readonly style="flex-grow: 1; padding: 10px; background-color: #333; border: 1px solid #555; color: #FFEB3B; font-weight: bold; border-radius: 5px;">
+                    <button id="copy-button" style="padding: 10px 20px; background-color: #00BCD4; color: white; border: none; border-radius: 5px; cursor: pointer; font-weight: bold;">Copiar</button>
+                </div>
+            </div>
+
+            <!-- Seção de Estatísticas -->
+            <div style="display: flex; justify-content: space-around; text-align: center; margin-top: 40px; background-color: #121212; padding: 20px; border-radius: 8px;">
+                <div>
+                    <h3 style="color: #B0B0B0; margin-bottom: 5px;">Saldo de Comissão</h3>
+                    <p id="commission-balance-display" style="font-size: 2em; color: #4CAF50; margin: 0;">R$ 0,00</p>
+                </div>
+                <div>
+                    <h3 style="color: #B0B0B0; margin-bottom: 5px;">Total de Indicados</h3>
+                    <p id="referral-count-display" style="font-size: 2em; color: #00BCD4; margin: 0;">0</p>
+                </div>
+            </div>
+
+             <!-- Tabela do Extrato Detalhado -->
+            <div style="margin-top: 40px;">
+                <h2 style="text-align: center; color: #E0E0E0;">Extrato de Comissões</h2>
+                <div style="max-height: 400px; overflow-y: auto; border: 1px solid #333; border-radius: 5px;">
+                    <table class="statement-table">
+                        <thead>
+                            <tr>
+                                <th>Data</th>
+                                <th>Tipo</th>
+                                <th>Origem (Utilizador)</th>
+                                <th>Detalhes da Aposta</th>
+                                <th>Valor</th>
+                            </tr>
+                        </thead>
+                        <tbody id="statement-body">
+                            <!-- As linhas da tabela serão inseridas aqui via JavaScript -->
+                            <tr><td colspan="5" style="text-align:center;">A carregar extrato...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <hr style="border-color: #333; margin: 40px 0;">
+
+            <a href="/" style="display: block; text-align: center; color: #00BCD4; font-size: 1.2em;">
+                &larr; Voltar para o Jogo
+            </a>
+        </div>
+    </div>
+
+    <script type="module" src="/js/influencer.js"></script>
+</body>
+</html>
