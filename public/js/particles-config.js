@@ -47,7 +47,7 @@
       interactivity: {
         events: {
           onHover: {
-            enable: true,
+            enable: false,
             mode: "grab" // Efeito de "pegar" linha ao passar o mouse
           },
           onClick: {
