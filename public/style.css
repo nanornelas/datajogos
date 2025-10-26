@@ -229,16 +229,16 @@ h1 {
     display: flex; /* Para centralizar o SVG */
     justify-content: center;
     align-items: center;
-    height: 60%; /* Ocupa a altura disponível para o ícone */
+    height: 30%; /* Ocupa a altura disponível para o ícone */
     width: 60%; /* Ocupa a largura disponível para o ícone */
-    padding-top: 5px; /* Ajuste se o ícone parecer muito alto */
+    padding-top: 12px; /* Ajuste se o ícone parecer muito alto */
     box-sizing: border-box; /* Inclui padding na altura/largura total */
 }
 
 .slot.color-GREEN .value.coringa-icon .coringa-svg-img {
-    width: 60%; /* Tamanho do SVG dentro do container */
+    width: 50%; /* Tamanho do SVG dentro do container */
     height: auto; /* Mantém a proporção */
-    max-width: 30px; /* Limite máximo para o ícone em telas maiores */
+    max-width: 45px; /* Limite máximo para o ícone em telas maiores */
     filter: invert(100%); /* Exemplo: Inverte a cor se o SVG for preto e o fundo for escuro, ou se o fundo for claro e o SVG for claro */
     /* Se o SVG já for da cor que você quer (e o background é verde), pode remover o filter */
 }
@@ -247,6 +247,7 @@ h1 {
 .slot.color-GREEN .label.color-label {
     width: 100%;
     text-align: center;
+    padding: 5px;
 }
 
 
