@@ -1,4 +1,4 @@
-const API_BASE_URL = 'http://localhost:3000/api';
+const API_BASE_URL = 'https://datajogos.onrender.com/api';
 
 // Função para buscar e exibir os dados do afiliado
 async function loadAffiliateData() {
