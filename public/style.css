@@ -366,57 +366,46 @@ h1 {
     padding-right: 150px;
 }
 
-.slot {
+slot {
     flex-shrink: 0; 
     width: 80px; 
     box-sizing: border-box; 
     height: 80px;
-    border-radius: 50px;
+    border-radius: 50%; /* CORREÇÃO: Usar 50% para círculo perfeito */
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
     text-align: center;
     font-weight: bold;
-    box-shadow: inset 0px 4px 6px rgba(0, 0, 0, 0.3), 0px 0px 15px rgba(150, 150, 150, 0.3);
+    box-shadow: inset 0px 4px 6px rgba(0, 0, 0, 0.3);
     position: relative;
-    z-index: 1;
-    overflow: hidden;
-    transform: translateZ(0);
+    /* z-index: 1; (Removido antes, ok) */
+    /* overflow: hidden; (REMOVIDO) */
 }
 
 .color-RED { 
-    /* Gradiente Radial para Vermelho */
-    background: radial-gradient(circle at 50% 40%, /* Ponto de luz ligeiramente acima do centro */
-        #ff7979 0%, /* Cor mais clara no centro */
-        #e53935 50%, /* Cor principal */
-        #c62828 100% /* Cor mais escura na borda */
-    );
-    color: white; 
-    /* Mantém a cor do texto branca */
-    border: 1px solid rgba(255, 100, 100, 0.3); /* Borda subtil avermelhada */
+    /* ... (background radial-gradient) ... */
+    border: 1px solid rgba(255, 100, 100, 0.3);
+    /* Sombra interna + Glow Vermelho */
+    box-shadow: inset 0px 4px 6px rgba(0, 0, 0, 0.3), 
+                0px 0px 18px rgba(255, 80, 80, 0.6); /* Ajuste cor/intensidade */
 }
 
 .color-BLUE { 
-    /* Gradiente Radial para Azul */
-    background: radial-gradient(circle at 50% 40%, 
-        #64b5f6 0%, 
-        #1976d2 50%, 
-        #0d47a1 100%
-    );
-    color: #E0E0E0; 
-    border: 1px solid rgba(100, 150, 255, 0.3); /* Borda subtil azulada */
+    /* ... (background radial-gradient) ... */
+    border: 1px solid rgba(100, 150, 255, 0.3);
+    /* Sombra interna + Glow Azul */
+    box-shadow: inset 0px 4px 6px rgba(0, 0, 0, 0.3), 
+                0px 0px 18px rgba(80, 150, 255, 0.6); /* Ajuste cor/intensidade */
 } 
 
 .color-GREEN { 
-    /* Gradiente Radial para Verde */
-    background: radial-gradient(circle at 50% 40%, 
-        #81c784 0%, 
-        #43a047 50%, 
-        #1b5e20 100%
-    );
-    color: white; /* Corrigido para branco */
-    border: 1px solid rgba(100, 255, 100, 0.3); /* Borda subtil esverdeada */
+    /* ... (background radial-gradient) ... */
+    border: 1px solid rgba(100, 255, 100, 0.3);
+     /* Sombra interna + Glow Verde */
+    box-shadow: inset 0px 4px 6px rgba(0, 0, 0, 0.3), 
+                0px 0px 18px rgba(80, 255, 80, 0.6); /* Ajuste cor/intensidade */
 }
 
 .slot.last-drawn {
@@ -457,7 +446,6 @@ h1 {
     flex-shrink: 0;
     position: absolute;
     z-index: 5;
-    overflow: hidden; /* Garante que faces não vazem */
 }
 
 .flipper {
@@ -486,9 +474,7 @@ h1 {
     text-align: center;
     font-weight: bold;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
-    border: none; 
-    overflow: hidden;
-    
+    border: none;
 }
 
 .front {
