@@ -366,7 +366,7 @@ h1 {
     padding-right: 150px;
 }
 
-slot {
+.slot {
     flex-shrink: 0; 
     width: 80px; 
     box-sizing: border-box; 
