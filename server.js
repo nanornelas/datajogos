@@ -79,10 +79,30 @@ async function generateNewResult() {
         else if (randomChance < 0.51) { color = 'BLUE'; } 
         else { color = 'RED'; }
     }
-    const parity = (num % 2 === 0) ? 'EVEN' : 'ODD'; 
-    const translatedParity = (parity === 'EVEN' ? 'PAR' : 'ÍMPAR'); 
-    const translatedColor = (color === 'RED' ? 'VERMELHO' : (color === 'BLUE' ? 'AZUL' : 'VERDE'));
-    return { color, number: num, parity, translatedColor, translatedParity, overridden: isOverridden };
+    // --- LÓGICA CORINGA PARA VERDE ---
+    let finalNumber, finalParity, finalTranslatedParity;
+    if (color === 'GREEN') {
+        finalNumber = '?'; // Número será '?'
+        finalParity = null; // Paridade é nula/indefinida
+        finalTranslatedParity = null; // Tradução também
+    } else {
+        finalNumber = num; // Mantém o número normal para Vermelho/Azul
+        finalParity = (num % 2 === 0) ? 'EVEN' : 'ODD'; 
+        finalTranslatedParity = (finalParity === 'EVEN' ? 'PAR' : 'ÍMPAR'); 
+    }
+    // --- FIM DA LÓGICA CORINGA ---
+
+    const translatedColor = (color === 'RED' ? 'VERMELHO' : (color === 'BLUE' ? 'AZUL' : 'VERDE'));
+
+    // Retorna os valores finais
+    return { 
+        color, 
+        number: finalNumber, // Usa o número final ('?' ou num)
+        parity: finalParity, // Usa a paridade final (null ou EVEN/ODD)
+        translatedColor, 
+        translatedParity: finalTranslatedParity, // Usa a tradução final (null ou PAR/ÍMPAR)
+        overridden: isOverridden 
+    };
 }
 
 // =================================================================================
@@ -147,9 +167,22 @@ app.post('/api/bet', authMiddleware, async (req, res) => {
         if (user.wageringTarget > 0) { user.wageringProgress += amount; }
         
         const finalResult = await generateNewResult();
-        let isWin = false;
-        if (betType === 'COLOR') { isWin = (betValue === finalResult.color); } 
-        else if (betType === 'PARITY') { const resultParity = (finalResult.number % 2 === 0) ? 'EVEN' : 'ODD'; isWin = (betValue === resultParity); }
+       let isWin = false;
+        if (betType === 'COLOR') { 
+            isWin = (betValue === finalResult.color); 
+        } 
+        else if (betType === 'PARITY') { 
+            // --- LÓGICA CORINGA PARA VERDE ---
+            // Se a cor for VERDE, a aposta em paridade SEMPRE perde
+            if (finalResult.color === 'GREEN') {
+                isWin = false; 
+            } else {
+                // Se não for Verde, calcula a paridade normalmente
+                // Nota: finalResult.parity já foi calculado em generateNewResult
+                isWin = (betValue === finalResult.parity); 
+            }
+            // --- FIM DA LÓGICA CORINGA ---
+        }
         
         let winnings = 0;
         if (isWin) {

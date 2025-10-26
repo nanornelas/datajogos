@@ -58,10 +58,25 @@ export const updateGameUI = {
    if (result === null) {
        return `<div class="${classList} flip-container"><div class="flipper"><div class="front"><span>?</span></div><div class="back"></div></div></div>`;            
    } else {
-       classList += ` color-${result.color}`;
-   // --- CORREÇÃO DE SINTAXE: HTML limpo, sem espaços ---
-       return `<div class="${classList}"><span class="label color-label">${result.translatedColor}</span><span class="value">${result.number}</span><span class="label parity-label">(${result.translatedParity})</span></div>`;
-   }
+        classList += ` color-${result.color}`;
+        // --- LÓGICA CORINGA PARA VERDE ---
+        let contentHTML;
+        if (result.color === 'GREEN') {
+            // Mostra a cor e '?' grande no meio
+            contentHTML = `
+                <span class="label color-label">${result.translatedColor}</span>
+                <span class="value coringa">?</span> 
+                <span class="label parity-label">&nbsp;</span>`; // Espaço vazio para manter altura
+        } else {
+            // Mantém o formato normal para Vermelho/Azul
+            contentHTML = `
+                <span class="label color-label">${result.translatedColor}</span>
+                <span class="value">${result.number}</span>
+                <span class="label parity-label">(${result.translatedParity})</span>`;
+        }
+        // --- FIM DA LÓGICA CORINGA ---
+        return `<div class="${classList}">${contentHTML}</div>`;
+    }
  }
  export async function renderSequence(newResult) { 
     const oldLastDrawn = sequenceElement.querySelector('.slot.last-drawn');
