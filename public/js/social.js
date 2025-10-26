@@ -98,6 +98,7 @@ async function fetchLiveFeed(source = 'interval') { // Adiciona source para depu
     } catch (error) {
         console.error(`[fetchLiveFeed from ${source}] Erro rede/processamento GET:`, error);
     } finally {
+        console.log(`--- [fetchLiveFeed from ${source}] Finalizado ---`);
     }
 }
 
