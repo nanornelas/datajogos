@@ -226,28 +226,33 @@ h1 {
 
 /* Ajustes para o SVG do Coringa */
 .slot.color-GREEN .value.coringa-icon {
-    display: flex; /* Para centralizar o SVG */
+    display: flex; 
     justify-content: center;
     align-items: center;
-    height: 30%; /* Ocupa a altura disponível para o ícone */
-    width: 60%; /* Ocupa a largura disponível para o ícone */
-    padding-top: 12px; /* Ajuste se o ícone parecer muito alto */
-    box-sizing: border-box; /* Inclui padding na altura/largura total */
+    height: 45px; /* Altura explícita para o ícone */
+    width: 100%; 
+    margin-top: -5px; /* Ajuste vertical */
+    /* padding-top: 5px; (Removido ou ajustado) */
+    box-sizing: border-box; 
 }
 
 .slot.color-GREEN .value.coringa-icon .coringa-svg-img {
-    width: 50%; /* Tamanho do SVG dentro do container */
-    height: auto; /* Mantém a proporção */
-    max-width: 45px; /* Limite máximo para o ícone em telas maiores */
-    filter: invert(100%); /* Exemplo: Inverte a cor se o SVG for preto e o fundo for escuro, ou se o fundo for claro e o SVG for claro */
-    /* Se o SVG já for da cor que você quer (e o background é verde), pode remover o filter */
+    width: auto; /* Deixa a largura ajustar */
+    height: 100%; /* Controla pelo height */
+    max-height: 40px; /* Limite máximo de altura */
+    /* filter: invert(100%); (Mantenha ou remova conforme a cor do seu SVG) */
 }
 
 /* Ajuste para centralizar o texto da cor quando o coringa estiver presente */
 .slot.color-GREEN .label.color-label {
     width: 100%;
     text-align: center;
-    padding: 5px;
+    margin-bottom: 0; /* Remove margem */
+}
+
+/* Esconde o label de paridade vazio */
+ .slot.color-GREEN .label.parity-label {
+    display: none; 
 }
 
 
@@ -373,15 +378,45 @@ h1 {
     align-items: center;
     text-align: center;
     font-weight: bold;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+    box-shadow: inset 0px 4px 6px rgba(0, 0, 0, 0.3), 0px 0px 15px rgba(150, 150, 150, 0.3);
     position: relative;
     z-index: 1;
     overflow: hidden;
 }
 
-.color-RED { background-color: #e53935; color: white; }
-.color-BLUE { background-color: #1976d2; color: #E0E0E0; } 
-.color-GREEN { background-color: #43a047; color: #121212; }
+.color-RED { 
+    /* Gradiente Radial para Vermelho */
+    background: radial-gradient(circle at 50% 40%, /* Ponto de luz ligeiramente acima do centro */
+        #ff7979 0%, /* Cor mais clara no centro */
+        #e53935 50%, /* Cor principal */
+        #c62828 100% /* Cor mais escura na borda */
+    );
+    color: white; 
+    /* Mantém a cor do texto branca */
+    border: 1px solid rgba(255, 100, 100, 0.3); /* Borda subtil avermelhada */
+}
+
+.color-BLUE { 
+    /* Gradiente Radial para Azul */
+    background: radial-gradient(circle at 50% 40%, 
+        #64b5f6 0%, 
+        #1976d2 50%, 
+        #0d47a1 100%
+    );
+    color: #E0E0E0; 
+    border: 1px solid rgba(100, 150, 255, 0.3); /* Borda subtil azulada */
+} 
+
+.color-GREEN { 
+    /* Gradiente Radial para Verde */
+    background: radial-gradient(circle at 50% 40%, 
+        #81c784 0%, 
+        #43a047 50%, 
+        #1b5e20 100%
+    );
+    color: white; /* Corrigido para branco */
+    border: 1px solid rgba(100, 255, 100, 0.3); /* Borda subtil esverdeada */
+}
 
 .slot.last-drawn {
     opacity: 1;
@@ -868,20 +903,23 @@ h1 {
 .bet-won { color: #4CAF50; }
 .bet-lost { color: #E53935; }
 
-/* Estilos para o CONTEÚDO das cartas (Número e Textos) */
+/* Estilos para o CONTEÚDO das cartas (Número e Textos) - AJUSTADO PARA ESFERAS */
 .value {
-    font-size: 1.4em;
-    line-height: 1.1; 
+    font-size: 1.8em; /* Aumentar um pouco o número? Teste! */
+    line-height: 1; /* Reduzir altura da linha para juntar */
+    margin-top: -2px; /* Pequeno ajuste vertical */
+    margin-bottom: -2px; /* Pequeno ajuste vertical */
 }
 
 .label {
-    font-size: 0.8em;
+    font-size: 0.7em; /* Reduzir tamanho dos labels */
+    line-height: 1;
 }
 .color-label {
-    margin-bottom: 3px;
+    margin-bottom: 0; /* Remover margem extra */
 }
 .parity-label {
-    font-size: 0.7em;
+    font-size: 0.6em; /* Reduzir ainda mais a paridade */
 }
 
 /* ======================================================= */
