@@ -363,10 +363,10 @@ h1 {
 
 .slot {
     flex-shrink: 0; 
-    width: 130px; 
+    width: 80px; 
     box-sizing: border-box; 
     height: 80px;
-    border-radius: 8px;
+    border-radius: 50px;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -376,6 +376,7 @@ h1 {
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
     position: relative;
     z-index: 1;
+    overflow: hidden;
 }
 
 .color-RED { background-color: #e53935; color: white; }
@@ -411,14 +412,16 @@ h1 {
 
 .flip-container {
     perspective: 1000px; 
-    width: 130px; 
+    width: 80px; 
     height: 80px; 
+    border-radius: 50%; /* Torna círculo */
     transform-style: preserve-3d;
     box-sizing: border-box; 
     border: 1px solid #444; 
     flex-shrink: 0;
     position: absolute;
     z-index: 5;
+    overflow: hidden; /* Garante que faces não vazem */
 }
 
 .flipper {
@@ -439,7 +442,7 @@ h1 {
     height: 100%;
     -webkit-backface-visibility: hidden; 
     backface-visibility: hidden;
-    border-radius: 8px;
+    border-radius: 50px;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -448,6 +451,8 @@ h1 {
     font-weight: bold;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
     border: none; 
+    overflow: hidden;
+    
 }
 
 .front {
