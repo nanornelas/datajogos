@@ -51,13 +51,11 @@ async function fetchLiveFeed(source = 'interval') { // Adiciona source para depu
 
     const token = Auth.JWT_TOKEN;
     if (!token) {
-        console.log(`[fetchLiveFeed from ${source}] Sem token. Abortando.`);
         return; // Sai se não estiver logado
     }
 
     try {
         const response = await fetch(`${API_BASE_URL}/live-feed`, { headers: getAuthHeaders(token) });
-        console.log(`[fetchLiveFeed from ${source}] Resposta GET:`, response.status, response.ok);
 
         if (!response.ok) {
             console.error(`[fetchLiveFeed from ${source}] Erro resposta GET:`, response.status);
@@ -100,7 +98,6 @@ async function fetchLiveFeed(source = 'interval') { // Adiciona source para depu
     } catch (error) {
         console.error(`[fetchLiveFeed from ${source}] Erro rede/processamento GET:`, error);
     } finally {
-        console.log(`--- [fetchLiveFeed from ${source}] Finalizado ---`);
     }
 }
 
@@ -174,8 +171,6 @@ function setupChatToggle() {
     const sidebar = document.getElementById('social-sidebar');
     const header = sidebar ? sidebar.querySelector('.sidebar-header') : null;
 
-    console.log("Elementos encontrados:", { toggleBtn, sidebar, header });
-
     if (!toggleBtn || !sidebar || !header) {
         console.error("ERRO: Elementos do chat toggle não encontrados!");
         return;
@@ -193,7 +188,6 @@ function setupChatToggle() {
 
     // Listener APENAS no header
     header.addEventListener('click', () => {
-        console.log("--- CLIQUE no HEADER detectado! ---"); 
         sidebar.classList.toggle('minimized');
         updateButtonIcon();
     });
@@ -201,7 +195,6 @@ function setupChatToggle() {
     // Define o estado inicial responsivo (Mantém-se)
     if (window.innerWidth < 1250) {
         if (!sidebar.classList.contains('minimized')) {
-            console.log("Forçando estado inicial minimizado (<1250px)");
             sidebar.classList.add('minimized');
         }
     } else {
@@ -222,7 +215,6 @@ export function initializeSocialFeatures() {
 
     // Mostra a barra lateral APENAS se o utilizador estiver logado
     if (Auth.JWT_TOKEN) {
-        console.log("Utilizador logado, mostrando socialSidebar.");
         socialSidebar.style.display = 'flex'; // Torna visível
 
         // --- INICIALIZAÇÃO DOS COMPONENTES DO CHAT ---
@@ -248,7 +240,6 @@ export function initializeSocialFeatures() {
         const chatForm = socialSidebar.querySelector('#chat-form'); // Busca dentro da sidebar
         if (chatForm) {
             chatForm.addEventListener('submit', sendChatMessage);
-            console.log("Listener 'submit' adicionado ao chatForm.");
         } else {
             console.error("ERRO: Formulário #chat-form não encontrado!");
         }
@@ -263,7 +254,6 @@ export function initializeSocialFeatures() {
     }
 
     } else {
-        console.log("Utilizador não logado, mantendo socialSidebar escondida.");
         socialSidebar.style.display = 'none'; // Garante que está escondida se não logado
     }
 }
@@ -273,7 +263,6 @@ export function stopLiveFeed() {
     if (liveFeedInterval) {
         clearInterval(liveFeedInterval);
         liveFeedInterval = null; // Marca como parado
-        console.log("[stopLiveFeed] Intervalo parado.");
     }
     const socialSidebar = document.getElementById('social-sidebar');
     if(socialSidebar) {
