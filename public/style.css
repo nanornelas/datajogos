@@ -231,7 +231,7 @@ h1 {
     align-items: center;
     height: 30%; /* Ocupa a altura disponível para o ícone */
     width: 30; /* Ocupa a largura disponível para o ícone */
-    padding-top: 10px; /* Ajuste se o ícone parecer muito alto */
+    padding-top: 5px; /* Ajuste se o ícone parecer muito alto */
     box-sizing: border-box; /* Inclui padding na altura/largura total */
 }
 
