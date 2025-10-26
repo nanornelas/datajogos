@@ -417,7 +417,8 @@ h1 {
     box-sizing: border-box; 
     border: 1px solid #444; 
     flex-shrink: 0;
-    position: relative;
+    position: absolute;
+    z-index: 5;
 }
 
 .flipper {
