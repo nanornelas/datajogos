@@ -147,6 +147,50 @@ h1 {
 }
 
 /* ======================================================= */
+/* ESTILOS DOS SALDOS NA BARRA DE NAVEGAÇÃO */
+/* ======================================================= */
+
+.nav-balance-area {
+    display: flex;
+    gap: 10px; /* Espaço entre as caixas de saldo */
+    align-items: center;
+    margin-left: auto; /* Empurra os saldos para a direita, antes do user dropdown */
+    margin-right: 20px; /* Espaço antes do dropdown do utilizador */
+}
+
+.nav-balance-box {
+    background-color: rgba(0, 0, 0, 0.3); /* Fundo escuro semi-transparente */
+    border: 1px solid rgba(255, 255, 255, 0.1); /* Borda subtil */
+    border-radius: 8px;
+    padding: 5px 12px;
+    text-align: center;
+    min-width: 100px; /* Largura mínima */
+}
+
+.nav-balance-label {
+    display: block;
+    font-size: 0.7em;
+    color: #B0B0B0; /* Cinza claro */
+    margin-bottom: 2px;
+    text-transform: uppercase;
+}
+
+.nav-balance-value {
+    display: block;
+    font-size: 1.1em;
+    font-weight: bold;
+}
+
+/* Cores específicas */
+.nav-balance-box.real .nav-balance-value {
+    color: #FFFFFF; /* Saldo real em branco */
+}
+
+.nav-balance-box.bonus .nav-balance-value {
+    color: #FFEB3B; /* Saldo bónus em amarelo (como antes) */
+}
+
+/* ======================================================= */
 /* ESTILOS DA BARRA DE PROGRESSO DO ROLLOVER */
 /* ======================================================= */
 

@@ -23,7 +23,7 @@ const app = express();
 const PORT = 3000; 
 
 const PAYOUTS = { 'RED': 2, 'BLUE': 2, 'GREEN': 14, 'ODD': 2, 'EVEN': 2 };
-const BONUS_ROLLOVER_MULTIPLIER = 20;
+const BONUS_ROLLOVER_MULTIPLIER = 5;
 const INFLUENCER_NGR_WIN_RATE = 0.03; // NOVO: Taxa de 3% sobre ganhos do jogador
 const INFLUENCER_NGR_LOSS_RATE = 0.05; // Taxa de 5% sobre perdas
 

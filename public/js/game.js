@@ -13,22 +13,40 @@ const betButtons = document.querySelectorAll('.bet-button');
 
 
 // FUNÇÕES DE UI DE JOGO
+// FUNÇÕES DE UI DE JOGO (Atualizado)
 export const updateGameUI = {
     updateBalanceDisplay: (balance, bonusBalance) => {
-        const balanceDisplay = document.getElementById('balance-display');
-        let bonusText = '';
-        if (bonusBalance > 0) {
-            bonusText = ` <span style="color: #FFEB3B;">(+ R$ ${parseFloat(bonusBalance).toFixed(2).replace('.', ',')} Bónus)</span>`;
+        const realBalanceEl = document.getElementById('nav-balance-real');
+        const bonusBalanceEl = document.getElementById('nav-balance-bonus');
+        const bonusBoxEl = document.getElementById('nav-balance-bonus-box');
+
+        // Garante que os elementos existem
+        if (!realBalanceEl || !bonusBalanceEl || !bonusBoxEl) {
+            console.error("Elementos de saldo na navegação não encontrados!");
+            return;
         }
-        balanceDisplay.innerHTML = `Saldo: R$ ${parseFloat(balance).toFixed(2).replace('.', ',')}${bonusText}`;
+
+        // Formata e exibe o saldo real
+        realBalanceEl.textContent = `R$ ${parseFloat(balance).toFixed(2).replace('.', ',')}`;
+
+        // Formata e exibe o saldo bónus (e mostra/esconde a caixa)
+        if (bonusBalance > 0) {
+            bonusBalanceEl.textContent = `R$ ${parseFloat(bonusBalance).toFixed(2).replace('.', ',')}`;
+            bonusBoxEl.style.display = 'block'; // Mostra a caixa de bónus
+        } else {
+            bonusBoxEl.style.display = 'none'; // Esconde a caixa de bónus se for zero
+        }
     },
+    // A função updateStatus continua igual
     updateStatus: (message, color = 'white') => {
         const statusEl = document.getElementById('status-message');
-        statusEl.textContent = message;
+        // Garante que o elemento existe
+        if (statusEl) {
+            statusEl.textContent = message;
+            // Poderia adicionar style.color = color aqui se quisesse usar o parâmetro
+        }
     }
- };
-
- // --- LÓGICA DE CRIAÇÃO DE SLOT E ANIMAÇÃO ---
+};
 
  // --- LÓGICA DE CRIAÇÃO DE SLOT E ANIMAÇÃO ---
 
