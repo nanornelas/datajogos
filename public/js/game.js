@@ -58,25 +58,23 @@ export const updateGameUI = {
    if (result === null) {
        return `<div class="${classList} flip-container"><div class="flipper"><div class="front"><span>?</span></div><div class="back"></div></div></div>`;            
    } else {
-        classList += ` color-${result.color}`;
-        // --- LÓGICA CORINGA PARA VERDE ---
-        let contentHTML;
-        if (result.color === 'GREEN') {
-            // Mostra a cor e '?' grande no meio
-            contentHTML = `
-                <span class="label color-label">${result.translatedColor}</span>
-                <span class="value coringa">?</span> 
-                <span class="label parity-label">&nbsp;</span>`; // Espaço vazio para manter altura
-        } else {
-            // Mantém o formato normal para Vermelho/Azul
-            contentHTML = `
-                <span class="label color-label">${result.translatedColor}</span>
-                <span class="value">${result.number}</span>
-                <span class="label parity-label">(${result.translatedParity})</span>`;
-        }
-        // --- FIM DA LÓGICA CORINGA ---
-        return `<div class="${classList}">${contentHTML}</div>`;
-    }
+    classList += ` color-${result.color}`;
+    let contentHTML;
+    if (result.color === 'GREEN') {
+        // --- MOSTRA O ÍCONE SVG PARA VERDE ---
+        contentHTML = `
+            <span class="label color-label">${result.translatedColor}</span>
+            <span class="value coringa-icon"><img src="assets/coringa-icon.svg" alt="Coringa" class="coringa-svg-img"></span> 
+            <span class="label parity-label">&nbsp;</span>`; 
+    } else {
+        // Mantém o formato normal para Vermelho/Azul
+        contentHTML = `
+            <span class="label color-label">${result.translatedColor}</span>
+            <span class="value">${result.number}</span>
+            <span class="label parity-label">(${result.translatedParity})</span>`;
+    }
+    return `<div class="${classList}">${contentHTML}</div>`;
+}
  }
  export async function renderSequence(newResult) { 
     const oldLastDrawn = sequenceElement.querySelector('.slot.last-drawn');
@@ -92,8 +90,19 @@ export const updateGameUI = {
    mysterySlotContainer.classList.add('last-drawn'); 
    mysteryBack.classList.add(`color-${newResult.color}`);
     // --- CORREÇÃO DE SINTAXE: HTML limpo, sem espaços ---
-   mysteryBack.innerHTML = `<span class="label color-label">${newResult.translatedColor}</span><span class="value">${newResult.number}</span><span class="label parity-label">(${newResult.translatedParity})</span>`;
-
+   if (newResult.color === 'GREEN') {
+         // --- MOSTRA O ÍCONE SVG PARA VERDE ---
+        mysteryBack.innerHTML = `
+            <span class="label color-label">${newResult.translatedColor}</span>
+            <span class="value coringa-icon"><img src="assets/coringa-icon.svg" alt="Coringa" class="coringa-svg-img"></span>
+            <span class="label parity-label">&nbsp;</span>`;
+    } else {
+        // Mantém o formato normal para Vermelho/Azul
+        mysteryBack.innerHTML = `
+            <span class="label color-label">${newResult.translatedColor}</span>
+            <span class="value">${newResult.number}</span>
+            <span class="label parity-label">(${newResult.translatedParity})</span>`;
+    }
    mysterySlotContainer.classList.add('flipped');
 
     // --- ETAPA 3: ESPERA A CARTA TERMINAR DE VIRAR ---

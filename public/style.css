@@ -224,6 +224,31 @@ h1 {
     transition: width 0.5s ease-out;
 }
 
+/* Ajustes para o SVG do Coringa */
+.slot.color-GREEN .value.coringa-icon {
+    display: flex; /* Para centralizar o SVG */
+    justify-content: center;
+    align-items: center;
+    height: 100%; /* Ocupa a altura disponível para o ícone */
+    width: 100%; /* Ocupa a largura disponível para o ícone */
+    padding-top: 5px; /* Ajuste se o ícone parecer muito alto */
+    box-sizing: border-box; /* Inclui padding na altura/largura total */
+}
+
+.slot.color-GREEN .value.coringa-icon .coringa-svg-img {
+    width: 80%; /* Tamanho do SVG dentro do container */
+    height: auto; /* Mantém a proporção */
+    max-width: 80px; /* Limite máximo para o ícone em telas maiores */
+    filter: invert(100%); /* Exemplo: Inverte a cor se o SVG for preto e o fundo for escuro, ou se o fundo for claro e o SVG for claro */
+    /* Se o SVG já for da cor que você quer (e o background é verde), pode remover o filter */
+}
+
+/* Ajuste para centralizar o texto da cor quando o coringa estiver presente */
+.slot.color-GREEN .label.color-label {
+    width: 100%;
+    text-align: center;
+}
+
 
 /* ======================================================= */
 /* ESTILOS GERAIS DO JOGO E PÁGINAS */
