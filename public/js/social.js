@@ -48,7 +48,6 @@ function renderBetEntry(bet) {
 
 // Busca os dados do feed (chat e apostas) e atualiza a UI
 async function fetchLiveFeed(source = 'interval') { // Adiciona source para depuração
-    console.log(`--- [fetchLiveFeed from ${source}] Iniciado ---`); // Log com source
 
     const token = Auth.JWT_TOKEN;
     if (!token) {
@@ -69,7 +68,6 @@ async function fetchLiveFeed(source = 'interval') { // Adiciona source para depu
         const data = await response.json();
 
         if (data.success && data.chat && data.bets) { // Verifica se chat e bets existem
-            console.log(`[fetchLiveFeed from ${source}] Sucesso. Recebido ${data.chat.length} msgs, ${data.bets.length} apostas.`);
 
             const chatContainer = document.getElementById('chat-messages');
             const betsContainer = document.getElementById('bets-feed');
@@ -84,7 +82,6 @@ async function fetchLiveFeed(source = 'interval') { // Adiciona source para depu
                 // Rola para o fundo APENAS se o utilizador já estava perto do fundo
                 if (shouldScroll) {
                     chatContainer.scrollTop = chatContainer.scrollHeight;
-                    console.log(`[fetchLiveFeed v2] Scroll para o fundo aplicado.`);
                 }
             } else {
                  console.warn(`[fetchLiveFeed from ${source}] Container do chat (#chat-messages) não encontrado.`);
@@ -109,8 +106,7 @@ async function fetchLiveFeed(source = 'interval') { // Adiciona source para depu
 
 // Envia uma nova mensagem de chat (VERSÃO FINAL - Usa resposta do POST diretamente)
 async function sendChatMessage(e) {
-    e.preventDefault();
-    console.log("[sendChatMessage v6 - Final] Iniciado."); 
+    e.preventDefault(); 
 
     const token = Auth.JWT_TOKEN;
     const input = document.getElementById('chat-input');
@@ -118,11 +114,9 @@ async function sendChatMessage(e) {
     const message = input.value.trim();
 
     if (!token || !message) {
-        console.log("[sendChatMessage v6] Token ou mensagem em falta.");
         return; // Sai se não houver token ou mensagem
     }
 
-    console.log("[sendChatMessage v6] Enviando:", message); 
     input.disabled = true; // Desabilita enquanto envia
 
     try {
@@ -132,14 +126,11 @@ async function sendChatMessage(e) {
             body: JSON.stringify({ message })
         });
 
-        console.log("[sendChatMessage v6] Resposta POST:", response.status, response.ok); 
-
         if (response.ok) {
             const data = await response.json(); // Lê a resposta que contém a nova mensagem
             
             // Verifica se a resposta contém a nova mensagem
             if (data.success && data.chat && data.chat.length > 0) { 
-                console.log("[sendChatMessage v6] POST OK. Nova mensagem recebida:", data.chat[0]); 
                 input.value = ''; // Limpa o input
 
                 // --- ATUALIZAÇÃO DIRETA NO DOM ---
@@ -151,7 +142,6 @@ async function sendChatMessage(e) {
                     chatContainer.insertAdjacentHTML('beforeend', newMessageHTML); 
                     // Rola para o fundo
                     chatContainer.scrollTop = chatContainer.scrollHeight; 
-                    console.log("[sendChatMessage v6] Nova mensagem adicionada ao DOM e scroll aplicado.");
                 } else {
                     console.warn("[sendChatMessage v6] Container do chat (#chat-messages) não encontrado.");
                 }
@@ -174,13 +164,11 @@ async function sendChatMessage(e) {
     } finally {
         input.disabled = false; // Reabilita o input
         // NÃO mexemos mais no liveFeedInterval aqui
-        console.log("[sendChatMessage v6] Finalizado."); 
     }
 }
 
 // Função para controlar o botão de minimizar/expandir (VERSÃO SIMPLIFICADA v3)
 function setupChatToggle() {
-    console.log("--- Executando setupChatToggle (v3 - Simplificado) ---"); 
 
     const toggleBtn = document.getElementById('toggle-chat-btn');
     const sidebar = document.getElementById('social-sidebar');
@@ -221,7 +209,6 @@ function setupChatToggle() {
          // sidebar.classList.remove('minimized'); 
     }
     updateButtonIcon(); // Define o ícone inicial
-    console.log("--- setupChatToggle Concluído (v3) ---");
 }
 
 // Inicializa todas as funcionalidades sociais
@@ -232,7 +219,6 @@ export function initializeSocialFeatures() {
         return; // Sai se a sidebar não existir
     }
     
-    console.log("--- Executando initializeSocialFeatures ---");
 
     // Mostra a barra lateral APENAS se o utilizador estiver logado
     if (Auth.JWT_TOKEN) {
@@ -272,7 +258,6 @@ export function initializeSocialFeatures() {
 
         // --- INÍCIO DO POLLING DO FEED ---
        if (!liveFeedInterval && Auth.JWT_TOKEN) { 
-        console.log("[initializeSocialFeatures] Iniciando intervalo do feed...");
         liveFeedInterval = setInterval(fetchLiveFeed, 5000); // Cria o novo intervalo
         fetchLiveFeed('initial_load'); // Busca os dados a primeira vez
     }
@@ -281,7 +266,6 @@ export function initializeSocialFeatures() {
         console.log("Utilizador não logado, mantendo socialSidebar escondida.");
         socialSidebar.style.display = 'none'; // Garante que está escondida se não logado
     }
-     console.log("--- initializeSocialFeatures Concluído ---");
 }
 
 // Para a atualização do feed (ex: ao fazer logout)
@@ -294,6 +278,5 @@ export function stopLiveFeed() {
     const socialSidebar = document.getElementById('social-sidebar');
     if(socialSidebar) {
         socialSidebar.style.display = 'none'; // Esconde a sidebar
-        console.log("[stopLiveFeed] Sidebar escondida.");
     }
 }

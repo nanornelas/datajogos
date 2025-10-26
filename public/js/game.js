@@ -152,7 +152,7 @@ export const updateGameUI = {
      if (isWin) {
          updateGameUI.updateStatus(`🎉 VOCÊ VENCEU! Ganho de R$ ${winnings.toFixed(2)}. ${resultMsg}`);
      } else {
-         updateGameUI.updateStatus(`😔 Você perdeu. ${resultMsg}`);
+         updateGameUI.updateStatus(`😔 Tente novamente. ${resultMsg}`);
      }
   }
 
