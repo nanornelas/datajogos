@@ -382,6 +382,7 @@ h1 {
     position: relative;
     z-index: 1;
     overflow: hidden;
+    transform: translateZ(0);
 }
 
 .color-RED { 
