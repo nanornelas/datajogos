@@ -229,8 +229,8 @@ h1 {
     display: flex; /* Para centralizar o SVG */
     justify-content: center;
     align-items: center;
-    height: 100%; /* Ocupa a altura disponível para o ícone */
-    width: 100%; /* Ocupa a largura disponível para o ícone */
+    height: 60%; /* Ocupa a altura disponível para o ícone */
+    width: 60; /* Ocupa a largura disponível para o ícone */
     padding-top: 5px; /* Ajuste se o ícone parecer muito alto */
     box-sizing: border-box; /* Inclui padding na altura/largura total */
 }
