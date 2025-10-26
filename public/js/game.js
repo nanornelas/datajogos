@@ -64,7 +64,7 @@ export const updateGameUI = {
         // --- MOSTRA O ÍCONE SVG PARA VERDE ---
         contentHTML = `
             <span class="label color-label">${result.translatedColor}</span>
-            <span class="value coringa-icon"><img src="assets/coringa-icon.svg" alt="Coringa" class="coringa-svg-img"></span> 
+            <span class="value coringa-icon"><img src="assets/joker.svg" alt="Coringa" class="coringa-svg-img"></span> 
             <span class="label parity-label">&nbsp;</span>`; 
     } else {
         // Mantém o formato normal para Vermelho/Azul
@@ -94,7 +94,7 @@ export const updateGameUI = {
          // --- MOSTRA O ÍCONE SVG PARA VERDE ---
         mysteryBack.innerHTML = `
             <span class="label color-label">${newResult.translatedColor}</span>
-            <span class="value coringa-icon"><img src="assets/coringa-icon.svg" alt="Coringa" class="coringa-svg-img"></span>
+            <span class="value coringa-icon"><img src="assets/joker.svg" alt="Coringa" class="coringa-svg-img"></span>
             <span class="label parity-label">&nbsp;</span>`;
     } else {
         // Mantém o formato normal para Vermelho/Azul
