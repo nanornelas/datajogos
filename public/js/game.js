@@ -63,13 +63,11 @@ export const updateGameUI = {
     if (result.color === 'GREEN') {
         // --- MOSTRA O ÍCONE SVG PARA VERDE ---
         contentHTML = `
-            <span class="label color-label">${result.translatedColor}</span>
             <span class="value coringa-icon"><img src="assets/joker.svg" alt="Coringa" class="coringa-svg-img"></span> 
             <span class="label parity-label">&nbsp;</span>`; 
     } else {
         // Mantém o formato normal para Vermelho/Azul
         contentHTML = `
-            <span class="label color-label">${result.translatedColor}</span>
             <span class="value">${result.number}</span>
             <span class="label parity-label">(${result.translatedParity})</span>`;
     }
@@ -93,13 +91,11 @@ export const updateGameUI = {
    if (newResult.color === 'GREEN') {
          // --- MOSTRA O ÍCONE SVG PARA VERDE ---
         mysteryBack.innerHTML = `
-            <span class="label color-label">${newResult.translatedColor}</span>
             <span class="value coringa-icon"><img src="assets/joker.svg" alt="Coringa" class="coringa-svg-img"></span>
             <span class="label parity-label">&nbsp;</span>`;
     } else {
         // Mantém o formato normal para Vermelho/Azul
         mysteryBack.innerHTML = `
-            <span class="label color-label">${newResult.translatedColor}</span>
             <span class="value">${newResult.number}</span>
             <span class="label parity-label">(${newResult.translatedParity})</span>`;
     }
