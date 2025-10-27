@@ -218,21 +218,21 @@ export const updateGameUI = {
         // Configuração para Telemóvel Pequeno (CSS usa padding 8px)
         return { 
             slotCount: 5, 
-            paddingRight: '65px',
+            paddingRight: '8px',
             paddingTop: '8px'
         };
     } else if (screenWidth < 890) {
         // Configuração para Tablet (CSS usa padding 10px)
         return { 
             slotCount: 6, 
-            paddingRight: '78px',
+            paddingRight: '10px',
             paddingTop: '10px'
         };
     } else {
         // Configuração Padrão (Desktop)
         return { 
             slotCount: VISIBLE_SLOT_COUNT, // O seu valor original 8
-            paddingRight: '90px', // O padding padrão do CSS
+            paddingRight: '10px', // O padding padrão do CSS
             paddingTop: '10px'
         };
     }
