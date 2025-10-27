@@ -1,7 +1,7 @@
 // js/utils.js
 
 export const API_BASE_URL = 'https://datajogos.onrender.com/api';
-export const VISIBLE_SLOT_COUNT = 5; 
+export const VISIBLE_SLOT_COUNT = 8; 
 export const CYCLE_TIME_MS = 8000; // Mantenha esta linha
 export const SLOT_WIDTH_WITH_MARGIN = 140; 
 export const ANIMATION_DURATION = 700; 

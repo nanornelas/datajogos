@@ -170,13 +170,13 @@ export const updateGameUI = {
 
     if (screenWidth < 500) {
         // CSS: width: 90px + gap: 5px
-        return 95;
+        return 65;
     } else if (screenWidth < 890) {
         // CSS: width: 100px + gap: 5px
-        return 105;
+        return 78;
     } else {
         // CSS: width: 130px + gap: 10px
-        return 140;
+        return 90;
     }
  }
 
@@ -217,22 +217,22 @@ export const updateGameUI = {
     if (screenWidth < 500) { 
         // Configuração para Telemóvel Pequeno (CSS usa padding 8px)
         return { 
-            slotCount: 4, 
-            paddingRight: '8px',
+            slotCount: 5, 
+            paddingRight: '65px',
             paddingTop: '8px'
         };
     } else if (screenWidth < 890) {
         // Configuração para Tablet (CSS usa padding 10px)
         return { 
-            slotCount: 4, 
-            paddingRight: '10px',
+            slotCount: 6, 
+            paddingRight: '78px',
             paddingTop: '10px'
         };
     } else {
         // Configuração Padrão (Desktop)
         return { 
-            slotCount: VISIBLE_SLOT_COUNT, // O seu valor original (5)
-            paddingRight: '10px', // O padding padrão do CSS
+            slotCount: VISIBLE_SLOT_COUNT, // O seu valor original 8
+            paddingRight: '90px', // O padding padrão do CSS
             paddingTop: '10px'
         };
     }

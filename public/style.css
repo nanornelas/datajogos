@@ -1103,28 +1103,27 @@ h1 {
         padding-right: 15px;
     }
     #slots-scroller {
-    gap: 5px; 
-    padding-right: 115px; 
+    gap: 8px; 
+    padding-right: 78px; 
 }
     /* --- ADICIONADO: Reduz o tamanho das cartas para telas médias --- */
     .slot, .flip-container {
-        width: 100px; /* Reduz de 130px */
-        height: 65px;  /* Reduz de 80px */
-        font-size: 0.9em; /* Ajusta a fonte */
+        width: 70px; /* Reduz de 130px */
+        height: 70px;  /* Reduz de 80px */
+        font-size: 0.8em; /* Ajusta a fonte */
     }
     /* Ajusta a altura da linha de resultados para o novo tamanho das cartas */
     .result-sequence {
-        height: 85px;
-        gap: 8px; /* Reduz um pouco o gap também */
+        height: 90px;
     }
    .value {
-        font-size: 1.3em; 
+        font-size: 1.6em; 
     }
     .label {
-        font-size: 0.7em;
+        font-size: 0.6em;
     }
     .parity-label {
-        font-size: 0.6em;
+        font-size: 0.5em;
     }
 }
 
@@ -1161,7 +1160,7 @@ h1 {
     }
     /* Cole isto DENTRO do @media (max-width: 500px) */
 #slots-scroller {
-    padding-right: 103px;
+    padding-right: 65px;
     gap: 5px;
 }
     
@@ -1199,23 +1198,23 @@ h1 {
     
     /* Ajusta o scroller de cartas para ser menor */
     .result-sequence {
-        height: 80px; /* Reduz ainda mais a altura da linha */
+        height: 76px; /* Reduz ainda mais a altura da linha */
         gap: 5px;    /* Reduz o gap entre as cartas */
         padding: 8px; /* Ajusta o padding interno */
     }
     .slot, .flip-container {
-        width: 90px; /* <-- Largura ainda menor para mobile pequeno */
+        width: 60px; /* <-- Largura ainda menor para mobile pequeno */
         height: 60px; /* <-- Altura ainda menor para mobile pequeno */
-        font-size: 0.8em; /* Fonte geral do slot */
+        font-size: 0.7em; /* Fonte geral do slot */
     }
    .value {
-        font-size: 1.2em; 
+        font-size: 1.4em; 
     }
     .label {
-        font-size: 0.6em;
+        font-size: 0.5em;
     }
     .parity-label {
-        font-size: 0.5em;
+        font-size: 0.4em;
     }
     /* Ajusta o tamanho do "?" no slot mystery */
     .mystery-slot span {
