@@ -1067,10 +1067,11 @@ h1 {
 @media (max-width: 1250px) {
 
     body{
-        font-size:15px;
+        font-size:12px;
     }
     .site-wrapper{
         padding-top:90px;
+        z-index: auto;
     }
     /* O Jogo agora pode ocupar todo o espaço central */
     .main-content-wrapper {
