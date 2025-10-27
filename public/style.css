@@ -385,27 +385,30 @@ h1 {
 }
 
 .color-RED { 
-    /* ... (background radial-gradient) ... */
+    background: radial-gradient(circle at 50% 40%, #ff7979 0%, #e53935 50%, #c62828 100%);
+    color: white; 
     border: 1px solid rgba(255, 100, 100, 0.3);
-    /* Sombra interna + Glow Vermelho */
+    /* Se usar glow colorido: */
     box-shadow: inset 0px 4px 6px rgba(0, 0, 0, 0.3), 
-                0px 0px 18px rgba(255, 80, 80, 0.6); /* Ajuste cor/intensidade */
+                0px 0px 18px rgba(255, 80, 80, 0.6); 
 }
 
 .color-BLUE { 
-    /* ... (background radial-gradient) ... */
+    background: radial-gradient(circle at 50% 40%, #64b5f6 0%, #1976d2 50%, #0d47a1 100%);
+    color: #E0E0E0; 
     border: 1px solid rgba(100, 150, 255, 0.3);
-    /* Sombra interna + Glow Azul */
-    box-shadow: inset 0px 4px 6px rgba(0, 0, 0, 0.3), 
-                0px 0px 18px rgba(80, 150, 255, 0.6); /* Ajuste cor/intensidade */
+    /* Se usar glow colorido: */
+     box-shadow: inset 0px 4px 6px rgba(0, 0, 0, 0.3), 
+                 0px 0px 18px rgba(80, 150, 255, 0.6); 
 } 
 
 .color-GREEN { 
-    /* ... (background radial-gradient) ... */
+    background: radial-gradient(circle at 50% 40%, #81c784 0%, #43a047 50%, #1b5e20 100%);
+    color: white; 
     border: 1px solid rgba(100, 255, 100, 0.3);
-     /* Sombra interna + Glow Verde */
+     /* Se usar glow colorido: */
     box-shadow: inset 0px 4px 6px rgba(0, 0, 0, 0.3), 
-                0px 0px 18px rgba(80, 255, 80, 0.6); /* Ajuste cor/intensidade */
+                0px 0px 18px rgba(80, 255, 80, 0.6); 
 }
 
 .slot.last-drawn {
