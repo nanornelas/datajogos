@@ -498,7 +498,7 @@ h1 {
 }
 
 .faded-out {
-    opacity: 0.4; 
+    opacity: 0.7; 
      transition: opacity 0.5s ease-out;
     transform: scale(0.95); 
     box-shadow: none; 
@@ -1066,9 +1066,18 @@ h1 {
  */
 @media (max-width: 1250px) {
 
+    body{
+        font-size:15px;
+    }
+    .site-wrapper{
+        padding-top:90px;
+    }
     /* O Jogo agora pode ocupar todo o espaço central */
     .main-content-wrapper {
         align-items: center; /* Centraliza o jogo */
+    }
+    .game-container{
+        max-width: 800px;
     }
 
     /* O Chat volta a ser FLUTUANTE (como era antes) */
