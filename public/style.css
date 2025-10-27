@@ -363,7 +363,7 @@ h1 {
     width: 100%;            /* Força o scroller a ocupar toda a largura */
     padding: 0; 
     box-sizing: border-box; /* Garante que o padding não aumente a largura */
-    padding-right: 150px;
+    padding-right: 90px;
 }
 
 .slot {
