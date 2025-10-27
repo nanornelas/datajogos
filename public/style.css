@@ -476,12 +476,11 @@ h1 {
     align-items: center;
     text-align: center;
     font-weight: bold;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
     border: none;
 }
 
 .front {
-    background-color: #333;
+   /* background-color: #333;*/
     color: #FFEB3B; 
     font-size: 2em;
     z-index: 2;
@@ -495,6 +494,7 @@ h1 {
 
 .back {
     transform: rotateY(180deg); 
+    backface-visibility: hidden;
 }
 
 .faded-out {
