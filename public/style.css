@@ -26,10 +26,10 @@ h1 {
 
 .top-nav-bar {
     position: fixed; 
-    top: 20px;
+    top: 10px;
     left: 50%;
     transform: translateX(-50%);
-    width: 95%;
+    width: 100%;
     max-width: 1240px;
     z-index: 1000; 
     
@@ -1064,7 +1064,7 @@ h1 {
  * Breakpoint 1: Telas Médias (ex: Tablets em modo paisagem, laptops pequenos)
  * Quando a tela for menor que 1250px...
  */
-@media (max-width: 1250px) {
+@media (max-width: 1000px) {
 
     body{
         font-size:12px;
