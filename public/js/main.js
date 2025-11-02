@@ -93,6 +93,48 @@ function initializeApp() {
            console.error("Função handleBet não encontrada/importada corretamente.");
         }
     });
+// --- LÓGICA DOS BOTÕES + E - DA APOSTA (STEPPER) ---
+    const betAmountInput = document.getElementById('bet-amount');
+    const betDecreaseBtn = document.getElementById('bet-decrease');
+    const betIncreaseBtn = document.getElementById('bet-increase');
+
+    if (betAmountInput && betDecreaseBtn && betIncreaseBtn) {
+
+        // Função para atualizar o estado dos botões (desabilitar '-' se o valor for 1)
+        const updateStepperButtons = () => {
+            const currentValue = parseInt(betAmountInput.value, 10);
+            const minValue = parseInt(betAmountInput.min, 10) || 1;
+            betDecreaseBtn.disabled = (currentValue <= minValue);
+        };
+
+        // Listener para o botão '-' (Diminuir)
+        betDecreaseBtn.addEventListener('click', () => {
+            let currentValue = parseInt(betAmountInput.value, 10);
+            const minValue = parseInt(betAmountInput.min, 10) || 1;
+            // Usa Math.max para garantir que não fique abaixo do mínimo
+            betAmountInput.value = Math.max(minValue, currentValue - 1); 
+            updateStepperButtons();
+        });
+
+        // Listener para o botão '+' (Aumentar)
+        betIncreaseBtn.addEventListener('click', () => {
+            let currentValue = parseInt(betAmountInput.value, 10);
+            const minValue = parseInt(betAmountInput.min, 10) || 1;
+            if (isNaN(currentValue) || currentValue < minValue) {
+                currentValue = minValue; // Reseta se for inválido
+            } else {
+                currentValue += 1;
+            }
+            betAmountInput.value = currentValue;
+            updateStepperButtons();
+        });
+
+        // Atualiza botões se o utilizador digitar manualmente
+        betAmountInput.addEventListener('input', updateStepperButtons);
+        
+        // Define o estado inicial dos botões no carregamento
+        updateStepperButtons(); 
+    }
 
     // Inicializa APENAS os eventos do modal de configurações aqui
     Auth.initializeSettingsModal(); // Chama a função de Auth

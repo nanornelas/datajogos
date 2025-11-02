@@ -344,7 +344,16 @@ h1 {
     color: #B0B0B0;
 }
 
+#bet-amount::-webkit-outer-spin-button,
+#bet-amount::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
 #bet-amount {
+    -moz-appearance: textfield; /* Para Firefox */
+}
+
+/*#bet-amount {
     padding: 8px;
     font-size: 1em;
     border-radius: 5px;
@@ -353,8 +362,69 @@ h1 {
     color: white;
     width: 100px;
     text-align: right;
+}*/
+
+.bet-stepper {
+    display: flex;
+    align-items: center;
+    background-color: #333; /* Cor de fundo do input */
+    border: 1px solid #555;   /* Borda do input */
+    border-radius: 6px;       /* Cantos arredondados */
+    overflow: hidden;         /* Funde os elementos */
 }
 
+.bet-stepper {
+    display: flex;
+    align-items: center;
+    background-color: #333; /* Cor de fundo do input */
+    border: 1px solid #555;   /* Borda do input */
+    border-radius: 6px;       /* Cantos arredondados */
+    overflow: hidden;         /* Funde os elementos */
+}
+
+/* Estilo para os botões + e - */
+.stepper-btn {
+    background-color: #4CAF50; /* Cor primária (verde) */
+    border: none;
+    color: white;
+    font-size: 1.5em; /* Torna os símbolos + e - maiores */
+    font-weight: bold;
+    line-height: 38px; /* Alinha o texto verticalmente */
+    height: 38px; /* Altura igual à do input */
+    width: 38px; /* Largura do botão */
+    padding: 0;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+.stepper-btn:hover {
+    background-color: #45a049; /* Verde mais escuro no hover */
+}
+.stepper-btn:active {
+    background-color: #3e8e41;
+}
+.stepper-btn:disabled {
+     background-color: #555;
+     color: #888;
+     cursor: not-allowed;
+}
+
+/* Ajusta o input #bet-amount para se encaixar no stepper */
+.bet-stepper #bet-amount {
+    width: 60px; /* Largura menor para o número */
+    height: 38px; /* Altura igual aos botões */
+    border: none; /* Remove a borda (o .bet-stepper já tem) */
+    border-radius: 0; /* Remove cantos internos */
+    box-shadow: none;
+    padding: 0 5px; /* Remove padding vertical */
+    box-sizing: border-box; /* Garante que a altura é respeitada */
+    text-align: center; /* Centraliza o número */
+    font-size: 1.1em;
+    font-weight: bold;
+}
+.bet-stepper #bet-amount:focus {
+     outline: none;
+     box-shadow: none; /* Remove o brilho do focus */
+}
 .result-sequence {
     width: 100%;
     box-sizing: border-box;
