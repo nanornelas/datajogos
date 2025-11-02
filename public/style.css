@@ -284,7 +284,6 @@ h1 {
     display: flex;
     flex-direction: column;
     /* Alinha o jogo e o formulário de login à esquerda da coluna */
-    align-items: flex-start;
     min-width: 0;
 }
 
