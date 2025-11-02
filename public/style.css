@@ -225,8 +225,13 @@ h1 {
     transition: width 0.5s ease-out;
 }
 
-/* Ajustes para o SVG do Coringa */
-.slot.color-GREEN .value.coringa-icon {
+/* ======================================================= */
+/* Ajustes para o SVG do Coringa (CORRIGIDO) */
+/* ======================================================= */
+
+/* Aplica ao container do ícone (o <span>) DENTRO de .slot OU .back */
+.slot.color-GREEN .value.coringa-icon,
+.back.color-GREEN .value.coringa-icon {
     display: flex; 
     justify-content: center;
     align-items: center;
@@ -236,21 +241,26 @@ h1 {
     box-sizing: border-box; 
 }
 
-.slot.color-GREEN .value.coringa-icon .coringa-svg-img {
+/* Aplica à imagem <img> DENTRO de .slot OU .back */
+.slot.color-GREEN .value.coringa-icon .coringa-svg-img,
+.back.color-GREEN .value.coringa-icon .coringa-svg-img {
     width: auto; /* Deixa a largura ajustar */
     height: 100%; /* Controla pelo height */
     max-height: 40px; /* Limite máximo de altura */
+    /* filter: invert(100%); (Mantenha ou remova conforme a cor do seu SVG) */
 }
 
-/* Ajuste para centralizar o texto da cor quando o coringa estiver presente */
-.slot.color-GREEN .label.color-label {
+/* Aplica aos labels DENTRO de .slot OU .back */
+.slot.color-GREEN .label.color-label,
+.back.color-GREEN .label.color-label {
     width: 100%;
     text-align: center;
     margin-bottom: 0; /* Remove margem */
 }
 
-/* Esconde o label de paridade vazio */
-.slot.color-GREEN .label.parity-label {
+/* Esconde o label de paridade DENTRO de .slot OU .back */
+.slot.color-GREEN .label.parity-label,
+.back.color-GREEN .label.parity-label {
     display: none; 
 }
 
