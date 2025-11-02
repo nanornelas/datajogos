@@ -298,7 +298,7 @@ h1 {
 .game-container {
     width: 100%;
     max-width: 860px; 
-    margin-top: 80px;
+    margin-top: 0px;
 }
 
 .controls-area {
