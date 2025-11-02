@@ -270,8 +270,8 @@ h1 {
     padding-top: 100px; 
     position: relative;
     z-index: 2;
-    padding-left: 10px;  /* Para alinhar com o .header-content */
-    padding-right: 10px; /* Para alinhar com o .header-content */
+    padding-left: 20px;  /* Para alinhar com o .header-content */
+    padding-right: 20px; /* Para alinhar com o .header-content */
     box-sizing: border-box;
     width: 100%;
 }
