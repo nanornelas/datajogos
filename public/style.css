@@ -277,14 +277,13 @@ h1 {
 }
 
 .main-content-wrapper {
-    align-items: center; /* Centraliza o jogo */
     /* Configurações da coluna da esquerda (Jogo) */
     flex-grow: 1; /* Faz esta coluna crescer para ocupar o espaço */
     flex-basis: 0; /* Base de crescimento */
     display: flex;
     flex-direction: column;
-    /* Alinha o jogo e o formulário de login à esquerda da coluna */
     min-width: 0;
+    align-items: center; /* Centraliza o jogo */
 }
 
 .page-container {
