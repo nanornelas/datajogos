@@ -353,6 +353,21 @@ h1 {
     align-items: center; 
     z-index: 0;
 }
+/* Estilo para a mensagem de status do jogo (Corrige o "salto") */
+#status-message {
+    /* Estilos que já estavam no HTML */
+    text-align: center;
+    margin-top: 20px; 
+
+    /* --- A CORREÇÃO --- */
+    /* Define uma altura mínima para 2 linhas de texto */
+    min-height: 2.5em; /* Pode precisar de ajustar (ex: 2.4em ou 3em) */
+
+    /* Opcional: Centraliza verticalmente o texto de 1 linha */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
 
 #slots-scroller {
    display: flex; 
