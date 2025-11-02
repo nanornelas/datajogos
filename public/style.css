@@ -309,10 +309,11 @@ h1 {
     justify-content: space-between;
     align-items: center;
     width: 100%;
-    margin-bottom: 20px;
-    padding: 15px;
+    margin-bottom: 10px;
+    padding: 5px;
     background-color: #121212;
     border-radius: 8px;
+    min-height: 0;
 }
 
 #balance-display {
@@ -325,6 +326,14 @@ h1 {
     display: flex;
     align-items: center;
     gap: 10px;
+    background-color: #121212; /* Fundo escuro (opcional) */
+    padding: 10px 15px; /* Padding (opcional) */
+    border-radius: 8px; /* Cantos arredondados (opcional) */
+}
+.bet-input-group span {
+    font-size: 1.1em;
+    font-weight: bold;
+    color: #B0B0B0;
 }
 
 #bet-amount {
@@ -526,7 +535,12 @@ h1 {
 #progress { 
     height: 100%; width: 100%; background-color: #00BCD4; border-radius: 5px; transition: width 8s linear; 
 }
-
+.bet-input-container {
+    display: flex;
+    justify-content: flex-start; /* Alinha o grupo à esquerda */
+    width: 100%;
+    margin-bottom: 15px; /* Espaço antes dos botões de aposta */
+}
 .bet-area { 
     width: 100%;
     box-sizing: border-box;
@@ -1093,7 +1107,7 @@ h1 {
         align-items: center; /* Centraliza o jogo */
     }
     .game-container{
-        max-width: 200px;
+        max-width: 700px;
     }
 
     /* O Chat volta a ser FLUTUANTE (como era antes) */
