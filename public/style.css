@@ -277,6 +277,7 @@ h1 {
 }
 
 .main-content-wrapper {
+    align-items: center; /* Centraliza o jogo */
     /* Configurações da coluna da esquerda (Jogo) */
     flex-grow: 1; /* Faz esta coluna crescer para ocupar o espaço */
     flex-basis: 0; /* Base de crescimento */
@@ -1104,10 +1105,7 @@ h1 {
         padding-top:90px;
         z-index: auto;
     }
-    /* O Jogo agora pode ocupar todo o espaço central */
-    .main-content-wrapper {
-        align-items: center; /* Centraliza o jogo */
-    }
+
     .game-container{
         max-width: 700px;
     }
