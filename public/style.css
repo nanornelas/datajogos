@@ -249,7 +249,7 @@ h1 {
 }
 
 /* Esconde o label de paridade vazio */
-.slot.color-GREEN .label.parity-label {
+ .slot.color-GREEN .label.parity-label {
     display: none; 
 }
 
@@ -260,7 +260,7 @@ h1 {
 
 .site-wrapper {
     max-width: 1240px;
-    margin: 0 auto; /* Centra o wrapper */
+    margin: 0 auto;
     display: flex;
     align-items: flex-start;
     justify-content: space-between;
@@ -268,7 +268,7 @@ h1 {
     padding-top: 100px; 
     position: relative;
     z-index: 2;
-    padding-left: 20px;  /* Para alinhar com o .header-content */
+    padding-left: 20px;  /* Para alinhar com o .header-content */
     padding-right: 20px; /* Para alinhar com o .header-content */
     box-sizing: border-box;
     width: 100%;
@@ -376,12 +376,12 @@ h1 {
 }
 
 #slots-scroller {
-    display: flex; 
+   display: flex; 
     align-items: center; 
     justify-content: flex-end; 
     gap: 10px; 
     transition: transform 0.7s cubic-bezier(0.645, 0.045, 0.355, 1); 
-    width: 100%;            /* Força o scroller a ocupar toda a largura */
+    width: 100%;            /* Força o scroller a ocupar toda a largura */
     padding: 0; 
     box-sizing: border-box; /* Garante que o padding não aumente a largura */
     padding-right: 90px;
@@ -419,15 +419,15 @@ h1 {
     color: #E0E0E0; 
     border: 1px solid rgba(100, 150, 255, 0.3);
     /* Se usar glow colorido: */
-    box-shadow: inset 0px 4px 6px rgba(0, 0, 0, 0.3), 
-                0px 0px 18px rgba(80, 150, 255, 0.6); 
+     box-shadow: inset 0px 4px 6px rgba(0, 0, 0, 0.3), 
+                 0px 0px 18px rgba(80, 150, 255, 0.6); 
 } 
 
 .color-GREEN { 
     background: radial-gradient(circle at 50% 40%, #81c784 0%, #43a047 50%, #1b5e20 100%);
     color: white; 
     border: 1px solid rgba(100, 255, 100, 0.3);
-    /* Se usar glow colorido: */
+     /* Se usar glow colorido: */
     box-shadow: inset 0px 4px 6px rgba(0, 0, 0, 0.3), 
                 0px 0px 18px rgba(80, 255, 80, 0.6); 
 }
@@ -501,7 +501,7 @@ h1 {
 }
 
 .front {
-    /* background-color: #333;*/
+   /* background-color: #333;*/
     color: #FFEB3B; 
     font-size: 2em;
     z-index: 2;
@@ -520,9 +520,9 @@ h1 {
 
 .faded-out {
     opacity: 0.7; 
-    transition: opacity 0.5s ease-out;
+     transition: opacity 0.5s ease-out;
     transform: scale(0.95); 
-    /* box-shadow: none; (Removido para manter o glow) */
+    box-shadow: none; 
 }
 
 #timer-bar {
@@ -661,7 +661,7 @@ h1 {
     overflow: hidden;
     display: flex;
     flex-direction: column;
-    border: 1px solid #2a2a2a;
+     border: 1px solid #2a2a2a;
     box-shadow: 0 5px 20px rgba(0,0,0,0.5);
     transition: height 0.3s ease-out;
 }
@@ -750,7 +750,7 @@ h1 {
 
 .social-content-panes {
     display: flex; /* Necessário para que a aba ativa preencha */
-    flex-grow: 1;  /* Faz este container crescer para preencher o .sidebar-content */
+    flex-grow: 1;  /* Faz este container crescer para preencher o .sidebar-content */
     overflow: hidden; /* Garante que as abas inativas não causem overflow */
 }
 
@@ -857,8 +857,8 @@ h1 {
 
 /* Estilo para o logo na barra de navegação */
 .logo-svg {
-    height: 40px;  /* Define a altura do logo */
-    width: auto;   /* Deixa a largura se ajustar automaticamente */
+    height: 40px;  /* Define a altura do logo */
+    width: auto;   /* Deixa a largura se ajustar automaticamente */
 }
 
 /* Configuração do container da animação de partículas */
@@ -1144,7 +1144,7 @@ h1 {
     /* --- ADICIONADO: Reduz o tamanho das cartas para telas médias --- */
     .slot, .flip-container {
         width: 70px; /* Reduz de 130px */
-        height: 70px;  /* Reduz de 80px */
+        height: 70px;  /* Reduz de 80px */
         font-size: 0.8em; /* Ajusta a fonte */
     }
     /* Ajusta a altura da linha de resultados para o novo tamanho das cartas */
@@ -1234,7 +1234,7 @@ h1 {
     /* Ajusta o scroller de cartas para ser menor */
     .result-sequence {
         height: 76px; /* Reduz ainda mais a altura da linha */
-        gap: 5px;    /* Reduz o gap entre as cartas */
+        gap: 5px;    /* Reduz o gap entre as cartas */
         padding: 8px; /* Ajusta o padding interno */
     }
     .slot, .flip-container {
@@ -1256,3 +1256,4 @@ h1 {
         font-size: 2em; /* Reduz o tamanho da interrogação */
     }
 }
+
