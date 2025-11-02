@@ -48,7 +48,6 @@ h1 {
 
 .header-content {
     width: 100%;
-    max-width: 1240px;
     margin: 0 auto;
     display: flex;
     justify-content: space-between;
