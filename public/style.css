@@ -540,6 +540,8 @@ h1 {
     justify-content: flex-start; /* Alinha o grupo à esquerda */
     width: 100%;
     margin-bottom: 15px; /* Espaço antes dos botões de aposta */
+    position: relative;
+    z-index: 2;
 }
 .bet-area { 
     width: 100%;
