@@ -1078,7 +1078,7 @@ h1 {
         align-items: center; /* Centraliza o jogo */
     }
     .game-container{
-        max-width: 800px;
+        max-width: 700px;
     }
 
     /* O Chat volta a ser FLUTUANTE (como era antes) */
