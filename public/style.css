@@ -30,7 +30,6 @@ h1 {
     left: 50%;
     transform: translateX(-50%);
     width: 100%;
-    max-width: 1240px;
     z-index: 1000; 
     
     /* EFEITO ATUALIZADO: Gradiente Verde Escuro + Glassmorphism */
