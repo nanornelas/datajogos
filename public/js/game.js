@@ -288,7 +288,8 @@ export const updateGameUI = {
    mysterySlot.style.right = config.paddingRight;
    // --- FIM DA MODIFICAÇÃO ---
    
-   mysterySlot.style.top = config.paddingTop;
+   mysterySlot.style.top = '50%';
+   mysterySlot.style.top = '50%';
    
    const lastInitialSlot = sequenceElement.lastChild;
    if (lastInitialSlot) {
