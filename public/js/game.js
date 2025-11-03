@@ -220,7 +220,7 @@ export const updateGameUI = {
             slotCount: 5, 
             paddingRight: '8px',
         };
-    } else if (screenWidth < 890) {
+    } else if (screenWidth < 1000) {
         // Configuração para Tablet (CSS usa padding 10px)
         return { 
             slotCount: 6, 
