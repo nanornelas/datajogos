@@ -286,7 +286,7 @@ export const updateGameUI = {
    // --- FIM DA MODIFICAÇÃO ---
    
    mysterySlot.style.top = '50%';
-   mysterySlot.style.top = '50%';
+   mysterySlot.style.transform = 'translateY(-50%)';
    
    const lastInitialSlot = sequenceElement.lastChild;
    if (lastInitialSlot) {
