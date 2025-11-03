@@ -1150,7 +1150,7 @@ h1 {
         font-size:14px;
     }
     .site-wrapper{
-        padding-top:80px;
+        padding-top:60px;
         z-index: auto;
         display: block; /* Pára de ser flex, torna-se um bloco normal */
         padding-left: 15px; /* Adiciona padding lateral (ajuste) */
@@ -1167,15 +1167,15 @@ h1 {
     }
 
     .bet-button {
-        height: 80px;
+        height: 50px;
         font-size: 0.9em;
     }
     .result-sequence {
-        height: 90px;
+        height: 80px;
     }
     .slot, .flip-container {
-        width: 75px;
-        height: 75px;
+        width: 65px;
+        height: 65px;
     }
     #slots-scroller {
         padding-right: 85px; 
@@ -1192,7 +1192,7 @@ h1 {
         margin-bottom: 10px;
     }
     .bet-area {
-        margin-top: 20px;
+        margin-top: 10px;
     }
 
     /* O Chat volta a ser FLUTUANTE (como era antes) */
