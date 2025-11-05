@@ -10,6 +10,22 @@ import { hideAuthModal } from './auth.js'; // <-- ADICIONAR ESTA LINHA
 
 function initializeApp() {
     // Esta função (do auth.js) agora decide se mostra o modal ou inicia o app
+    try {
+        const urlParams = new URLSearchParams(window.location.search);
+        const refCode = urlParams.get('ref'); // Procura por ?ref=...
+
+        if (refCode) {
+            // Guarda o código do link no localStorage
+            localStorage.setItem('referralCodeFromLink', refCode);
+            console.log("Código de referência capturado do URL:", refCode);
+
+            // Opcional: Limpa o URL para que o ?ref=... não fique visível
+            // window.history.replaceState(null, '', window.location.pathname);
+        }
+    } catch (error) {
+        console.error("Erro ao processar URL de referência:", error);
+    }
+
     Auth.initializeUI();
 
     // --- LISTENERS EXISTENTES (MANTÊM-SE) ---
@@ -34,35 +50,48 @@ function initializeApp() {
         });
     }
 
-    const registerLink = document.getElementById('show-register-link');
-    if (registerLink) {
-        registerLink.addEventListener('click', (e) => {
-            e.preventDefault();
-            const button = document.getElementById('login-submit-button');
-            const groupConfirmPass = document.getElementById('group-confirm-password');
-            const groupAffiliateCode = document.getElementById('group-affiliate-code');
-            const errorMessageEl = document.getElementById('auth-error-message'); // Adicionado para limpar erro
+    // Substitua o seu 'registerLink.addEventListener' por este:
 
-            // Verifica se o botão e outros elementos existem antes de acessá-los
-            if (button && groupConfirmPass && groupAffiliateCode && e.target) {
-                const isLogin = button.dataset.action === 'login';
-                if (isLogin) {
-                    button.dataset.action = 'register';
-                    button.textContent = 'Registar-se';
-                    e.target.textContent = 'Voltar para Login';
-                    groupConfirmPass.style.display = 'flex';
-                    groupAffiliateCode.style.display = 'flex';
+    const registerLink = document.getElementById('show-register-link');
+    if (registerLink) {
+        registerLink.addEventListener('click', (e) => {
+            e.preventDefault();
+            const button = document.getElementById('login-submit-button'); 
+            const isLogin = button.dataset.action === 'login';
+            const groupConfirmPass = document.getElementById('group-confirm-password');
+            const groupAffiliateCode = document.getElementById('group-affiliate-code');
+
+            if (isLogin) {
+                // A mudar para a tela de REGISTO
+                button.dataset.action = 'register';
+                button.textContent = 'Registar-se';
+                e.target.textContent = 'Voltar para Login';
+                if (groupConfirmPass) groupConfirmPass.style.display = 'flex';
+
+                // --- LÓGICA DE REFERÊNCIA ADICIONADA ---
+                // Verifica se um código de link está guardado
+                const codeFromLink = localStorage.getItem('referralCodeFromLink');
+                if (codeFromLink) {
+                    // Se veio do link, ESCONDE o campo de código manual
+                    if (groupAffiliateCode) groupAffiliateCode.style.display = 'none';
+                    console.log("A registar com código de link. Campo manual escondido.");
                 } else {
-                    button.dataset.action = 'login';
-                    button.textContent = 'Entrar';
-                    e.target.textContent = 'Criar Conta';
-                    groupConfirmPass.style.display = 'none';
-                    groupAffiliateCode.style.display = 'none';
+                    // Se NÃO veio do link, MOSTRA o campo de código manual
+                    if (groupAffiliateCode) groupAffiliateCode.style.display = 'flex';
                 }
-                if (errorMessageEl) errorMessageEl.textContent = ''; // Limpa erro ao trocar
-            }
-        });
-    }
+                // --- FIM DA LÓGICA ---
+
+            } else {
+                // A mudar de volta para LOGIN
+                button.dataset.action = 'login';
+                button.textContent = 'Entrar';
+                e.target.textContent = 'Criar Conta';
+                if (groupConfirmPass) groupConfirmPass.style.display = 'none';
+                if (groupAffiliateCode) groupAffiliateCode.style.display = 'none'; // Esconde no login
+            }
+            document.getElementById('auth-error-message').textContent = '';
+        });
+    }
 
     // --- 2. ADICIONAR LISTENERS DO MODAL DE AUTENTICAÇÃO ---
     // Listener para o botão fechar (X) - Opcional, adicione se você colocou o botão no HTML

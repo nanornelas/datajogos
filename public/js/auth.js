@@ -333,8 +333,12 @@ export function setCurrentBalance(newBalance, newBonusBalance = -1) {
         if (password !== confirmPassword) {
             errorMessageEl.textContent = 'As senhas não coincidem.'; return;
         }
-         const affiliateCode = document.getElementById('affiliate-code').value;
-         if (affiliateCode) { requestBody.affiliateCode = affiliateCode; }
+         const codeFromLink = localStorage.getItem('referralCodeFromLink');
+         const codeFromInput = document.getElementById('affiliate-code').value;
+         const affiliateCode = codeFromLink || codeFromInput;
+         if (affiliateCode) { requestBody.affiliateCode = affiliateCode;
+         console.log("A registar com o código de afiliado:", affiliateCode);
+ }
      }
 
      try {
