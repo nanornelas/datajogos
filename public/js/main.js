@@ -1,37 +1,39 @@
+// Importa todos os módulos necessários no topo
 import * as Auth from './auth.js'; 
 import { handleBet } from './game.js'; 
 import { initializeSocialFeatures, stopLiveFeed } from './social.js'; 
 import { loadAffiliateData, setupCopyButton, setupCopyLinkButton } from './afiliado.js';
-
-// Importa a função para esconder o modal de autenticação
-import { hideAuthModal, openSettingsModal, initializeSettingsModal } from './auth.js'; // <-- Importações de Auth consolidadas
+import { hideAuthModal } from './auth.js'; // A sua importação está correta
 
 function initializeApp() {
-    // 1. Captura de Link de Referência (Executa em todas as páginas)
+    
+    // --- 1. LÓGICA DE ARRANQUE GLOBAL (Executa em TODAS as páginas) ---
+
+    // Captura o código de referência (se existir no URL)
     try {
         const urlParams = new URLSearchParams(window.location.search);
-        const refCode = urlParams.get('ref'); // Procura por ?ref=...
-
+        const refCode = urlParams.get('ref');
         if (refCode) {
             localStorage.setItem('referralCodeFromLink', refCode);
             console.log("Código de referência capturado do URL:", refCode);
-            // window.history.replaceState(null, '', window.location.pathname);
+            // window.history.replaceState(null, '', window.location.pathname); // Opcional
         }
     } catch (error) {
         console.error("Erro ao processar URL de referência:", error);
     }
 
-    // 2. Inicializa a UI Base (Header, Modal Auth) (Executa em todas as páginas)
-    Auth.initializeUI();
+    // Inicializa a UI de Autenticação (mostra modal ou dados do user no header)
+    // Isto é global porque o header está em todas as páginas
+    Auth.initializeUI(); 
 
-    // 3. Listeners Globais (para elementos que existem em TODAS as páginas com o header/modal)
-    
-    // Listeners do Modal de Autenticação
+    // --- 2. LISTENERS GLOBAIS (Elementos que existem em TODAS as páginas) ---
+
+    // Listeners do Modal de Autenticação (o modal existe em todas as páginas)
     const loginButton = document.getElementById('login-submit-button');
     if (loginButton) {
         loginButton.addEventListener('click', Auth.handleAuth);
     }
-    
+
     const registerLink = document.getElementById('show-register-link');
     if (registerLink) {
         registerLink.addEventListener('click', (e) => {
@@ -40,12 +42,12 @@ function initializeApp() {
             const isLogin = button.dataset.action === 'login';
             const groupConfirmPass = document.getElementById('group-confirm-password');
             const groupAffiliateCode = document.getElementById('group-affiliate-code');
-            const errorMessageEl = document.getElementById('auth-error-message'); // Adicionado para limpar
+            const errorMessageEl = document.getElementById('auth-error-message'); // Adicionado para limpar erro
 
             if (!button || !groupConfirmPass || !groupAffiliateCode || !e.target) return; // Segurança
 
             if (isLogin) {
-                // A mudar para a tela de REGISTO
+                // A mudar para REGISTO
                 button.dataset.action = 'register';
                 button.textContent = 'Registar-se';
                 e.target.textContent = 'Voltar para Login';
@@ -55,6 +57,7 @@ function initializeApp() {
                 const codeFromLink = localStorage.getItem('referralCodeFromLink');
                 if (codeFromLink) {
                     groupAffiliateCode.style.display = 'none';
+                    console.log("A registar com código de link. Campo manual escondido.");
                 } else {
                     groupAffiliateCode.style.display = 'flex';
                 }
@@ -88,7 +91,7 @@ function initializeApp() {
     const logoutButton = document.getElementById('logout-button');
     if (logoutButton) {
         logoutButton.addEventListener('click', () => {
-            Auth.handleLogout(); 
+            Auth.handleLogout();
             // stopLiveFeed() é chamado dentro de handleLogout
         });
     }
@@ -102,10 +105,11 @@ function initializeApp() {
     }
     
     // Inicializa o Modal de Configurações (Global)
-    Auth.initializeSettingsModal();
+    Auth.initializeSettingsModal(); 
 
-
-    // 4. Lógica Específica da Página
+    
+    // --- 3. LÓGICA ESPECIALIZADA (Depende da página atual) ---
+    
     const currentPath = window.location.pathname;
 
     if (currentPath.includes('afiliado.html')) {
@@ -114,17 +118,13 @@ function initializeApp() {
         loadAffiliateData();
         setupCopyButton();
         setupCopyLinkButton();
-        
+        // Não configura os listeners de aposta aqui
+
     } else if (currentPath.includes('admin.html')) {
         // --- SE ESTIVER NA PÁGINA DE ADMIN (Exemplo futuro) ---
         // console.log("A carregar scripts do Painel de Admin...");
-        // loadAdminData(); 
+        // loadAdminData(); // (Função a ser importada de admin.js)
         
-    } else if (currentPath.includes('influencer.html')) {
-        // --- SE ESTIVER NA PÁGINA DE INFLUENCER (Exemplo futuro) ---
-        // console.log("A carregar scripts do Painel de Influencer...");
-        // loadInfluencerData();
-
     } else {
         // --- SE ESTIVER NA PÁGINA PRINCIPAL (JOGO) ---
         console.log("A carregar scripts do Jogo...");
@@ -144,6 +144,7 @@ function initializeApp() {
         const betIncreaseBtn = document.getElementById('bet-increase');
 
         if (betAmountInput && betDecreaseBtn && betIncreaseBtn) {
+
             const updateStepperButtons = () => {
                 const currentValue = parseInt(betAmountInput.value, 10);
                 const minValue = parseInt(betAmountInput.min, 10) || 1;
@@ -161,7 +162,7 @@ function initializeApp() {
                 let currentValue = parseInt(betAmountInput.value, 10);
                 const minValue = parseInt(betAmountInput.min, 10) || 1;
                 if (isNaN(currentValue) || currentValue < minValue) {
-                    currentValue = minValue;
+                    currentValue = minValue; 
                 } else {
                     currentValue += 1;
                 }
@@ -172,7 +173,9 @@ function initializeApp() {
             betAmountInput.addEventListener('input', updateStepperButtons);
             updateStepperButtons(); 
         }
-        // (initializeSocialFeatures é chamado pelo auth.js após login, por isso não precisa estar aqui)
+        
+        // initializeSocialFeatures() é chamado pelo auth.js (via fetchBalance),
+        // por isso não precisa ser chamado aqui.
     }
 }
 
