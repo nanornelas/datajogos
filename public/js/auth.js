@@ -307,9 +307,6 @@ export function setCurrentBalance(newBalance, newBonusBalance = -1) {
         if (data.success) {
             setCurrentBalance(parseFloat(data.balance), parseFloat(data.bonusBalance));
             updateRolloverUI(data.wageringProgress, data.wageringTarget);
-            initializeGameCycle(); // Inicia o JOGO
-            initializeSocialFeatures(); // Inicia o CHAT
-            initializeSettingsModal();
         } else { console.error("Erro ao buscar saldo:", data.message); }
     } catch (error) { console.error("Erro de rede ao buscar saldo:", error); }
  }
