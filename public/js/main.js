@@ -25,6 +25,7 @@ async function initializeApp() {
 
     // Inicializa a UI de Autenticação (mostra modal OU dados do user no header)
     // ESTA FUNÇÃO AGORA CHAMA 'fetchBalance' INTERNAMENTE SE ESTIVER LOGADO
+    // E RETORNA 'true' SE ESTIVER LOGADO, 'false' SE NÃO.
     const isLoggedIn = await Auth.initializeUI(); 
 
     // --- 2. LISTENERS GLOBAIS (Elementos que existem em TODAS as páginas) ---
@@ -100,10 +101,6 @@ async function initializeApp() {
         });
     }
     
-    // Inicializa o Modal de Configurações (Global, pois existe em todas as páginas)
-    Auth.initializeSettingsModal(); 
-
-    
     // --- 3. LÓGICA ESPECIALIZADA (Depende da página atual) ---
     
     const currentPath = window.location.pathname;
@@ -112,9 +109,9 @@ async function initializeApp() {
         // --- SE ESTIVER NA PÁGINA DE AFILIADO ---
         console.log("A carregar scripts do Painel de Afiliado...");
         if (isLoggedIn) {
-            loadAffiliateData();
+            loadAffiliateData(); // Carrega os dados se estiver logado
         }
-        // Configura os botões (eles podem ser configurados mesmo se não estiver logado)
+        // Configura os botões (eles existem nesta página)
         setupCopyButton();
         setupCopyLinkButton();
         
@@ -127,6 +124,9 @@ async function initializeApp() {
         // --- SE ESTIVER NA PÁGINA PRINCIPAL (JOGO) ---
         console.log("A carregar scripts do Jogo...");
         
+        // Inicializa o Modal de Configurações (SÓ existe na página do jogo)
+        Auth.initializeSettingsModal(); // <-- MOVIDO PARA AQUI
+
         // Configura listeners dos botões de aposta
         document.querySelectorAll('.bet-button').forEach(button => {
             if (typeof handleBet === 'function') {
