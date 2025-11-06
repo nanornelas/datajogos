@@ -1144,7 +1144,7 @@ h1 {
 /* --- DESIGN RESPONSIVO (Media Queries) --- */
 /* ======================================================= */
 
-@media (max-width: 1000px) {
+@media (max-width: 1200px) {
 
     body{
         font-size:14px;
