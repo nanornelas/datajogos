@@ -4,47 +4,92 @@ import { initializeSocialFeatures, stopLiveFeed } from './social.js';
 import { loadAffiliateData, setupCopyButton, setupCopyLinkButton } from './afiliado.js';
 
 // Importa a função para esconder o modal de autenticação
-import { hideAuthModal } from './auth.js'; // <-- ADICIONAR ESTA LINHA
+import { hideAuthModal, openSettingsModal, initializeSettingsModal } from './auth.js'; // <-- Importações de Auth consolidadas
 
 function initializeApp() {
-    Auth.initializeUI();
-
-    const currentPath = window.location.pathname;
-    if (currentPath.includes('afiliado.html')) {
-        // Está na página de Afiliado
-        console.log("A carregar dados do painel de afiliado...");
-        loadAffiliateData();
-        setupCopyButton();
-        setupCopyLinkButton();
-    }
-    // Esta função (do auth.js) agora decide se mostra o modal ou inicia o app
+    // 1. Captura de Link de Referência (Executa em todas as páginas)
     try {
         const urlParams = new URLSearchParams(window.location.search);
         const refCode = urlParams.get('ref'); // Procura por ?ref=...
 
         if (refCode) {
-            // Guarda o código do link no localStorage
             localStorage.setItem('referralCodeFromLink', refCode);
             console.log("Código de referência capturado do URL:", refCode);
-
-            // Opcional: Limpa o URL para que o ?ref=... não fique visível
             // window.history.replaceState(null, '', window.location.pathname);
         }
     } catch (error) {
         console.error("Erro ao processar URL de referência:", error);
     }
 
-    // --- LISTENERS EXISTENTES (MANTÊM-SE) ---
+    // 2. Inicializa a UI Base (Header, Modal Auth) (Executa em todas as páginas)
+    Auth.initializeUI();
+
+    // 3. Listeners Globais (para elementos que existem em TODAS as páginas com o header/modal)
+    
+    // Listeners do Modal de Autenticação
     const loginButton = document.getElementById('login-submit-button');
     if (loginButton) {
         loginButton.addEventListener('click', Auth.handleAuth);
     }
+    
+    const registerLink = document.getElementById('show-register-link');
+    if (registerLink) {
+        registerLink.addEventListener('click', (e) => {
+            e.preventDefault();
+            const button = document.getElementById('login-submit-button'); 
+            const isLogin = button.dataset.action === 'login';
+            const groupConfirmPass = document.getElementById('group-confirm-password');
+            const groupAffiliateCode = document.getElementById('group-affiliate-code');
+            const errorMessageEl = document.getElementById('auth-error-message'); // Adicionado para limpar
 
+            if (!button || !groupConfirmPass || !groupAffiliateCode || !e.target) return; // Segurança
+
+            if (isLogin) {
+                // A mudar para a tela de REGISTO
+                button.dataset.action = 'register';
+                button.textContent = 'Registar-se';
+                e.target.textContent = 'Voltar para Login';
+                groupConfirmPass.style.display = 'flex';
+
+                // Lógica de Referência
+                const codeFromLink = localStorage.getItem('referralCodeFromLink');
+                if (codeFromLink) {
+                    groupAffiliateCode.style.display = 'none';
+                } else {
+                    groupAffiliateCode.style.display = 'flex';
+                }
+            } else {
+                // A mudar de volta para LOGIN
+                button.dataset.action = 'login';
+                button.textContent = 'Entrar';
+                e.target.textContent = 'Criar Conta';
+                groupConfirmPass.style.display = 'none';
+                groupAffiliateCode.style.display = 'none';
+            }
+            if (errorMessageEl) errorMessageEl.textContent = '';
+        });
+    }
+
+    const closeButtonAuth = document.getElementById('auth-modal-close-btn');
+    if (closeButtonAuth) {
+        closeButtonAuth.addEventListener('click', hideAuthModal); 
+    }
+
+    const overlayAuth = document.getElementById('auth-modal-overlay');
+    if (overlayAuth) {
+        overlayAuth.addEventListener('click', (e) => {
+            if (e.target === overlayAuth) {
+                hideAuthModal();
+            }
+        });
+    }
+
+    // Listeners da Barra de Navegação (Globais)
     const logoutButton = document.getElementById('logout-button');
     if (logoutButton) {
         logoutButton.addEventListener('click', () => {
-            Auth.handleLogout();
-            // stopLiveFeed(); // stopLiveFeed agora é chamado DENTRO de handleLogout
+            Auth.handleLogout(); 
+            // stopLiveFeed() é chamado dentro de handleLogout
         });
     }
 
@@ -52,130 +97,83 @@ function initializeApp() {
     if (settingsLink) {
         settingsLink.addEventListener('click', (e) => {
             e.preventDefault();
-            Auth.openSettingsModal(); // Chama a função de Auth
+            Auth.openSettingsModal(); 
         });
     }
-
-    // Substitua o seu 'registerLink.addEventListener' por este:
-
-    const registerLink = document.getElementById('show-register-link');
-    if (registerLink) {
-        registerLink.addEventListener('click', (e) => {
-            e.preventDefault();
-            const button = document.getElementById('login-submit-button'); 
-            const isLogin = button.dataset.action === 'login';
-            const groupConfirmPass = document.getElementById('group-confirm-password');
-            const groupAffiliateCode = document.getElementById('group-affiliate-code');
-
-            if (isLogin) {
-                // A mudar para a tela de REGISTO
-                button.dataset.action = 'register';
-                button.textContent = 'Registar-se';
-                e.target.textContent = 'Voltar para Login';
-                if (groupConfirmPass) groupConfirmPass.style.display = 'flex';
-
-                // --- LÓGICA DE REFERÊNCIA ADICIONADA ---
-                // Verifica se um código de link está guardado
-                const codeFromLink = localStorage.getItem('referralCodeFromLink');
-                if (codeFromLink) {
-                    // Se veio do link, ESCONDE o campo de código manual
-                    if (groupAffiliateCode) groupAffiliateCode.style.display = 'none';
-                    console.log("A registar com código de link. Campo manual escondido.");
-                } else {
-                    // Se NÃO veio do link, MOSTRA o campo de código manual
-                    if (groupAffiliateCode) groupAffiliateCode.style.display = 'flex';
-                }
-                // --- FIM DA LÓGICA ---
-
-            } else {
-                // A mudar de volta para LOGIN
-                button.dataset.action = 'login';
-                button.textContent = 'Entrar';
-                e.target.textContent = 'Criar Conta';
-                if (groupConfirmPass) groupConfirmPass.style.display = 'none';
-                if (groupAffiliateCode) groupAffiliateCode.style.display = 'none'; // Esconde no login
-            }
-            document.getElementById('auth-error-message').textContent = '';
-        });
-    }
-
-    // --- 2. ADICIONAR LISTENERS DO MODAL DE AUTENTICAÇÃO ---
-    // Listener para o botão fechar (X) - Opcional, adicione se você colocou o botão no HTML
-    const closeButtonAuth = document.getElementById('auth-modal-close-btn');
-    if (closeButtonAuth) {
-        closeButtonAuth.addEventListener('click', hideAuthModal); // Chama a função importada de auth.js
-    }
-
-    // Listener para fechar ao clicar FORA do conteúdo do modal (no overlay escuro)
-    const overlayAuth = document.getElementById('auth-modal-overlay');
-    if (overlayAuth) {
-        overlayAuth.addEventListener('click', (e) => {
-            // Verifica se o clique foi diretamente no overlay
-            if (e.target === overlayAuth) {
-                hideAuthModal(); // Chama a função importada de auth.js
-            }
-        });
-    }
-    // --- FIM DOS LISTENERS DO MODAL DE AUTENTICAÇÃO ---
+    
+    // Inicializa o Modal de Configurações (Global)
+    Auth.initializeSettingsModal();
 
 
-    // Listener dos botões de aposta (Mantém-se)
-    document.querySelectorAll('.bet-button').forEach(button => {
-        // Adiciona verificação para garantir que handleBet existe
-        if (typeof handleBet === 'function') {
-           button.addEventListener('click', (e) => handleBet(e));
-        } else {
-           console.error("Função handleBet não encontrada/importada corretamente.");
-        }
-    });
-// --- LÓGICA DOS BOTÕES + E - DA APOSTA (STEPPER) ---
-    const betAmountInput = document.getElementById('bet-amount');
-    const betDecreaseBtn = document.getElementById('bet-decrease');
-    const betIncreaseBtn = document.getElementById('bet-increase');
+    // 4. Lógica Específica da Página
+    const currentPath = window.location.pathname;
 
-    if (betAmountInput && betDecreaseBtn && betIncreaseBtn) {
+    if (currentPath.includes('afiliado.html')) {
+        // --- SE ESTIVER NA PÁGINA DE AFILIADO ---
+        console.log("A carregar scripts do Painel de Afiliado...");
+        loadAffiliateData();
+        setupCopyButton();
+        setupCopyLinkButton();
+        
+    } else if (currentPath.includes('admin.html')) {
+        // --- SE ESTIVER NA PÁGINA DE ADMIN (Exemplo futuro) ---
+        // console.log("A carregar scripts do Painel de Admin...");
+        // loadAdminData(); 
+        
+    } else if (currentPath.includes('influencer.html')) {
+        // --- SE ESTIVER NA PÁGINA DE INFLUENCER (Exemplo futuro) ---
+        // console.log("A carregar scripts do Painel de Influencer...");
+        // loadInfluencerData();
 
-        // Função para atualizar o estado dos botões (desabilitar '-' se o valor for 1)
-        const updateStepperButtons = () => {
-            const currentValue = parseInt(betAmountInput.value, 10);
-            const minValue = parseInt(betAmountInput.min, 10) || 1;
-            betDecreaseBtn.disabled = (currentValue <= minValue);
-        };
-
-        // Listener para o botão '-' (Diminuir)
-        betDecreaseBtn.addEventListener('click', () => {
-            let currentValue = parseInt(betAmountInput.value, 10);
-            const minValue = parseInt(betAmountInput.min, 10) || 1;
-            // Usa Math.max para garantir que não fique abaixo do mínimo
-            betAmountInput.value = Math.max(minValue, currentValue - 1); 
-            updateStepperButtons();
-        });
-
-        // Listener para o botão '+' (Aumentar)
-        betIncreaseBtn.addEventListener('click', () => {
-            let currentValue = parseInt(betAmountInput.value, 10);
-            const minValue = parseInt(betAmountInput.min, 10) || 1;
-            if (isNaN(currentValue) || currentValue < minValue) {
-                currentValue = minValue; // Reseta se for inválido
+    } else {
+        // --- SE ESTIVER NA PÁGINA PRINCIPAL (JOGO) ---
+        console.log("A carregar scripts do Jogo...");
+        
+        // Listener dos botões de aposta
+        document.querySelectorAll('.bet-button').forEach(button => {
+            if (typeof handleBet === 'function') {
+                button.addEventListener('click', (e) => handleBet(e));
             } else {
-                currentValue += 1;
+                console.error("Função handleBet não encontrada.");
             }
-            betAmountInput.value = currentValue;
-            updateStepperButtons();
-        });
+        });
 
-        // Atualiza botões se o utilizador digitar manualmente
-        betAmountInput.addEventListener('input', updateStepperButtons);
-        
-        // Define o estado inicial dos botões no carregamento
-        updateStepperButtons(); 
-    }
+        // Lógica dos botões + e - da aposta (Stepper)
+        const betAmountInput = document.getElementById('bet-amount');
+        const betDecreaseBtn = document.getElementById('bet-decrease');
+        const betIncreaseBtn = document.getElementById('bet-increase');
 
-    // Inicializa APENAS os eventos do modal de configurações aqui
-    Auth.initializeSettingsModal(); // Chama a função de Auth
+        if (betAmountInput && betDecreaseBtn && betIncreaseBtn) {
+            const updateStepperButtons = () => {
+                const currentValue = parseInt(betAmountInput.value, 10);
+                const minValue = parseInt(betAmountInput.min, 10) || 1;
+                betDecreaseBtn.disabled = (currentValue <= minValue);
+            };
 
-    // Não chama mais initializeSocialFeatures() aqui, pois é chamado por auth.js
-    // // initializeSocialFeatures(); // <-- REMOVIDA/COMENTADA
+            betDecreaseBtn.addEventListener('click', () => {
+                let currentValue = parseInt(betAmountInput.value, 10);
+                const minValue = parseInt(betAmountInput.min, 10) || 1;
+                betAmountInput.value = Math.max(minValue, currentValue - 1); 
+                updateStepperButtons();
+            });
+
+            betIncreaseBtn.addEventListener('click', () => {
+                let currentValue = parseInt(betAmountInput.value, 10);
+                const minValue = parseInt(betAmountInput.min, 10) || 1;
+                if (isNaN(currentValue) || currentValue < minValue) {
+                    currentValue = minValue;
+                } else {
+                    currentValue += 1;
+                }
+                betAmountInput.value = currentValue;
+                updateStepperButtons();
+            });
+
+            betAmountInput.addEventListener('input', updateStepperButtons);
+            updateStepperButtons(); 
+        }
+        // (initializeSocialFeatures é chamado pelo auth.js após login, por isso não precisa estar aqui)
+    }
 }
 
 // Inicia a aplicação quando o DOM está pronto
