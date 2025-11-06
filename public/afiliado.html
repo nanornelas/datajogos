@@ -4,49 +4,106 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Painel de Afiliado</title>
-    <link rel="stylesheet" href="/style.css">
+    <link rel="stylesheet" href="/style.css"> 
 </head>
 <body>
-    <div class="main-content-wrapper">
-        <div class="page-container" style="max-width: 700px; display: block;">
-            <h1>Painel de Afiliado</h1>
-            <p style="text-align: center;">Use o código e o link abaixo para convidar novos jogadores!</p>
-            
-            <div style="margin-top: 30px;">
-                <label style="display: block; margin-bottom: 5px; color: #B0B0B0;" for="referral-code-input">Seu Código de Afiliado:</label>
-                <div style="display: flex; gap: 10px;">
-                    <input type="text" id="referral-code-input" readonly style="flex-grow: 1; padding: 10px; background-color: #333; border: 1px solid #555; color: #FFEB3B; font-weight: bold; border-radius: 5px;">
-                    <button id="copy-button" style="padding: 10px 20px; background-color: #00BCD4; color: white; border: none; border-radius: 5px; cursor: pointer; font-weight: bold;">Copiar</button>
-                </div>
-            </div>
-
-            <div style="margin-top: 20px;">
-                <label style="display: block; margin-bottom: 5px; color: #B0B0B0;" for="referral-link-input">Seu Link de Divulgação:</label>
-                <div style="display: flex; gap: 10px;">
-                    <input type="text" id="referral-link-input" readonly style="flex-grow: 1; padding: 10px; background-color: #333; border: 1px solid #555; color: #E0E0E0; border-radius: 5px;">
-                    <button id="copy-link-btn" style="padding: 10px 20px; background-color: #4CAF50; color: white; border: none; border-radius: 5px; cursor: pointer; font-weight: bold;">Copiar Link</button>
-                </div>
-            </div>
-            
-            <div style="display: flex; justify-content: space-around; text-align: center; margin-top: 40px;">
-                <div>
-                    <h3 style="color: #B0B0B0; margin-bottom: 5px;">Saldo de Comissão</h3>
-                    <p id="commission-balance-display" style="font-size: 2em; color: #4CAF50; margin: 0;">R$ 0,00</p>
-                </div>
-                <div>
-                    <h3 style="color: #B0B0B0; margin-bottom: 5px;">Total de Indicados</h3>
-                    <p id="referral-count-display" style="font-size: 2em; color: #00BCD4; margin: 0;">0</p>
-                </div>
-            </div>
-
-            <hr style="border-color: #333; margin: 40px 0;">
-
-            <a href="/" style="display: block; text-align: center; color: #00BCD4; font-size: 1.2em;">
-                &larr; Voltar para o Jogo
+    <div id="particles-container"></div>
+    
+    <header class="top-nav-bar">
+        <div class="header-content">
+            <a class="navbar-brand" href="/"> <img src="assets/logo.svg" alt="iGaming Logo" class="logo-svg">
             </a>
+            <div id="rollover-progress-container" class="rollover-progress-container" style="display: none;">
+                <span class="rollover-label">Desbloqueio do Bônus</span>
+                <div class="progress-bar-background">
+                    <div id="rollover-progress-bar" class="progress-bar-foreground"></div>
+                </div>
+            </div>
+
+            <div class="nav-balance-area">
+                <div id="nav-balance-real-box" class="nav-balance-box real">
+                    <span class="nav-balance-label">Saldo</span>
+                    <span id="nav-balance-real" class="nav-balance-value">R$ 0,00</span>
+                </div>
+                <div id="nav-balance-bonus-box" class="nav-balance-box bonus" style="display: none;"> <span class="nav-balance-label">Bónus</span>
+                    <span id="nav-balance-bonus" class="nav-balance-value">R$ 0,00</span>
+                </div>
+            </div>
+            <div id="user-dropdown" class="user-dropdown" style="display: none;">
+                <button id="user-display-button" class="user-display-button">
+                    <span id="user-display-name"></span>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="chevron-icon" viewBox="0 0 16 16">
+                        <path fill-rule="evenodd" d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z"/>
+                    </svg>
+                </button>
+                <div id="user-dropdown-menu" class="dropdown-menu">
+                    <a id="admin-panel-link" href="/admin.html" class="dropdown-item" style="display: none;">Painel Admin</a>
+                    <a id="influencer-panel-link" href="/influencer.html" class="dropdown-item" style="display: none;">Dashboard Influencer</a>
+                    <a id="affiliate-panel-link" href="/afiliado.html" class="dropdown-item" style="display: none;">Painel Afiliado</a>
+                    <a href="#" id="settings-link" class="dropdown-item">Configurações</a>
+                    <button id="logout-button" class="dropdown-item dropdown-logout-button">Sair</button>
+                </div>
+            </div>
+        </div>
+    </header>
+    <div id="auth-modal-overlay" class="auth-modal-overlay" style="display: none;"> 
+        <div id="auth-modal-content" class="auth-modal-content page-container">
+             <p>A sua sessão expirou. Por favor, <a href="/">volte ao início</a> para fazer login.</p>
         </div>
     </div>
+    
+    <div class="site-wrapper">
+        <div class="main-content-wrapper">
+            
+            <div class="page-container" style="max-width: 700px;">
+                <h1>Painel de Afiliado</h1>
+                <p style="text-align: center;">Use o código e o link abaixo para convidar novos jogadores!</p>
 
-    <script type="module" src="/js/afiliado.js"></script>
+                <div style="margin-top: 30px;">
+                    <label style="display: block; margin-bottom: 5px; color: #B0B0B0;">Seu Código de Afiliado:</label>
+                    <div style="display: flex; gap: 10px;">
+                        <input type="text" id="referral-code-input" readonly style="flex-grow: 1; padding: 10px; background-color: #333; border: 1px solid #555; color: #FFEB3B; font-weight: bold; border-radius: 5px;">
+                        <button id="copy-button" style="padding: 10px 20px; background-color: #00BCD4; color: white; border: none; border-radius: 5px; cursor: pointer; font-weight: bold;">Copiar</button>
+                    </div>
+                </div>
+
+                <div style="margin-top: 20px;">
+                    <label style="display: block; margin-bottom: 5px; color: #B0B0B0;">Seu Link de Divulgação:</label>
+                    <div style="display: flex; gap: 10px;">
+                        <input type="text" id="referral-link-input" readonly style="flex-grow: 1; padding: 10px; background-color: #333; border: 1px solid #555; color: #E0E0E0; border-radius: 5px; font-family: Arial, sans-serif; font-size: 1em;">
+                        <button id="copy-link-btn" style="padding: 10px 20px; background-color: #4CAF50; color: white; border: none; border-radius: 5px; cursor: pointer; font-weight: bold;">Copiar Link</button>
+                    </div>
+                </div>
+
+                <div style="display: flex; justify-content: space-around; text-align: center; margin-top: 40px;">
+                    <div>
+                        <h3 style="color: #B0B0B0; margin-bottom: 5px;">Saldo de Comissão</h3>
+                        <p id="commission-balance-display" style="font-size: 2em; color: #4CAF50; margin: 0;">R$ 0,00</p>
+                    </div>
+                    <div>
+                        <h3 style="color: #B0B0B0; margin-bottom: 5px;">Total de Indicados</h3>
+                        <p id="referral-count-display" style="font-size: 2em; color: #00BCD4; margin: 0;">0</p>
+                    </div>
+                </div>
+
+                <hr style="border-color: #333; margin: 40px 0;">
+
+                <a href="/" style="display: block; text-align: center; color: #00BCD4; font-size: 1.2em;">
+                    &larr; Voltar para o Jogo
+                </a>
+            </div>
+            </div> 
+        
+        <aside id="social-sidebar" class="social-sidebar" style="display: none;">
+             </aside>
+
+    </div> <div id="settings-modal" class="settings-modal-overlay">
+        </div>
+
+    <script type="module" src="js/main.js"></script> 
+    <script src="https://cdn.jsdelivr.net/npm/tsparticles@3.9.1/tsparticles.bundle.min.js"></script>
+    <script src="js/particles-config.js"></script>
+    
+    <script type="module" src="/js/afiliado.js"></script> 
 </body>
 </html>

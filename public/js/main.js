@@ -1,14 +1,22 @@
-// --- 1. ADICIONAR IMPORTAÇÃO ---
-// Importa as funções necessárias dos outros módulos
-import * as Auth from './auth.js'; // Já existente
-import { handleBet } from './game.js'; // Já existente
-// openSettingsModal e initializeSettingsModal já vêm de Auth
-import { initializeSocialFeatures, stopLiveFeed } from './social.js'; // Já existente
+import * as Auth from './auth.js'; 
+import { handleBet } from './game.js'; 
+import { initializeSocialFeatures, stopLiveFeed } from './social.js'; 
+import { loadAffiliateData, setupCopyButton, setupCopyLinkButton } from './afiliado.js';
 
 // Importa a função para esconder o modal de autenticação
 import { hideAuthModal } from './auth.js'; // <-- ADICIONAR ESTA LINHA
 
 function initializeApp() {
+    Auth.initializeUI();
+
+    const currentPath = window.location.pathname;
+    if (currentPath.includes('afiliado.html')) {
+        // Está na página de Afiliado
+        console.log("A carregar dados do painel de afiliado...");
+        loadAffiliateData();
+        setupCopyButton();
+        setupCopyLinkButton();
+    }
     // Esta função (do auth.js) agora decide se mostra o modal ou inicia o app
     try {
         const urlParams = new URLSearchParams(window.location.search);
@@ -25,8 +33,6 @@ function initializeApp() {
     } catch (error) {
         console.error("Erro ao processar URL de referência:", error);
     }
-
-    Auth.initializeUI();
 
     // --- LISTENERS EXISTENTES (MANTÊM-SE) ---
     const loginButton = document.getElementById('login-submit-button');
