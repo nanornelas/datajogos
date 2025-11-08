@@ -11,7 +11,8 @@
     
     <header class="top-nav-bar">
         <div class="header-content">
-            <a class="navbar-brand" href="/"> <img src="assets/logo.svg" alt="iGaming Logo" class="logo-svg">
+            <a class="navbar-brand" href="/"> 
+                <img src="assets/logo.svg" alt="iGaming Logo" class="logo-svg">
             </a>
             <div id="rollover-progress-container" class="rollover-progress-container" style="display: none;">
                 <span class="rollover-label">Desbloqueio do Bônus</span>
@@ -46,17 +47,20 @@
             </div>
         </div>
     </header>
+
     <div id="auth-modal-overlay" class="auth-modal-overlay" style="display: none;"> 
         <div id="auth-modal-content" class="auth-modal-content page-container">
-             <p>A sua sessão expirou. Por favor, <a href="/">volte ao início</a> para fazer login.</p>
-        </div>
+            <button id="auth-modal-close-btn" class="auth-modal-close">&times;</button> 
+            <h1>Sessão Expirada</h1>
+            <p style="text-align: center;">Por favor, <a href="/">volte ao início</a> para fazer login novamente.</p>
+            </div>
     </div>
     
     <div class="site-wrapper">
+        
         <div class="main-content-wrapper">
             
-            <div class="page-container" style="max-width: 700px;">
-                <h1>Painel de Afiliado</h1>
+            <div class="page-container" style="max-width: 700px;"> <h1>Painel de Afiliado</h1>
                 <p style="text-align: center;">Use o código e o link abaixo para convidar novos jogadores!</p>
 
                 <div style="margin-top: 30px;">
@@ -91,20 +95,10 @@
                 <a href="/" style="display: block; text-align: center; color: #00BCD4; font-size: 1.2em;">
                     &larr; Voltar para o Jogo
                 </a>
-            </div>
-            </div> 
-        
-        <aside id="social-sidebar" class="social-sidebar" style="display: none;">
+            </div> </div> <aside id="social-sidebar" class="social-sidebar" style="display: none;">
              </aside>
 
     </div> <div id="settings-modal" class="settings-modal-overlay">
-        </div>
-
-    <script type="module" src="js/main.js"></script> 
-    <script src="https://cdn.jsdelivr.net/npm/tsparticles@3.9.1/tsparticles.bundle.min.js"></script>
-    <script src="js/particles-config.js"></script>
-    
-    <div id="settings-modal" class="settings-modal-overlay">
         <div class="settings-modal-content">
             <button id="settings-modal-close-btn" class="settings-modal-close">&times;</button>
             <div class="settings-sidebar">
@@ -131,5 +125,11 @@
             </div>
         </div>
     </div>
+
+    <script type="module" src="js/main.js"></script> 
+    <script src="https://cdn.jsdelivr.net/npm/tsparticles@3.9.1/tsparticles.bundle.min.js"></script>
+    <script src="js/particles-config.js"></script>
+    
+    <script type="module" src="/js/afiliado.js"></script>
 </body>
 </html>
