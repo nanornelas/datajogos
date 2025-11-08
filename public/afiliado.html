@@ -104,6 +104,32 @@
     <script src="https://cdn.jsdelivr.net/npm/tsparticles@3.9.1/tsparticles.bundle.min.js"></script>
     <script src="js/particles-config.js"></script>
     
-    <script type="module" src="/js/afiliado.js"></script> 
+    <div id="settings-modal" class="settings-modal-overlay">
+        <div class="settings-modal-content">
+            <button id="settings-modal-close-btn" class="settings-modal-close">&times;</button>
+            <div class="settings-sidebar">
+                <button class="settings-tab-btn active" data-tab="profile">Perfil</button>
+                <button class="settings-tab-btn" data-tab="history">Histórico</button>
+                <button class="settings-tab-btn" data-tab="wallet">Carteira</button>
+            </div>
+            <div class="settings-main-content">
+                <div id="tab-profile" class="settings-tab-pane active">
+                    <h2>Perfil do Utilizador</h2>
+                    <div class="avatar-section"><span id="current-avatar-display" class="current-avatar">👤</span><div id="avatar-grid" class="avatar-grid"></div></div>
+                    <div class="form-group"><label for="profile-email">Email (obrigatório para saques)</label><input type="email" id="profile-email" placeholder="O seu melhor email"></div>
+                    <button id="save-profile-btn" class="action-button">Salvar Alterações</button>
+                    <p id="profile-status" style="text-align: center; margin-top: 15px;"></p>
+                </div>
+                <div id="tab-history" class="settings-tab-pane">
+                    <h2>Histórico de Jogos (Últimos 20)</h2>
+                    <div class="history-table-container"><table class="history-table"><thead><tr><th>Data</th><th>Aposta</th><th>Resultado</th><th>Ganhos</th></tr></thead><tbody id="game-history-body"></tbody></table></div>
+                </div>
+                <div id="tab-wallet" class="settings-tab-pane">
+                    <h2>Carteira</h2>
+                    <p>Funcionalidades de depósito e saque serão implementadas aqui.</p>
+                </div>
+            </div>
+        </div>
+    </div>
 </body>
 </html>
