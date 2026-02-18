@@ -1,12 +1,7 @@
 import { initializeGameCycle, updateGameUI, stopGameCycle, processWinLoss } from './game.js'; 
-
-// Funções necessárias do módulo de utilidades (sem switchPage)
 import { API_BASE_URL, getAuthHeaders } from './utils.js';
-
-// Funções necessárias do módulo social (adicionado initializeSocialFeatures)
 import { initializeSocialFeatures, stopLiveFeed } from './social.js';
 
-// Variáveis de estado global
 export let JWT_TOKEN = localStorage.getItem('jwtToken'); 
 export let CURRENT_USER_ID = localStorage.getItem('userId');
 export let USER_ROLE = localStorage.getItem('userRole'); 
@@ -14,15 +9,12 @@ export let currentBalance = 0.00;
 export let currentBonusBalance = 0.00;
 let currentBet = { type: null, value: null, amount: 0 };
 
-// --- FUNÇÕES PARA CONTROLAR O MODAL DE AUTENTICAÇÃO ---
 const authModal = document.getElementById('auth-modal-overlay');
 
 function showAuthModal() {
     if (authModal) {
-        // Limpa mensagens de erro antigas
         const errorMsg = authModal.querySelector('#auth-error-message');
         if (errorMsg) errorMsg.textContent = '';
-        // Reseta para o estado de Login (caso estivesse em Registo)
         const button = authModal.querySelector('#login-submit-button');
         const registerLink = authModal.querySelector('#show-register-link');
         const groupConfirmPass = authModal.querySelector('#group-confirm-password');
@@ -35,30 +27,20 @@ function showAuthModal() {
             if (groupAffiliateCode) groupAffiliateCode.style.display = 'none';
         }
         const loginForm = authModal.querySelector('#login-form');
-         if(loginForm) loginForm.reset(); // Limpa campos
+        if(loginForm) loginForm.reset(); 
 
-        // Mostra o modal com animação
-        authModal.style.display = 'flex'; // Torna visível primeiro
-        setTimeout(() => authModal.classList.add('active'), 10); // Adiciona classe para animar
-        console.log("Modal de autenticação mostrado.");
-    } else {
-        console.error("Overlay do modal de autenticação não encontrado!");
+        authModal.style.display = 'flex'; 
+        setTimeout(() => authModal.classList.add('active'), 10); 
     }
 }
 
 export function hideAuthModal() {
     if (authModal) {
-        authModal.classList.remove('active'); // Remove classe para animar saída
-        // Espera a animação terminar antes de esconder com display: none
-        setTimeout(() => {
-            authModal.style.display = 'none'; 
-            console.log("Modal de autenticação escondido.");
-        }, 300); // Tempo igual à transição do overlay
+        authModal.classList.remove('active'); 
+        setTimeout(() => { authModal.style.display = 'none'; }, 300); 
     }
 }
-// --- FIM DAS FUNÇÕES DO MODAL ---
-// --- NOVA FUNÇÃO REUTILIZÁVEL ---
-// Atualiza o header (dropdown, nome, links de role)
+
 function updateUserUI(username, userRole) {
     const userDropdown = document.getElementById('user-dropdown');
     const userDisplayName = document.getElementById('user-display-name');
@@ -66,44 +48,32 @@ function updateUserUI(username, userRole) {
     const influencerLink = document.getElementById('influencer-panel-link');
     const affiliateLink = document.getElementById('affiliate-panel-link');
 
-    // Garante que os elementos existem antes de tentar aceder-lhes
     if (!userDropdown || !userDisplayName) return; 
 
-    // Esconde links específicos por padrão
     [adminLink, influencerLink, affiliateLink].forEach(link => { if(link) link.style.display = 'none'; });
 
-    if (username) { // Se está logado
+    if (username) { 
         userDisplayName.textContent = `Olá, ${username}!`; 
-        userDropdown.style.display = 'block'; // Mostra o dropdown
+        userDropdown.style.display = 'block'; 
 
-        // Mostra links baseados no role
         if (userRole === 'admin' && adminLink) adminLink.style.display = 'block';
         if ((userRole === 'admin' || userRole === 'influencer') && influencerLink) influencerLink.style.display = 'block';
         if (userRole === 'affiliate' && affiliateLink) affiliateLink.style.display = 'block';
-    } else { // Se não está logado
-        userDropdown.style.display = 'none'; // Esconde o dropdown
+    } else { 
+        userDropdown.style.display = 'none'; 
     }
 }
-// --- FIM DA NOVA FUNÇÃO ---
-
-// ===== LÓGICA DO MODAL DE CONFIGURAÇÕES =====
 
 const AVATARS = ['👤', '👨', '👩', '🧑', '👽', '🤖', '👾', '🎃', '😈', '👻'];
 let selectedAvatar = '';
 
-// Abre o modal e busca os dados do utilizador
 export async function openSettingsModal() {
     const modal = document.getElementById('settings-modal');
     if (modal) modal.style.display = 'flex';
     
-    // Preenche a grelha de avatares (apenas na primeira vez que o modal é aberto)
     const avatarGrid = document.getElementById('avatar-grid');
     if (avatarGrid.childElementCount === 0) {
-        avatarGrid.innerHTML = AVATARS.map(avatar => 
-            `<span class="avatar-option" data-avatar="${avatar}">${avatar}</span>`
-        ).join('');
-        
-        // Adiciona eventos de clique aos avatares
+        avatarGrid.innerHTML = AVATARS.map(avatar => `<span class="avatar-option" data-avatar="${avatar}">${avatar}</span>`).join('');
         document.querySelectorAll('.avatar-option').forEach(option => {
             option.addEventListener('click', () => {
                 document.querySelectorAll('.avatar-option').forEach(el => el.classList.remove('selected'));
@@ -114,52 +84,90 @@ export async function openSettingsModal() {
         });
     }
 
-    // Busca e preenche os dados do perfil e histórico
+    // Atualiza saldo na tela da Carteira
+    const realEl = document.getElementById('wallet-modal-real');
+    const bonusEl = document.getElementById('wallet-modal-bonus');
+    if(realEl) realEl.textContent = `R$ ${currentBalance.toFixed(2)}`;
+    if(bonusEl) bonusEl.textContent = `R$ ${currentBonusBalance.toFixed(2)}`;
+
+    // Botão de Sacar dentro da Carteira
+    const walletWithdrawBtn = document.getElementById('wallet-btn-withdraw');
+    if (walletWithdrawBtn) {
+        walletWithdrawBtn.onclick = () => {
+            closeSettingsModal(); 
+            // Usa a função blindada que definimos no main.js
+            if (typeof window.openWithdrawModal === 'function') {
+                window.openWithdrawModal();
+            }
+        };
+    }
+    const walletDepositBtn = document.getElementById('wallet-btn-deposit');
+    if (walletDepositBtn) {
+        walletDepositBtn.onclick = () => { alert("Sistema de Depósitos PIX será implementado na Fase 4.1!"); };
+    }
+
     try {
-        const response = await fetch(`${API_BASE_URL}/user/profile-data`, { headers: getAuthHeaders(JWT_TOKEN) });
-        const data = await response.json();
-        if(data.success) {
-            // Preenche a aba de Perfil
-            document.getElementById('profile-email').value = data.profile.email || '';
-            document.getElementById('current-avatar-display').textContent = data.profile.avatar;
-            selectedAvatar = data.profile.avatar;
+        const headers = getAuthHeaders(JWT_TOKEN);
+        const [profileRes, walletRes] = await Promise.all([
+            fetch(`${API_BASE_URL}/user/profile-data`, { headers }),
+            fetch(`${API_BASE_URL}/user/wallet-history`, { headers })
+        ]);
+
+        const profileData = await profileRes.json();
+        const walletData = await walletRes.json();
+
+        if(profileData.success) {
+            document.getElementById('profile-email').value = profileData.profile.email || '';
+            document.getElementById('profile-cpf').value = profileData.profile.cpf || '';
+            document.getElementById('current-avatar-display').textContent = profileData.profile.avatar;
+            selectedAvatar = profileData.profile.avatar;
             
-            // Marca o avatar atual como selecionado
             document.querySelectorAll('.avatar-option').forEach(el => el.classList.remove('selected'));
             const currentAvatarEl = document.querySelector(`.avatar-option[data-avatar="${selectedAvatar}"]`);
             if (currentAvatarEl) currentAvatarEl.classList.add('selected');
 
-            // Preenche a aba de Histórico
             const historyBody = document.getElementById('game-history-body');
-            if (data.history.length > 0) {
-                historyBody.innerHTML = data.history.map(log => `
+            if (profileData.history.length > 0) {
+                historyBody.innerHTML = profileData.history.map(log => `
                     <tr>
                         <td>${new Date(log.createdAt).toLocaleString('pt-BR', {day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit'})}</td>
                         <td>R$ ${log.amount.toFixed(2)} em ${log.betValue}</td>
                         <td>${log.gameResult.color} (${log.gameResult.number})</td>
-                        <td class="${log.isWin ? 'bet-won' : 'bet-lost'}">
-                            ${log.isWin ? '+' : '-'} R$ ${log.isWin ? log.winnings.toFixed(2) : log.amount.toFixed(2)}
-                        </td>
+                        <td class="${log.isWin ? 'bet-won' : 'bet-lost'}">${log.isWin ? '+' : '-'} R$ ${log.isWin ? log.winnings.toFixed(2) : log.amount.toFixed(2)}</td>
                     </tr>
                 `).join('');
-            } else {
-                historyBody.innerHTML = '<tr><td colspan="4" style="text-align: center;">Nenhum jogo registado.</td></tr>';
-            }
+            } else { historyBody.innerHTML = '<tr><td colspan="4" style="text-align: center;">Nenhum jogo registado.</td></tr>'; }
         }
-    } catch (error) {
-        console.error("Erro ao carregar dados de configurações:", error);
-    }
+
+        if(walletData.success) {
+            const walletHistoryBody = document.getElementById('wallet-history-body');
+            if (walletData.transactions.length > 0) {
+                walletHistoryBody.innerHTML = walletData.transactions.map(tx => {
+                    const isWithdraw = tx.type === 'WITHDRAWAL';
+                    const typeLabel = isWithdraw ? 'Saque' : 'Depósito';
+                    const typeClass = isWithdraw ? 'tx-type-withdraw' : 'tx-type-deposit';
+                    const signal = isWithdraw ? '-' : '+';
+                    return `
+                    <tr>
+                        <td>${new Date(tx.createdAt).toLocaleString('pt-BR', {day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit'})}</td>
+                        <td class="${typeClass}">${typeLabel}</td>
+                        <td><span class="tx-status-completed">Concluído</span></td>
+                        <td class="${typeClass}">${signal} R$ ${tx.amount.toFixed(2)}</td>
+                    </tr>
+                `}).join('');
+            } else { walletHistoryBody.innerHTML = '<tr><td colspan="4" style="text-align: center;">Nenhuma transação financeira ainda.</td></tr>'; }
+        }
+    } catch (error) { console.error("Erro ao carregar configurações:", error); }
 }
 
-// Fecha o modal
-function closeSettingsModal() {
+export function closeSettingsModal() {
     const modal = document.getElementById('settings-modal');
     if (modal) modal.style.display = 'none';
 }
 
-// Salva as alterações do perfil (avatar e email)
 async function saveProfileChanges() {
     const email = document.getElementById('profile-email').value;
+    const cpf = document.getElementById('profile-cpf').value;
     const statusEl = document.getElementById('profile-status');
     statusEl.textContent = 'A salvar...';
     statusEl.style.color = '#FFEB3B';
@@ -167,7 +175,8 @@ async function saveProfileChanges() {
         const response = await fetch(`${API_BASE_URL}/user/profile`, {
             method: 'PUT',
             headers: getAuthHeaders(JWT_TOKEN),
-            body: JSON.stringify({ avatar: selectedAvatar, email: email })
+            // ATUALIZE O BODY PARA ENVIAR O CPF:
+            body: JSON.stringify({ avatar: selectedAvatar, email: email, cpf: cpf }) 
         });
         const data = await response.json();
         if(data.success) {
@@ -176,7 +185,7 @@ async function saveProfileChanges() {
             setTimeout(() => {
                 closeSettingsModal();
                 statusEl.textContent = '';
-                window.location.reload(); // Recarrega para que o novo avatar apareça no token
+                window.location.reload(); 
             }, 1500);
         } else { throw new Error(data.message); }
     } catch (error) {
@@ -185,10 +194,23 @@ async function saveProfileChanges() {
     }
 }
 
-// Inicializa todos os eventos do modal (chamado pelo main.js)
 export function initializeSettingsModal() {
     const modal = document.getElementById('settings-modal');
     if(!modal) return;
+// --- NOVA MÁSCARA DE CPF ---
+    const cpfInput = document.getElementById('profile-cpf');
+    if (cpfInput) {
+        cpfInput.addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\D/g, ''); // Remove letras
+            if (value.length > 11) value = value.slice(0, 11); // Limite de 11 números
+            // Aplica a formatação XXX.XXX.XXX-XX
+            value = value.replace(/(\d{3})(\d)/, '$1.$2');
+            value = value.replace(/(\d{3})(\d)/, '$1.$2');
+            value = value.replace(/(\d{3})(\d{1,2})$/, '$1-$2');
+            e.target.value = value;
+        });
+    }
+
     document.getElementById('settings-modal-close-btn').addEventListener('click', closeSettingsModal);
     document.getElementById('save-profile-btn').addEventListener('click', saveProfileChanges);
     const tabButtons = document.querySelectorAll('.settings-tab-btn');
@@ -201,10 +223,7 @@ export function initializeSettingsModal() {
             document.getElementById(`tab-${button.dataset.tab}`).classList.add('active');
         });
     });
- }
-
-
-// ===== FUNÇÕES EXISTENTES =====
+}
 
 export function getCurrentBalance() { return currentBalance; }
 export function setCurrentBet(betObject) { currentBet = betObject; }
@@ -212,13 +231,11 @@ export function getCurrentBet() { return currentBet; }
 
 export function setCurrentBalance(newBalance, newBonusBalance = -1) {
     currentBalance = newBalance;
-    if (newBonusBalance !== -1) {
-        currentBonusBalance = newBonusBalance;
-    }
+    if (newBonusBalance !== -1) { currentBonusBalance = newBonusBalance; }
     updateGameUI.updateBalanceDisplay(currentBalance, currentBonusBalance); 
- }
- 
- export function updateRolloverUI(progress, target) {
+}
+
+export function updateRolloverUI(progress, target) {
     const container = document.getElementById('rollover-progress-container');
     const bar = document.getElementById('rollover-progress-bar');
     if (!container || !bar) return;
@@ -227,31 +244,25 @@ export function setCurrentBalance(newBalance, newBonusBalance = -1) {
         bar.style.width = `${percentage}%`;
         container.title = `Progresso do Rollover: R$ ${progress.toFixed(2)} / R$ ${target.toFixed(2)}`;
         container.style.display = 'flex';
-    } else {
-        container.style.display = 'none';
-    }
- }
+    } else { container.style.display = 'none'; }
+}
 
- 
-
- export function handleLogout() {
-    console.log("A fazer logout...");
+export function handleLogout() {
     JWT_TOKEN = null;
-    CURRENT_USER_ID = null;
-    USER_ROLE = null; 
+    CURRENT_USER_ID = null;
+    USER_ROLE = null; 
     currentBalance = 0.00; 
     currentBonusBalance = 0.00;
-    localStorage.clear(); 
+    localStorage.clear(); 
 
-    updateUserUI(null, null); // Esconde o dropdown
-    updateRolloverUI(0, 0); 
+    updateUserUI(null, null); 
+    updateRolloverUI(0, 0); 
     updateGameUI.updateBalanceDisplay(0, 0); 
     updateGameUI.updateStatus('Faça login para começar a apostar.'); 
 
-    stopLiveFeed(); // Pára o chat
-    stopGameCycle(); // Pára o jogo
+    stopLiveFeed(); 
+    stopGameCycle(); 
 
-    // Reseta o formulário de autenticação para o estado de Login
     const button = document.getElementById('login-submit-button'); 
     const registerLink = document.getElementById('show-register-link');
     const groupConfirmPass = document.getElementById('group-confirm-password');
@@ -268,13 +279,10 @@ export function setCurrentBalance(newBalance, newBonusBalance = -1) {
     const errorMessageEl = document.getElementById('auth-error-message');
     if(errorMessageEl) errorMessageEl.textContent = '';
 
-    // Mostra o modal de login
-    const authModal = document.getElementById('auth-modal-overlay');
     showAuthModal();
-    // Não recarrega mais a página
 }
 
- export async function fetchBetResult(bet) {
+export async function fetchBetResult(bet) {
     if (!JWT_TOKEN || !CURRENT_USER_ID) { handleLogout(); return; }
     try {
         const response = await fetch(`${API_BASE_URL}/bet`, {
@@ -296,9 +304,9 @@ export function setCurrentBalance(newBalance, newBonusBalance = -1) {
         updateGameUI.updateStatus("Erro de rede ao processar aposta.", '#E53935');
         console.error("Erro ao processar aposta:", error);
     }
- }
+}
 
- export async function fetchBalance() {
+export async function fetchBalance() {
     if (!JWT_TOKEN || !CURRENT_USER_ID) return;
     try {
         const response = await fetch(`${API_BASE_URL}/balance/${CURRENT_USER_ID}`, { headers: getAuthHeaders(JWT_TOKEN) });
@@ -307,112 +315,85 @@ export function setCurrentBalance(newBalance, newBonusBalance = -1) {
         if (data.success) {
             setCurrentBalance(parseFloat(data.balance), parseFloat(data.bonusBalance));
             updateRolloverUI(data.wageringProgress, data.wageringTarget);
-        } else { console.error("Erro ao buscar saldo:", data.message); }
+        } 
     } catch (error) { console.error("Erro de rede ao buscar saldo:", error); }
- }
+}
 
- export async function handleAuth(event) {
-     event.preventDefault(); 
-     const button = event.currentTarget; 
-     const action = button.dataset.action;
-     const usernameInput = document.getElementById('login-username');
-     const username = usernameInput.value;
-     const password = document.getElementById('login-password').value;
-     const errorMessageEl = document.getElementById('auth-error-message');
-    const authModal = document.getElementById('auth-modal-overlay');
-
-     errorMessageEl.textContent = ''; 
-     if (!username || !password) { errorMessageEl.textContent = 'Preencha utilizador e senha.'; return; }
-     
+export async function handleAuth(event) {
+     event.preventDefault(); 
+     const button = event.currentTarget; 
+     const action = button.dataset.action;
+     const usernameInput = document.getElementById('login-username');
+     const username = usernameInput.value;
+     const password = document.getElementById('login-password').value;
+     const errorMessageEl = document.getElementById('auth-error-message');
+    
+     errorMessageEl.textContent = ''; 
+     if (!username || !password) { errorMessageEl.textContent = 'Preencha utilizador e senha.'; return; }
+     
     const requestBody = { username, password };
-     if (action === 'register') {
+     if (action === 'register') {
         const confirmPassword = document.getElementById('confirm-password').value;
-        if (password !== confirmPassword) {
-            errorMessageEl.textContent = 'As senhas não coincidem.'; return;
-        }
-         const codeFromLink = localStorage.getItem('referralCodeFromLink');
+        if (password !== confirmPassword) { errorMessageEl.textContent = 'As senhas não coincidem.'; return; }
+         const codeFromLink = localStorage.getItem('referralCodeFromLink');
          const codeFromInput = document.getElementById('affiliate-code').value;
          const affiliateCode = codeFromLink || codeFromInput;
-         if (affiliateCode) { requestBody.affiliateCode = affiliateCode;
-         console.log("A registar com o código de afiliado:", affiliateCode);
- }
-     }
+         if (affiliateCode) requestBody.affiliateCode = affiliateCode;
+     }
 
-     try {
-         const response = await fetch(`${API_BASE_URL}/auth/${action}`, {
-             method: 'POST',
-             headers: { 'Content-Type': 'application/json' },
-             body: JSON.stringify(requestBody)
-         });
-         const data = await response.json();
+     try {
+         const response = await fetch(`${API_BASE_URL}/auth/${action}`, {
+             method: 'POST',
+             headers: { 'Content-Type': 'application/json' },
+             body: JSON.stringify(requestBody)
+         });
+         const data = await response.json();
 
-         if (data.success) {
-             if (action === 'login') {
-                // --- LOGIN BEM-SUCEDIDO ---
-                 console.log("Login bem-sucedido:", data.username);
-                JWT_TOKEN = data.token;
-                 CURRENT_USER_ID = data.userId;
-                 USER_ROLE = data.role;
+         if (data.success) {
+             if (action === 'login') {
+                 JWT_TOKEN = data.token;
+                 CURRENT_USER_ID = data.userId;
+                 USER_ROLE = data.role;
                 const loggedInUsername = data.username; 
-
-                 localStorage.setItem('jwtToken', data.token);
-                 localStorage.setItem('userId', data.userId);
-                 localStorage.setItem('userRole', data.role);
-                 localStorage.setItem('username', loggedInUsername);
+                 localStorage.setItem('jwtToken', data.token);
+                 localStorage.setItem('userId', data.userId);
+                 localStorage.setItem('userRole', data.role);
+                 localStorage.setItem('username', loggedInUsername);
 
                 hideAuthModal();
-                updateUserUI(loggedInUsername, USER_ROLE); // Atualiza o header
-
-                fetchBalance(); // Busca saldo (que iniciará o jogo/chat/settings)
-
-                // Não precisa mais recarregar a página
-             } else {
-                // --- REGISTO BEM-SUCEDIDO ---
-                 console.log("Registo bem-sucedido.");
-                document.getElementById('login-form').reset(); 
-                document.getElementById('show-register-link').click(); // Volta para login
-                 errorMessageEl.style.color = '#4CAF50';
-                 errorMessageEl.textContent = 'Registo bem-sucedido! Faça o login para jogar.';
-             }
-         } else {
-            // --- ERRO NO LOGIN/REGISTO ---
+                updateUserUI(loggedInUsername, USER_ROLE); 
+                fetchBalance(); 
+             } else {
+                 document.getElementById('login-form').reset(); 
+                document.getElementById('show-register-link').click(); 
+                 errorMessageEl.style.color = '#4CAF50';
+                 errorMessageEl.textContent = 'Registo bem-sucedido! Faça o login para jogar.';
+             }
+         } else {
             errorMessageEl.style.color = '#E53935';
             errorMessageEl.textContent = data.message || `Erro ao ${action}.`;
-         }
-     } catch (error) {
-        // --- ERRO DE REDE ---
+         }
+     } catch (error) {
         errorMessageEl.style.color = '#E53935';
-         errorMessageEl.textContent = 'Erro de conexão com o servidor.';
-        console.error(`Erro em ${action}:`, error);
-     }
- }
+         errorMessageEl.textContent = 'Erro de conexão com o servidor.';
+     }
+}
 
- export function initializeUI() {
-     JWT_TOKEN = localStorage.getItem('jwtToken'); 
-     CURRENT_USER_ID = localStorage.getItem('userId');
-     USER_ROLE = localStorage.getItem('userRole'); 
-    const username = localStorage.getItem('username'); // Pega o username guardado
-    const authModal = document.getElementById('auth-modal-overlay'); // Referência ao modal
-     
-     if (JWT_TOKEN && CURRENT_USER_ID && username) {
-        // --- UTILIZADOR LOGADO ---
-        console.log("Utilizador já logado:", username);
-        if (authModal) authModal.style.display = 'none'; // Garante que o modal está escondido
-
-        updateUserUI(username, USER_ROLE); // Atualiza o header
-
-         fetchBalance(); // Busca o saldo (que iniciará o jogo e chat/settings no SUCESSO)
-
-        // As inicializações de chat/settings foram movidas para DENTRO do fetchBalance/sucesso do login
-        // para garantir que só rodem quando os dados estão prontos.
-
-         return true; 
-     } else {
-        // --- UTILIZADOR NÃO LOGADO ---
-        console.log("Utilizador não logado. Mostrando modal.");
-        updateUserUI(null, null); 
-        showAuthModal(); // <-- Chama a função para mostrar com reset/animação
-        return false;
-     }
- }
-
+export function initializeUI() {
+     JWT_TOKEN = localStorage.getItem('jwtToken'); 
+     CURRENT_USER_ID = localStorage.getItem('userId');
+     USER_ROLE = localStorage.getItem('userRole'); 
+    const username = localStorage.getItem('username'); 
+    const authModal = document.getElementById('auth-modal-overlay'); 
+     
+     if (JWT_TOKEN && CURRENT_USER_ID && username) {
+        if (authModal) authModal.style.display = 'none'; 
+        updateUserUI(username, USER_ROLE); 
+         fetchBalance(); 
+         return true; 
+     } else {
+        updateUserUI(null, null); 
+        showAuthModal(); 
+        return false;
+     }
+}

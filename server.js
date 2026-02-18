@@ -9,9 +9,9 @@ const dotenv = require('dotenv');
 const User = require('./models/User');
 const Transaction = require('./models/Transaction');
 const FinancialTransaction = require('./models/FinancialTransaction');
-const GameLog = require('./models/GameLog'); // NOVO MODELO
-const ChatMessage = require('./models/ChatMessage'); // Importação Essencial
-const PublicBet = require('./models/PublicBet');   // Importação Essencial
+const GameLog = require('./models/GameLog'); 
+const ChatMessage = require('./models/ChatMessage'); 
+const PublicBet = require('./models/PublicBet');   
 const authMiddleware = require('./middleware/auth');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
@@ -24,8 +24,9 @@ const PORT = 3000;
 
 const PAYOUTS = { 'RED': 2, 'BLUE': 2, 'GREEN': 14, 'ODD': 2, 'EVEN': 2 };
 const BONUS_ROLLOVER_MULTIPLIER = 5;
-const INFLUENCER_NGR_WIN_RATE = 0.03; // NOVO: Taxa de 3% sobre ganhos do jogador
-const INFLUENCER_NGR_LOSS_RATE = 0.05; // Taxa de 5% sobre perdas
+const INFLUENCER_NGR_WIN_RATE = 0.03; 
+const INFLUENCER_NGR_LOSS_RATE = 0.05; 
+const AFFILIATE_CPA_VALUE = 5.00; 
 
 // =================================================================================
 // 2. CONEXÃO COM A BASE DE DADOS
@@ -61,6 +62,7 @@ const connectDB = async () => {
 app.use(cors({ origin: '*', methods: ['GET', 'POST', 'PUT'] }));
 app.use(express.json());
 app.use(express.static('public')); 
+
 async function generateNewResult() {
     const settings = await GameSettings.findOneAndUpdate({ settingId: 'GLOBAL_SETTINGS' }, { $setOnInsert: { settingId: 'GLOBAL_SETTINGS' } }, { upsert: true, new: true, setDefaultsOnInsert: true });
     let finalColor = null;
@@ -79,28 +81,26 @@ async function generateNewResult() {
         else if (randomChance < 0.51) { color = 'BLUE'; } 
         else { color = 'RED'; }
     }
-    // --- LÓGICA CORINGA PARA VERDE ---
+    
     let finalNumber, finalParity, finalTranslatedParity;
     if (color === 'GREEN') {
-        finalNumber = '?'; // Número será '?'
-        finalParity = null; // Paridade é nula/indefinida
-        finalTranslatedParity = null; // Tradução também
+        finalNumber = '?'; 
+        finalParity = null; 
+        finalTranslatedParity = null; 
     } else {
-        finalNumber = num; // Mantém o número normal para Vermelho/Azul
+        finalNumber = num; 
         finalParity = (num % 2 === 0) ? 'EVEN' : 'ODD'; 
         finalTranslatedParity = (finalParity === 'EVEN' ? 'PAR' : 'ÍMPAR'); 
     }
-    // --- FIM DA LÓGICA CORINGA ---
 
-    const translatedColor = (color === 'RED' ? 'VERMELHO' : (color === 'BLUE' ? 'AZUL' : 'VERDE'));
+    const translatedColor = (color === 'RED' ? 'VERMELHO' : (color === 'BLUE' ? 'AZUL' : 'VERDE'));
 
-    // Retorna os valores finais
-    return { 
+    return { 
         color, 
-        number: finalNumber, // Usa o número final ('?' ou num)
-        parity: finalParity, // Usa a paridade final (null ou EVEN/ODD)
+        number: finalNumber, 
+        parity: finalParity, 
         translatedColor, 
-        translatedParity: finalTranslatedParity, // Usa a tradução final (null ou PAR/ÍMPAR)
+        translatedParity: finalTranslatedParity, 
         overridden: isOverridden 
     };
 }
@@ -126,7 +126,6 @@ app.post('/api/auth/register', async (req, res) => {
     }
 });
 
-// ROTA DE LOGIN ATUALIZADA PARA INCLUIR AVATAR E ROLE NO TOKEN
 app.post('/api/auth/login', async (req, res) => {
     const { username, password } = req.body;
     try {
@@ -137,7 +136,6 @@ app.post('/api/auth/login', async (req, res) => {
         user.lastLogin = new Date();
         await user.save();
         
-        // ATUALIZAÇÃO: Adiciona avatar e role ao token para uso no chat
         const token = jwt.sign(
            { userId: user.userId, username: user.username, role: user.role, avatar: user.avatar }, 
             process.env.JWT_SECRET, 
@@ -150,7 +148,6 @@ app.post('/api/auth/login', async (req, res) => {
     }
 });
 
-// ROTA DE APOSTA ATUALIZADA com a nova lógica de Revenue Share
 app.post('/api/bet', authMiddleware, async (req, res) => {
     const { userId, username, avatar } = req.user;
     const { betType, betValue, amount } = req.body;
@@ -168,20 +165,15 @@ app.post('/api/bet', authMiddleware, async (req, res) => {
         
         const finalResult = await generateNewResult();
        let isWin = false;
-        if (betType === 'COLOR') { 
+        if (betType === 'COLOR') { 
             isWin = (betValue === finalResult.color); 
         } 
-        else if (betType === 'PARITY') { 
-            // --- LÓGICA CORINGA PARA VERDE ---
-            // Se a cor for VERDE, a aposta em paridade SEMPRE perde
+        else if (betType === 'PARITY') { 
             if (finalResult.color === 'GREEN') {
                 isWin = false; 
             } else {
-                // Se não for Verde, calcula a paridade normalmente
-                // Nota: finalResult.parity já foi calculado em generateNewResult
                 isWin = (betValue === finalResult.parity); 
             }
-            // --- FIM DA LÓGICA CORINGA ---
         }
         
         let winnings = 0;
@@ -200,12 +192,6 @@ app.post('/api/bet', authMiddleware, async (req, res) => {
 
         await GameLog.create({ userId, betType, betValue, amount, isWin, winnings, gameResult: { color: finalResult.color, number: finalResult.number } });
         await PublicBet.create({ userId, username, avatar, betValue, amount, isWin, winnings });
-
-        // NOVO: Guarda a aposta pública para o feed
-        await PublicBet.create({
-            userId, username, avatar,
-            betValue, amount, isWin, winnings
-        });
 
         const partner = user.affiliateId ? await User.findOne({ userId: user.affiliateId }) : null;
         if (partner) {
@@ -272,6 +258,51 @@ app.get('/api/balance/:userId', authMiddleware, async (req, res) => {
     }
 });
 
+app.post('/api/withdraw', authMiddleware, async (req, res) => {
+    const { userId } = req.user; 
+    const { amount, pixKey } = req.body; 
+
+    if (!amount || amount <= 0 || isNaN(amount)) {
+        return res.status(400).json({ success: false, message: 'Valor de saque inválido.' });
+    }
+
+    try {
+        const user = await User.findOne({ userId });
+
+        if (!user) {
+            return res.status(404).json({ success: false, message: 'Utilizador não encontrado.' });
+        }
+
+        if (user.balance < amount) {
+            return res.status(400).json({ 
+                success: false, 
+                message: `Saldo insuficiente. O seu saldo sacável é R$ ${user.balance.toFixed(2)}` 
+            });
+        }
+
+        user.balance -= amount;
+
+        await FinancialTransaction.create({ 
+            userId: user.userId, 
+            username: user.username, 
+            type: 'WITHDRAWAL', 
+            amount: amount, 
+            initiatedBy: 'USER', 
+        });
+
+        await user.save();
+
+        res.json({ 
+            success: true, 
+            message: `Saque via PIX de R$ ${amount.toFixed(2)} solicitado com sucesso!`, 
+            newBalance: user.balance 
+        });
+
+    } catch (error) {
+        console.error("Erro ao processar saque:", error);
+        res.status(500).json({ success: false, message: 'Erro interno do servidor.' });
+    }
+});
 
 // ===== ROTAS DO PAINEL DE ADMIN =====
 app.post('/api/admin/set-draw', authMiddleware, async (req, res) => {
@@ -394,13 +425,16 @@ app.get('/api/admin/financial-summary', authMiddleware, async (req, res) => {
     }
 });
 
+// ===== ROTAS DE PERFIL E CARTEIRA DO UTILIZADOR =====
 
-// ===== NOVAS ROTAS DE PERFIL DO UTILIZADOR =====
+// 1. Busca os dados para preencher as abas do painel
 app.get('/api/user/profile-data', authMiddleware, async (req, res) => {
     try {
         const { userId } = req.user;
-        const user = await User.findOne({ userId }).select('username email avatar');
+        // ATUALIZAÇÃO: Adicionado 'cpf' na lista do select para enviar ao front-end
+        const user = await User.findOne({ userId }).select('username email avatar cpf role'); 
         const gameHistory = await GameLog.find({ userId }).sort({ createdAt: -1 }).limit(20);
+        
         if (!user) {
             return res.status(404).json({ success: false, message: 'Utilizador não encontrado.' });
         }
@@ -411,16 +445,22 @@ app.get('/api/user/profile-data', authMiddleware, async (req, res) => {
     }
 });
 
+// 2. Atualiza o perfil (Avatar, Email e CPF)
 app.put('/api/user/profile', authMiddleware, async (req, res) => {
     try {
         const { userId } = req.user;
-        const { avatar, email } = req.body;
+        // ATUALIZAÇÃO: Extrai o CPF do request
+        const { avatar, email, cpf } = req.body; 
+        
         const userToUpdate = await User.findOne({ userId });
         if (!userToUpdate) {
             return res.status(404).json({ success: false, message: 'Utilizador não encontrado.' });
         }
+        
         if (avatar) userToUpdate.avatar = avatar;
         if (email !== undefined) userToUpdate.email = email;
+        if (cpf !== undefined) userToUpdate.cpf = cpf; // Atualiza o CPF
+        
         await userToUpdate.save();
         res.json({ success: true, message: 'Perfil atualizado com sucesso.' });
     } catch (error) {
@@ -429,7 +469,22 @@ app.put('/api/user/profile', authMiddleware, async (req, res) => {
     }
 });
 
-// ===== NOVAS ROTAS SOCIAIS =====
+// 3. Extrato Financeiro (Aba Carteira)
+app.get('/api/user/wallet-history', authMiddleware, async (req, res) => {
+    try {
+        const { userId } = req.user;
+        const transactions = await FinancialTransaction.find({ userId })
+            .sort({ createdAt: -1 })
+            .limit(20);
+            
+        res.json({ success: true, transactions });
+    } catch (error) {
+        console.error("Erro ao buscar histórico da carteira:", error);
+        res.status(500).json({ success: false, message: 'Erro interno do servidor.' });
+    }
+});
+
+// ===== ROTAS SOCIAIS =====
 app.post('/api/chat', authMiddleware, async (req, res) => {
     const { userId, username, avatar, role } = req.user;
     const { message } = req.body;
@@ -486,4 +541,3 @@ app.get('/api/influencer/statement', authMiddleware, async (req, res) => {
 // 5. INICIALIZAÇÃO
 // =================================================================================
 connectDB();
-
