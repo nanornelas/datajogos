@@ -363,6 +363,9 @@ export async function handleAuth(event) {
                 hideAuthModal();
                 updateUserUI(loggedInUsername, USER_ROLE); 
                 fetchBalance(); 
+                updateGameUI.updateStatus('Aguardando próxima rodada...', '#4CAF50');
+                 initializeGameCycle();
+                 initializeSocialFeatures();
              } else {
                  document.getElementById('login-form').reset(); 
                 document.getElementById('show-register-link').click(); 
