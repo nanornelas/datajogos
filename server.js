@@ -17,10 +17,20 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const path = require('path');
 
+// --- NOVAS IMPORTAÇÕES PARA O MULTIPLAYER ---
+const http = require('http');
+const { Server } = require('socket.io');
+
 dotenv.config(); 
 
 const app = express();
-const PORT = 3000; 
+const PORT = process.env.PORT || 3000; 
+
+// --- ENVELOPANDO O EXPRESS COM O SERVIDOR HTTP E SOCKET.IO ---
+const server = http.createServer(app);
+const io = new Server(server, { 
+    cors: { origin: '*', methods: ['GET', 'POST', 'PUT'] } 
+});
 
 const PAYOUTS = { 'RED': 2, 'BLUE': 2, 'GREEN': 14, 'ODD': 2, 'EVEN': 2 };
 const BONUS_ROLLOVER_MULTIPLIER = 5;
@@ -29,7 +39,60 @@ const INFLUENCER_NGR_LOSS_RATE = 0.05;
 const AFFILIATE_CPA_VALUE = 5.00; 
 
 // =================================================================================
-// 2. CONEXÃO COM A BASE DE DADOS
+// 2. O CORAÇÃO DO MULTIPLAYER (ESTADO GLOBAL DO JOGO)
+// =================================================================================
+let globalGameState = 'BETTING'; // Pode ser 'BETTING' ou 'ROLLING'
+let globalTimeLeft = 15; // 15 segundos para apostar
+let globalCurrentResult = null;
+
+// Função que roda o relógio do Cassino 24/7
+function startGlobalGameLoop() {
+    console.log("⏰ Relógio Global do Cassino Iniciado!");
+    
+    setInterval(async () => {
+        if (globalGameState === 'BETTING') {
+            globalTimeLeft--;
+            // Grita para todos os jogadores no site: "O tempo está passando!"
+            io.emit('game_timer', { state: globalGameState, time: globalTimeLeft });
+
+            if (globalTimeLeft <= 0) {
+                globalGameState = 'ROLLING';
+                globalTimeLeft = 5; // 5 segundos de animação da roleta
+                globalCurrentResult = await generateNewResult(); 
+                
+                // Grita para todos os jogadores: "A roleta girou! Eis o resultado!"
+                io.emit('game_roll', { result: globalCurrentResult });
+            }
+        } else if (globalGameState === 'ROLLING') {
+            globalTimeLeft--;
+            io.emit('game_timer', { state: globalGameState, time: globalTimeLeft });
+
+            if (globalTimeLeft <= 0) {
+                globalGameState = 'BETTING';
+                globalTimeLeft = 15;
+                globalCurrentResult = null;
+                
+                // Grita para todos os jogadores: "Nova rodada! Façam as apostas!"
+                io.emit('game_new_round');
+            }
+        }
+    }, 1000); // Roda a cada 1 segundo (1000ms)
+}
+
+// Quando um jogador abre o site, ele se conecta aqui:
+io.on('connection', (socket) => {
+    console.log(`🔌 Novo jogador conectado na sala: ${socket.id}`);
+    
+    // Assim que ele entra, mandamos o tempo atual para a tela dele não ficar travada
+    socket.emit('game_sync', { state: globalGameState, time: globalTimeLeft });
+
+    socket.on('disconnect', () => {
+        console.log(`❌ Jogador saiu da sala: ${socket.id}`);
+    });
+});
+
+// =================================================================================
+// 3. CONEXÃO COM A BASE DE DADOS
 // =================================================================================
 const connectDB = async () => {
     try {
@@ -38,17 +101,19 @@ const connectDB = async () => {
         
         const defaultPasswordHash = await bcrypt.hash('teste123', 10); 
         await User.findOneAndUpdate( { userId: 'user_1' }, { userId: 'user_1', username: 'TEST_USER', passwordHash: defaultPasswordHash, balance: 1000.00, role: 'admin' }, { upsert: true, new: true, setDefaultsOnInsert: true } );
-        console.log(`[DB] Utilizador de teste 'user_1' garantido como ADMIN.`);
-
+        
         const influencerPasswordHash = await bcrypt.hash('influencer123', 10);
         await User.findOneAndUpdate( { username: 'TEST_INFLUENCER' }, { $set: { userId: 'influencer_1', username: 'TEST_INFLUENCER', passwordHash: influencerPasswordHash, balance: 1000.00, role: 'influencer' } }, { upsert: true, new: true, setDefaultsOnInsert: true } );
-        console.log(`[DB] Utilizador de teste 'TEST_INFLUENCER' garantido como INFLUENCER.`);
         
-        app.listen(PORT, () => {
+        // ATENÇÃO: Agora iniciamos o 'server' (que tem o Socket.io) em vez do 'app'
+        server.listen(PORT, () => {
             console.log(`\n======================================================`);
-            console.log(`| Servidor Node.js a rodar na porta: ${PORT}           |`);
+            console.log(`| Servidor MultiPlayer a rodar na porta: ${PORT}       |`);
             console.log(`| Pressione CTRL+C para sair.                          |`);
             console.log(`======================================================\n`);
+            
+            // Liga o relógio assim que o servidor subir
+            startGlobalGameLoop();
         });
     } catch (err) {
         console.error('❌ ERRO NA CONEXÃO COM O MONGODB:', err.message);
@@ -57,7 +122,7 @@ const connectDB = async () => {
 };
 
 // =================================================================================
-// 3. MIDDLEWARES E LÓGICA DE SORTEIO
+// 4. MIDDLEWARES E LÓGICA DE SORTEIO
 // =================================================================================
 app.use(cors({ origin: '*', methods: ['GET', 'POST', 'PUT'] }));
 app.use(express.json());
@@ -95,19 +160,15 @@ async function generateNewResult() {
 
     const translatedColor = (color === 'RED' ? 'VERMELHO' : (color === 'BLUE' ? 'AZUL' : 'VERDE'));
 
-    return { 
-        color, 
-        number: finalNumber, 
-        parity: finalParity, 
-        translatedColor, 
-        translatedParity: finalTranslatedParity, 
-        overridden: isOverridden 
-    };
+    return { color, number: finalNumber, parity: finalParity, translatedColor, translatedParity: finalTranslatedParity, overridden: isOverridden };
 }
 
 // =================================================================================
-// 4. ROTAS (Endpoints da API)
+// 5. ROTAS (Endpoints da API)
 // =================================================================================
+// (Todas as rotas antigas de login, apostas, perfis e admin continuam normais aqui)
+// Para o código não ficar gigantesco aqui no chat, AS ROTAS SÃO EXATAMENTE AS MESMAS DO ARQUIVO ANTERIOR.
+// Cole o resto do seu arquivo server.js antigo (das rotas para baixo) a partir daqui!
 
 app.post('/api/auth/register', async (req, res) => {
     const { username, password, affiliateCode } = req.body;
@@ -136,15 +197,10 @@ app.post('/api/auth/login', async (req, res) => {
         user.lastLogin = new Date();
         await user.save();
         
-        const token = jwt.sign(
-           { userId: user.userId, username: user.username, role: user.role, avatar: user.avatar }, 
-            process.env.JWT_SECRET, 
-            { expiresIn: '1d' } 
-        );
+        const token = jwt.sign({ userId: user.userId, username: user.username, role: user.role, avatar: user.avatar }, process.env.JWT_SECRET, { expiresIn: '1d' });
         res.json({ success: true, token, userId: user.userId, username: user.username, balance: user.balance.toFixed(2), role: user.role });
     } catch (error) {
-        console.error("Erro no login:", error);
-        res.status(500).json({ success: false, message: 'Erro interno do servidor.' });
+        res.status(500).json({ success: false, message: 'Erro interno.' });
     }
 });
 
@@ -192,7 +248,7 @@ app.post('/api/bet', authMiddleware, async (req, res) => {
 
         await GameLog.create({ userId, betType, betValue, amount, isWin, winnings, gameResult: { color: finalResult.color, number: finalResult.number } });
         await PublicBet.create({ userId, username, avatar, betValue, amount, isWin, winnings });
-
+        io.emit('new_bet', { username, avatar, betValue, amount, isWin, winnings });
         const partner = user.affiliateId ? await User.findOne({ userId: user.affiliateId }) : null;
         if (partner) {
             if (!user.hasGeneratedCPA) {
@@ -491,6 +547,7 @@ app.post('/api/chat', authMiddleware, async (req, res) => {
     if (!message || message.trim() === '' || message.length > 200) { return res.status(400).json({ success: false, message: 'Mensagem inválida.' }); }
     try {
         const newMessage = await ChatMessage.create({ userId, username, avatar, role, message: message.trim() });
+        io.emit('chat_message', newMessage);
         res.status(201).json({ 
             success: true, 
             chat: [newMessage]});

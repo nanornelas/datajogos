@@ -1,9 +1,6 @@
-// js/social.js
-
 import { API_BASE_URL, getAuthHeaders } from './utils.js';
 import * as Auth from './auth.js';
-
-let liveFeedInterval = null; // Guarda a referência ao setInterval
+import { socket } from './game.js'; // Importamos o "Rádio" do Cassino
 
 // Função para renderizar uma única mensagem de chat no HTML
 function renderChatMessage(msg) {
@@ -12,9 +9,8 @@ function renderChatMessage(msg) {
     const username = msg.username || 'Utilizador';
     const messageText = msg.message || '';
     const escapedMessage = messageText.replace(/</g, "&lt;").replace(/>/g, "&gt;");
-    const messageIdAttribute = msg._id ? ` data-message-id="${msg._id}"` : ''; // Usa _id do MongoDB
+    const messageIdAttribute = msg._id ? ` data-message-id="${msg._id}"` : '';
 
-    // Removido atributo data-pending, pois a lógica mudou
     return `
         <div class="chat-message"${messageIdAttribute}>
             <span class="username ${roleClass}">${avatar} ${username}:</span>
@@ -45,69 +41,43 @@ function renderBetEntry(bet) {
     `;
 }
 
-// Busca os dados do feed (chat e apostas) e atualiza a UI
-async function fetchLiveFeed(source = 'interval') { // Mantém source para erro
+// Busca o histórico inicial APENAS UMA VEZ ao carregar a página
+async function loadInitialFeed() {
     const token = Auth.JWT_TOKEN;
     if (!token) return;
 
     try {
         const response = await fetch(`${API_BASE_URL}/live-feed`, { headers: getAuthHeaders(token) });
-
-        if (!response.ok) {
-            // Mantém erro se a resposta não for OK
-            console.error(`[fetchLiveFeed from ${source}] Erro resposta GET:`, response.status);
-            return;
-        }
+        if (!response.ok) return;
 
         const data = await response.json();
-
         if (data.success && data.chat && data.bets) {
             const chatContainer = document.getElementById('chat-messages');
             const betsContainer = document.getElementById('bets-feed');
 
             if (chatContainer) {
-                const shouldScroll = chatContainer.scrollTop + chatContainer.clientHeight >= chatContainer.scrollHeight - 50;
-                // Renderiza na ordem recebida (antiga -> nova) - SEM reverse()
                 chatContainer.innerHTML = data.chat.map(msg => renderChatMessage(msg)).join('');
-                if (shouldScroll) {
-                    chatContainer.scrollTop = chatContainer.scrollHeight;
-                }
-            } else {
-                 // Pode manter como warn se quiser saber se o elemento sumir
-                 // console.warn(`[fetchLiveFeed from ${source}] Container do chat (#chat-messages) não encontrado.`);
+                chatContainer.scrollTop = chatContainer.scrollHeight;
             }
-
             if (betsContainer) {
                 betsContainer.innerHTML = data.bets.map(renderBetEntry).join('');
-            } else {
-                 // console.warn(`[fetchLiveFeed from ${source}] Container de apostas (#bets-feed) não encontrado.`);
             }
-        } else {
-             // Mantém erro se API retornar falha
-            console.error(`[fetchLiveFeed from ${source}] API retornou data.success = false ou dados em falta.`);
         }
     } catch (error) {
-         // Mantém erro de rede/processamento
-        console.error(`[fetchLiveFeed from ${source}] Erro rede/processamento GET:`, error);
+        console.error("[loadInitialFeed] Erro ao carregar histórico:", error);
     }
-    // Remove log 'Finalizado'
 }
 
-// Envia uma nova mensagem de chat (VERSÃO FINAL - Usa resposta do POST diretamente)
+// Envia uma nova mensagem de chat para o servidor
 async function sendChatMessage(e) {
     e.preventDefault();
-    // Remove logs iniciais
-
     const token = Auth.JWT_TOKEN;
     const input = document.getElementById('chat-input');
-    if (!input) { console.error("Input #chat-input não encontrado!"); return; }
+    if (!input) return;
+    
     const message = input.value.trim();
+    if (!token || !message) return;
 
-    if (!token || !message) {
-        return; // Sai silenciosamente
-    }
-
-    // Remove log 'Enviando'
     input.disabled = true;
 
     try {
@@ -117,98 +87,75 @@ async function sendChatMessage(e) {
             body: JSON.stringify({ message })
         });
 
-        // Remove log 'Resposta POST'
-
         if (response.ok) {
-            const data = await response.json();
-            if (data.success && data.chat && data.chat.length > 0) {
-                // Remove log 'Nova mensagem recebida'
-                input.value = '';
-
-                const chatContainer = document.getElementById('chat-messages');
-                if (chatContainer) {
-                    const newMessageHTML = renderChatMessage(data.chat[0]);
-                    chatContainer.insertAdjacentHTML('beforeend', newMessageHTML);
-                    chatContainer.scrollTop = chatContainer.scrollHeight;
-                    // Remove log 'Nova mensagem adicionada'
-                } else {
-                     console.warn("[sendChatMessage] Container do chat não encontrado para adicionar msg."); // Mantém warn?
-                }
-            } else {
-                 console.warn("[sendChatMessage] POST OK, mas resposta não continha a nova mensagem."); // Mantém warn?
-                 input.value = '';
-            }
+            // Limpa o input imediatamente. A mensagem vai aparecer quando o servidor gritar de volta pelo Socket!
+            input.value = ''; 
         } else {
-            const errorData = await response.json().catch(() => ({ message: response.statusText }));
-            // Mantém erro
-            console.error("[sendChatMessage] Erro resposta POST:", response.status, errorData.message || 'Erro desconhecido');
-            alert(`Erro ao enviar: ${errorData.message || 'Erro desconhecido'}`);
+            alert('Erro ao enviar mensagem.');
         }
     } catch (error) {
-        // Mantém erro de rede
-        console.error("[sendChatMessage] Erro rede POST:", error);
-        alert("Erro de rede ao enviar. Tente novamente.");
+        console.error("[sendChatMessage] Erro rede:", error);
     } finally {
         input.disabled = false;
-        // Remove log 'Finalizado'
+        input.focus();
     }
 }
 
-
-// Função para controlar o botão de minimizar/expandir
 function setupChatToggle() {
-    // Remove logs iniciais
-
     const toggleBtn = document.getElementById('toggle-chat-btn');
     const sidebar = document.getElementById('social-sidebar');
     const header = sidebar ? sidebar.querySelector('.sidebar-header') : null;
 
-    // Remove log 'Elementos encontrados'
-
-    if (!toggleBtn || !sidebar || !header) {
-        // Mantém erro crítico
-        console.error("ERRO: Elementos do chat toggle não encontrados!");
-        return;
-    }
+    if (!toggleBtn || !sidebar || !header) return;
 
     const updateButtonIcon = () => {
         if (!toggleBtn) return;
-        if (sidebar.classList.contains('minimized')) {
-            toggleBtn.textContent = '＋';
-        } else {
-            toggleBtn.textContent = '−';
-        }
+        toggleBtn.textContent = sidebar.classList.contains('minimized') ? '＋' : '−';
     };
 
     header.addEventListener('click', () => {
-        // Remove log 'CLIQUE no HEADER'
         sidebar.classList.toggle('minimized');
         updateButtonIcon();
     });
 
-    if (window.innerWidth < 1250) {
-        if (!sidebar.classList.contains('minimized')) {
-             // Remove log 'Forçando estado inicial'
-            sidebar.classList.add('minimized');
-        }
+    if (window.innerWidth < 1250 && !sidebar.classList.contains('minimized')) {
+        sidebar.classList.add('minimized');
     }
     updateButtonIcon();
-    // Remove log 'setupChatToggle Concluído'
 }
 
-// Inicializa todas as funcionalidades sociais
+// ==========================================
+// OUVIDOS DO MULTIPLAYER (SOCKET.IO)
+// ==========================================
+// 1. Ouve novas mensagens de chat
+socket.on('chat_message', (msg) => {
+    const chatContainer = document.getElementById('chat-messages');
+    if (chatContainer) {
+        const shouldScroll = chatContainer.scrollTop + chatContainer.clientHeight >= chatContainer.scrollHeight - 50;
+        chatContainer.insertAdjacentHTML('beforeend', renderChatMessage(msg));
+        if (shouldScroll) chatContainer.scrollTop = chatContainer.scrollHeight;
+    }
+});
+
+// 2. Ouve novas apostas no feed
+socket.on('new_bet', (bet) => {
+    const betsContainer = document.getElementById('bets-feed');
+    if (betsContainer) {
+        // Coloca a nova aposta no TOPO da lista (afterbegin)
+        betsContainer.insertAdjacentHTML('afterbegin', renderBetEntry(bet));
+        // Remove a mais antiga se passar de 30 itens para não pesar o site
+        if (betsContainer.children.length > 30) {
+            betsContainer.removeChild(betsContainer.lastChild);
+        }
+    }
+});
+// ==========================================
+
 export function initializeSocialFeatures() {
     const socialSidebar = document.getElementById('social-sidebar');
-    if (!socialSidebar) {
-        // Mantém erro crítico
-        console.error("ERRO: Sidebar social (#social-sidebar) não encontrada!");
-        return;
-    }
-
-    // Remove log inicial
+    if (!socialSidebar) return;
 
     if (Auth.JWT_TOKEN) {
-        // Remove log 'Mostrando sidebar'
         socialSidebar.style.display = 'flex';
 
         const tabButtons = socialSidebar.querySelectorAll('.social-tab-btn');
@@ -224,44 +171,21 @@ export function initializeSocialFeatures() {
                     if (targetPane) targetPane.classList.add('active');
                 });
             });
-        } else {
-            console.warn("Abas do chat não encontradas ou incompletas."); // Mantém warn?
         }
 
         const chatForm = socialSidebar.querySelector('#chat-form');
-        if (chatForm) {
-            chatForm.addEventListener('submit', sendChatMessage);
-             // Remove log 'Listener adicionado'
-        } else {
-             // Mantém erro crítico
-            console.error("ERRO: Formulário #chat-form não encontrado!");
-        }
+        if (chatForm) chatForm.addEventListener('submit', sendChatMessage);
 
         setupChatToggle();
 
-        if (!liveFeedInterval && Auth.JWT_TOKEN) {
-             // Remove log 'Iniciando intervalo'
-            liveFeedInterval = setInterval(fetchLiveFeed, 5000);
-            fetchLiveFeed('initial_load');
-        }
-
+        // Carrega o histórico APENAS UMA VEZ na entrada
+        loadInitialFeed();
     } else {
-        // Remove log 'Utilizador não logado'
         socialSidebar.style.display = 'none';
     }
-     // Remove log 'Finalizado'
 }
 
-// Para a atualização do feed (ex: ao fazer logout)
 export function stopLiveFeed() {
-    if (liveFeedInterval) {
-        clearInterval(liveFeedInterval);
-        liveFeedInterval = null;
-         // Remove log 'Intervalo parado'
-    }
     const socialSidebar = document.getElementById('social-sidebar');
-    if(socialSidebar) {
-        socialSidebar.style.display = 'none';
-         // Remove log 'Sidebar escondida'
-    }
+    if(socialSidebar) socialSidebar.style.display = 'none';
 }
