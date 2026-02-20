@@ -146,11 +146,46 @@ h1 { color: #4CAF50; }
     transform: translateZ(0);
 }
 
-.color-RED { background: radial-gradient(circle at 50% 40%, #ff7979 0%, #e53935 50%, #c62828 100%); color: white; border: 1px solid rgba(255, 100, 100, 0.3); box-shadow: inset 0px 4px 6px rgba(0, 0, 0, 0.3), 0px 0px 18px rgba(255, 80, 80, 0.6); }
-.color-BLUE { background: radial-gradient(circle at 50% 40%, #64b5f6 0%, #1976d2 50%, #0d47a1 100%); color: #E0E0E0; border: 1px solid rgba(100, 150, 255, 0.3); box-shadow: inset 0px 4px 6px rgba(0, 0, 0, 0.3), 0px 0px 18px rgba(80, 150, 255, 0.6); } 
-.color-GREEN { background: radial-gradient(circle at 50% 40%, #81c784 0%, #43a047 50%, #1b5e20 100%); color: white; border: 1px solid rgba(100, 255, 100, 0.3); box-shadow: inset 0px 4px 6px rgba(0, 0, 0, 0.3), 0px 0px 18px rgba(80, 255, 80, 0.6); }
+.color-RED { 
+    /* Luz batendo no topo esquerdo, escuridão no fundo direito */
+    background: radial-gradient(circle at 30% 30%, #ff4d4d 0%, #b30000 50%, #330000 100%);
+    color: white; 
+    border: 2px solid #ff1a1a; /* Borda viva */
+    box-shadow: 
+        inset -10px -10px 20px rgba(0, 0, 0, 0.8), /* Sombra volumétrica 3D */
+        inset 10px 10px 15px rgba(255, 100, 100, 0.4), /* Reflexo de luz interno */
+        0px 0px 15px rgba(255, 0, 0, 0.5); /* Brilho Neon Externo */
+}
+.color-BLUE { 
+    background: radial-gradient(circle at 30% 30%, #4da6ff 0%, #0059b3 50%, #001a33 100%);
+    color: #E0E0E0; 
+    border: 2px solid #3399ff;
+    box-shadow: 
+        inset -10px -10px 20px rgba(0, 0, 0, 0.8),
+        inset 10px 10px 15px rgba(100, 180, 255, 0.4),
+        0px 0px 15px rgba(0, 128, 255, 0.5); 
+} 
 
-.slot.last-drawn { opacity: 1; border: 2px solid #00BCD4; box-shadow: 0 0 10px rgba(0, 188, 212, 0.7), inset 0 0 5px rgba(0, 188, 212, 0.5); transform: scale(1.05); transition: all 0.3s ease-out; z-index: 10; }
+/* 🟢 ESFERA VERDE CORINGA */
+.color-GREEN { 
+    background: radial-gradient(circle at 30% 30%, #4dff4d 0%, #00b300 50%, #003300 100%);
+    color: white; 
+    border: 2px solid #00ff00;
+    box-shadow: 
+        inset -10px -10px 20px rgba(0, 0, 0, 0.8), 
+        inset 10px 10px 15px rgba(100, 255, 100, 0.4),
+        0px 0px 15px rgba(0, 255, 0, 0.5); 
+}
+.slot.last-drawn { 
+    opacity: 1; 
+    border: 2px solid #00BCD4; 
+    box-shadow: 
+        inset -10px -10px 20px rgba(0, 0, 0, 0.8),
+        0 0 25px rgba(0, 188, 212, 1); /* Brilho forte ao ganhar */
+    transform: scale(1.08); 
+    transition: all 0.3s ease-out; 
+    z-index: 10; 
+}
 .slot:not(.last-drawn) { border: 1px solid #2a2a2a; box-shadow: none; transform: scale(1); transition: all 0.3s ease-out; }
 .slot.revealed { animation: reveal-flash 0.7s ease-out; }
 
