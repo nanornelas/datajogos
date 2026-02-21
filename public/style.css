@@ -142,7 +142,7 @@ h1 { color: #4CAF50; }
     /* 🟢 A MÁGICA DO MEIO-TERMO: Altura automática! */
     height: auto; 
     /* Colocamos um limite máximo de segurança para não engolir o PC inteiro */
-    max-height: 260px; 
+    max-height: 160px; 
     
     display: flex;
     justify-content: center;
@@ -160,7 +160,7 @@ h1 { color: #4CAF50; }
     width: 100%;
     /* 🟢 Acompanha a caixa: cresce na proporção certa sem distorcer */
     height: auto; 
-    max-height: 260px; /* Garante que respeita o limite do wrapper */
+    max-height: 160px; /* Garante que respeita o limite do wrapper */
     
     /* Se por acaso bater no limite máximo, ele usa o cover de forma inteligente */
     object-fit: cover; 
