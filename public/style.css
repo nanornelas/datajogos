@@ -143,7 +143,7 @@ h1 { color: #4CAF50; }
     margin: -20px -20px 20px -20px; /* Puxa o banner para cima e para os lados, anulando o padding do jogo */
     
     max-width: none; /* Remove a trava antiga */
-    height: 140px; /* Altura do banner. Pode aumentar ou diminuir a gosto! */
+    height: 180px; /* Altura do banner. Pode aumentar ou diminuir a gosto! */
     
     display: flex;
     justify-content: center;
