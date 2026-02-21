@@ -131,6 +131,28 @@ h1 { color: #4CAF50; }
 /* =======================================================
    4. JOGO (ROLETAS, BOTÕES, CONTROLES)
    ======================================================= */
+   /* =======================================================
+   BANNER DO JOGO (REGRA GLOBAL)
+   ======================================================= */
+.banner-wrapper {
+    width: 100%;
+    max-width: 480px; /* Trava a largura para não passar do tamanho do jogo */
+    height: 120px;    /* Trava a altura absoluta */
+    margin: 0 auto 20px auto; 
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-shrink: 0;
+    overflow: hidden; /* Corta qualquer coisa que tente vazar dessa caixa */
+}
+
+.banner-image {
+    width: 100%;
+    height: 100%;
+    max-height: 120px; /* Trava redundante para o PC respeitar */
+    object-fit: contain; 
+    filter: drop-shadow(0px 5px 15px rgba(0, 0, 0, 0.6));
+}
 .page-container { width: 100%; max-width: 480px; margin: 0; padding: 20px; background-color: #1E1E1E; border-radius: 10px; box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);height:100%;}
 .game-container { width: 100%; max-width: 860px; margin-top: 0px; }
 
@@ -540,41 +562,6 @@ h1 { color: #4CAF50; }
         font-size: 1.4em; 
     }
 
-/* =======================================================
-   BANNER DO JOGO (A CORREÇÃO DEFINITIVA)
-   ======================================================= */
-
-/* 1. A "Caixa Protetora" do Banner */
-.banner-wrapper {
-    width: 100%;
-    /* Define a largura máxima que o banner pode ocupar na tela */
-    max-width: 500px; 
-    /* Define a ALTURA MÁXIMA FIXA. O banner nunca passará disso! */
-    height: 110px; 
-    
-    /* Centraliza a caixa na tela */
-    margin: 0 auto 25px auto; 
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    /* Garante que a caixa não estique com o flexbox pai */
-    flex-shrink: 0;
-}
-
-/* 2. A Imagem dentro da caixa */
-.banner-image {
-    width: 100%;
-    height: 100%;
-    /* 🟢 O SEGREDO: 'contain' faz a imagem caber inteira dentro da caixa de 110px de altura, sem distorcer e sem vazar. */
-    object-fit: contain; 
-    filter: drop-shadow(0px 5px 15px rgba(0, 0, 0, 0.6)); /* Sombra neon */
-}
-/* Ajuste para telas menores, para o banner não ocupar muito espaço */
-@media (max-width: 500px) {
-    .game-banner {
-        max-width: 350px;
-    }
-}
     
     .social-sidebar { width: 90%; right: 5%; height: 400px; bottom: 10px; }
     .result-sequence { height: 66px; gap: 5px; padding: 8px; }
