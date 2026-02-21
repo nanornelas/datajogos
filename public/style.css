@@ -164,8 +164,8 @@ h1 { color: #4CAF50; }
     /* 🟢 A MÁGICA DA FUSÃO (CSS MASK) */
     /* Cria um degradê que vai de transparente (topo) para preto sólido (meio) e transparente (base) */
     /* Onde é transparente, a imagem some. Onde é preto, ela aparece. */
-    -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 25%, black 75%, transparent 100%);
-    mask-image: linear-gradient(to bottom, transparent 0%, black 25%, black 75%, transparent 100%);
+    /* -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 25%, black 75%, transparent 100%); */
+    /* mask-image: linear-gradient(to bottom, transparent 0%, black 25%, black 75%, transparent 100%); */
 }
 
 /* Ajuste para celular, para o banner não ficar muito alto */
