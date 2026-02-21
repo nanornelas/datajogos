@@ -511,7 +511,7 @@ h1 { color: #4CAF50; }
     }
 
     .bet-button {
-        height: 75px; /* Altura generosa e segura para o toque do polegar */
+        height: 55px; /* Altura generosa e segura para o toque do polegar */
         font-size: 0.9em;
         min-width: unset; /* Remove travas do computador */
         margin: 0; /* Garante que o grid cuida do espaçamento */
