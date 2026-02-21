@@ -161,7 +161,7 @@ h1 { color: #4CAF50; }
     /* (Removemos o max-height antigo aqui, a caixa wrapper já controla isso) */
     
     /* 🟢 MUDANÇA 2: 'contain' para dar o ZOOM OUT e mostrar tudo */
-    object-fit: contain; 
+    object-fit: cover; 
     object-position: center bottom; /* Alinha a arte mais para baixo, perto do jogo */
     display: block;
 }
