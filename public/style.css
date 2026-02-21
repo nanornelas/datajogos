@@ -490,8 +490,28 @@ h1 { color: #4CAF50; }
     #slots-scroller { padding-right: 65px; gap: 5px; }
     .rollover-label { display: none; }
     .rollover-progress-container { width: 120px; }
-    #bet-group-colors .bet-group-buttons, #bet-group-parity .bet-group-buttons { flex-direction: column; }
-    .bet-button { height: 70px; font-size: 0.9em; }
+    #bet-group-colors .bet-group-buttons {
+        display: grid;
+        grid-template-columns: 1fr 1fr; /* Duas colunas perfeitas */
+        gap: 12px;
+    }
+    /* O Coringa Verde ganha a linha de baixo inteira para destaque máximo */
+    #bet-green {
+        grid-column: 1 / span 2; 
+    }
+
+    #bet-group-parity .bet-group-buttons {
+        display: grid;
+        grid-template-columns: 1fr 1fr; /* Ímpar e Par lado a lado */
+        gap: 12px;
+    }
+
+    .bet-button {
+        height: 75px; /* Altura generosa e segura para o toque do polegar */
+        font-size: 0.9em;
+        min-width: unset; /* Remove travas do computador */
+        margin: 0; /* Garante que o grid cuida do espaçamento */
+    }
     
     .social-sidebar { width: 90%; right: 5%; height: 400px; bottom: 10px; }
     .result-sequence { height: 76px; gap: 5px; padding: 8px; }
