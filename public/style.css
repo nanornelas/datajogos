@@ -487,7 +487,7 @@ h1 { color: #4CAF50; }
 /* Quebra para Celular Pequeno (<= 500px) */
 @media (max-width: 500px) {
     .page-container, .game-container { padding: 15px; }
-    #slots-scroller { padding-right: 65px; gap: 5px; }
+    #slots-scroller { padding-right: 52px; gap: 6px; }
     .rollover-label { display: none; }
     .rollover-progress-container { width: 120px; }
     #bet-group-colors .bet-group-buttons {
@@ -512,13 +512,25 @@ h1 { color: #4CAF50; }
         min-width: unset; /* Remove travas do computador */
         margin: 0; /* Garante que o grid cuida do espaçamento */
     }
+
+    .slot.color-GREEN .value.coringa-icon, .back.color-GREEN .value.coringa-icon {
+        height: 32px;
+    }
+    .slot.color-GREEN .value.coringa-icon .coringa-svg-img, .back.color-GREEN .value.coringa-icon .coringa-svg-img {
+        max-height: 28px;
+    }
+
+    /* O '?' flutuante menorzinho */
+    .front {
+        font-size: 1.4em; 
+    }
     
     .social-sidebar { width: 90%; right: 5%; height: 400px; bottom: 10px; }
-    .result-sequence { height: 76px; gap: 5px; padding: 8px; }
-    .slot, .flip-container { width: 60px; height: 60px; font-size: 0.7em; }
-    .value { font-size: 1.4em; }
+    .result-sequence { height: 66px; gap: 5px; padding: 8px; }
+    .slot, .flip-container { width: 46px; height: 46px; font-size: 0.8em; border-width: 1px; }
+    .value { font-size: 1.15em; margin-top: -1px; margin-bottom: 0px; }
     .label { font-size: 0.5em; }
-    .parity-label { font-size: 0.4em; }
+    .parity-label { font-size: 0.45em; letter-spacing: 0.5px;}
     
     /* Ajustes para caber nos modals do celular */
     .settings-modal-content { flex-direction: column; height: 90vh; overflow-y: auto;}

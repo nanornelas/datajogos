@@ -204,7 +204,7 @@ export async function renderSequence(newResult) {
 
 function getCalculatedScrollDistance() {
     const screenWidth = window.innerWidth;
-    if (screenWidth < 500) return 65;
+    if (screenWidth < 500) return 52;
     else if (screenWidth < 890) return 78;
     else return 90;
 }
@@ -223,7 +223,7 @@ export async function processWinLoss(gameResult, isWin, winnings) {
 
 function getResponsiveConfig() {
     const screenWidth = window.innerWidth;
-    if (screenWidth < 500) return { slotCount: 5, paddingRight: '8px' };
+    if (screenWidth < 500) return { slotCount: 7, paddingRight: '6px' };
     else if (screenWidth < 1000) return { slotCount: 10, paddingRight: '10px' };
     else return { slotCount: VISIBLE_SLOT_COUNT, paddingRight: '10px' };
 }
