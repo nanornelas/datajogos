@@ -540,17 +540,35 @@ h1 { color: #4CAF50; }
         font-size: 1.4em; 
     }
 
-    /* Banner do Jogo */
-.game-banner {
+/* =======================================================
+   BANNER DO JOGO (A CORREÇÃO DEFINITIVA)
+   ======================================================= */
+
+/* 1. A "Caixa Protetora" do Banner */
+.banner-wrapper {
     width: 100%;
-    max-width: 480px; /* Limite para não ficar gigante no PC */
-    height: auto;
-    max-height: 120px;
-    margin-bottom: 20px;
-    object-fit: contain;
-    filter: drop-shadow(0px 4px 10px rgba(0, 0, 0, 0.5)); /* Sombrinha para destacar */
+    /* Define a largura máxima que o banner pode ocupar na tela */
+    max-width: 500px; 
+    /* Define a ALTURA MÁXIMA FIXA. O banner nunca passará disso! */
+    height: 110px; 
+    
+    /* Centraliza a caixa na tela */
+    margin: 0 auto 25px auto; 
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    /* Garante que a caixa não estique com o flexbox pai */
+    flex-shrink: 0;
 }
 
+/* 2. A Imagem dentro da caixa */
+.banner-image {
+    width: 100%;
+    height: 100%;
+    /* 🟢 O SEGREDO: 'contain' faz a imagem caber inteira dentro da caixa de 110px de altura, sem distorcer e sem vazar. */
+    object-fit: contain; 
+    filter: drop-shadow(0px 5px 15px rgba(0, 0, 0, 0.6)); /* Sombra neon */
+}
 /* Ajuste para telas menores, para o banner não ocupar muito espaço */
 @media (max-width: 500px) {
     .game-banner {
