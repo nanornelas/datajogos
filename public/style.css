@@ -211,8 +211,10 @@ h1 { color: #4CAF50; }
 .label { font-size: 0.7em; line-height: 1; }
 .color-label { margin-bottom: 0; }
 .parity-label { font-size: 0.6em; }
-.slot.color-GREEN .value.coringa-icon, .back.color-GREEN .value.coringa-icon { display: flex; justify-content: center; align-items: center; height: 45px; width: 100%; margin-top: -5px; box-sizing: border-box; }
-.slot.color-GREEN .value.coringa-icon .coringa-svg-img, .back.color-GREEN .value.coringa-icon .coringa-svg-img { width: auto; height: 100%; max-height: 40px; }
+.slot.color-GREEN .value.coringa-icon, .back.color-GREEN .value.coringa-icon { display: flex; justify-content: center; align-items: center; height: 60px; width: 100%; margin-top: 0px; box-sizing: border-box; }
+.slot.color-GREEN .value.coringa-icon .coringa-svg-img, .back.color-GREEN .value.coringa-icon .coringa-svg-img { width: auto; height: 100%; max-height: 55px; filter: drop-shadow(0px 3px 5px rgba(0, 0, 0, 0.7)); transition: transform 0.2s ease;}
+/* Pequeno efeito extra: o Coringa "pula" ligeiramente quando a carta é a sorteada */
+.slot.last-drawn.color-GREEN .value.coringa-icon .coringa-svg-img { transform: scale(1.15); }
 .slot.color-GREEN .label.color-label, .back.color-GREEN .label.color-label { width: 100%; text-align: center; margin-bottom: 0; }
 .slot.color-GREEN .label.parity-label, .back.color-GREEN .label.parity-label { display: none; }
 
