@@ -543,7 +543,7 @@ h1 { color: #4CAF50; }
     /* Banner do Jogo */
 .game-banner {
     width: 100%;
-    max-width: 500px; /* Limite para não ficar gigante no PC */
+    max-width: 100px; /* Limite para não ficar gigante no PC */
     height: auto;
     margin-bottom: 20px;
     filter: drop-shadow(0px 4px 10px rgba(0, 0, 0, 0.5)); /* Sombrinha para destacar */
