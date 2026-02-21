@@ -134,25 +134,43 @@ h1 { color: #4CAF50; }
    /* =======================================================
    BANNER DO JOGO (REGRA GLOBAL)
    ======================================================= */
+/* =======================================================
+   BANNER DO JOGO (HERO BANNER DE BORDA A BORDA)
+   ======================================================= */
 .banner-wrapper {
-    width: 100%;
-    max-width: 480px; /* Trava a largura para não passar do tamanho do jogo */
-    height: 120px;    /* Trava a altura absoluta */
-    margin: 0 auto 20px auto; 
+    /* 1. A MÁGICA DA SANGRIA TOTAL */
+    width: calc(100% + 40px); /* 100% do espaço + 20px roubados da esquerda + 20px da direita */
+    margin: -20px -20px 20px -20px; /* Puxa o banner para cima e para os lados, anulando o padding do jogo */
+    
+    max-width: none; /* Remove a trava antiga */
+    height: 140px; /* Altura do banner. Pode aumentar ou diminuir a gosto! */
+    
     display: flex;
     justify-content: center;
     align-items: center;
     flex-shrink: 0;
-    overflow: hidden; /* Corta qualquer coisa que tente vazar dessa caixa */
+    
+    /* 2. O SEGREDO DAS CURVAS */
+    border-top-left-radius: 10px; /* Acompanha as curvas do topo da caixa cinza */
+    border-top-right-radius: 10px;
+    overflow: hidden; /* Funciona como uma tesoura: corta as pontas quadradas da imagem */
+    
+    /* 3. UM CHARME EXTRA */
+    background: #0d0d0d; /* Fundo escuro de segurança */
+    border-bottom: 2px solid #2a2a2a; /* Uma linha de divisão elegante entre o banner e a roleta */
 }
 
 .banner-image {
     width: 100%;
     height: 100%;
-    max-height: 120px; /* Trava redundante para o PC respeitar */
-    object-fit: contain; 
-    filter: drop-shadow(0px 5px 15px rgba(0, 0, 0, 0.6));
+    
+    /* 4. O PREENCHIMENTO PERFEITO */
+    /* 'cover' faz a imagem esticar e preencher 100% da caixa sem distorcer. */
+    object-fit: cover; 
+    object-position: center; /* Mantém o foco no centro da imagem (onde está o seu texto) */
 }
+
+
 .page-container { width: 100%; max-width: 480px; margin: 0; padding: 20px; background-color: #1E1E1E; border-radius: 10px; box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);height:100%;}
 .game-container { width: 100%; max-width: 860px; margin-top: 0px; }
 
