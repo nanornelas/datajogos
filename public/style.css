@@ -1,10 +1,14 @@
 /* =======================================================
    1. ESTILOS BÁSICOS E FUNDO
    ======================================================= */
-body {
+html, body {
     margin: 0;
+    padding: 0;
+    /* 🟢 TRAVA DE MOVIMENTO: Impede a tela de balançar para os lados no celular */
+    max-width: 100vw;
+    overflow-x: hidden; 
     overflow-y: scroll; 
-    overflow-x: hidden;
+    
     font-family: 'Arial', sans-serif;
     background-color: #111; 
     background-image: linear-gradient(135deg, #000000 0%, #333333 100%);
@@ -272,7 +276,7 @@ h1 { color: #4CAF50; }
 .bet-area { width: 100%; box-sizing: border-box; display: flex; justify-content: space-between; align-items: flex-start; gap: 20px; margin-top: 20px; perspective: 1000px; }
 
 /* As "Gaiolas" dos botões */
-.bet-group { background: rgba(0, 0, 0, 0.3); border: 1px solid #222; border-radius: 12px; padding: 15px; flex-grow: 0; box-shadow: inset 0 0 20px rgba(0,0,0,0.8); }
+.bet-group { background: rgba(0, 0, 0, 0.3); border: 1px solid #222; border-radius: 12px; padding: 15px; flex-grow: 0; box-shadow: inset 0 0 20px rgba(0,0,0,0.8); box-sizing: border-box; width: 100%;}
 #bet-group-colors { flex-basis: 58%; }
 #bet-group-parity { flex-basis: 38%; }
 .bet-group-label { margin: 0 0 15px 0; font-size: 0.8em; color: #777; text-align: center; font-weight: bold; text-transform: uppercase; letter-spacing: 1.5px; }
