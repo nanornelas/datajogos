@@ -140,7 +140,7 @@ h1 { color: #4CAF50; }
     margin: -20px -20px 25px -20px; 
     
     /* Altura da "faixa" do banner. 220px é um bom equilíbrio. */
-    height: 150px; 
+    height: 110px; 
     
     display: flex; justify-content: center; align-items: center; flex-shrink: 0;
     
