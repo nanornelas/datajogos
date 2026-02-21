@@ -200,12 +200,16 @@ h1 { color: #4CAF50; }
 }
 
 /* Efeito 3D da Carta */
-.flip-container { perspective: 1000px; width: 80px; height: 80px; border-radius: 50%; transform-style: preserve-3d; box-sizing: border-box; border: 1px solid #444; flex-shrink: 0; position: absolute; z-index: 5; }
-.flipper { position: relative; width: 100%; height: 100%; transition: transform 0.6s; transform-style: preserve-3d; }
+.flip-container { perspective: 1000px; width: 80px; height: 80px; border-radius: 50%; transform-style: preserve-3d; box-sizing: border-box; flex-shrink: 0; position: absolute; z-index: 5; }
+.flipper { position: relative; width: 100%; height: 100%; transition: transform 0.6s cubic-bezier(0.455, 0.03, 0.515, 0.955); transform-style: preserve-3d; }
 .flip-container.flipped .flipper { transform: rotateY(180deg); }
-.front, .back { position: absolute; width: 100%; height: 100%; -webkit-backface-visibility: hidden; backface-visibility: hidden; border-radius: 50%; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; font-weight: bold; border: none; }
-.front { color: #FFEB3B; font-size: 2em; z-index: 2; animation: pulse 1.5s infinite alternate; }
-.back { transform: rotateY(180deg); backface-visibility: hidden; }
+.front, .back { position: absolute; top: 0; left: 0; width: 100%; height: 100%; -webkit-backface-visibility: hidden; backface-visibility: hidden; border-radius: 50%; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; font-weight: bold; box-sizing: border-box; background-color: rgba(20, 20, 20, 0.8); border: none; }
+.front { color: #FFEB3B; font-size: 2em; z-index: 2; border: 2px solid #FFEB3B; box-shadow: inset 0 0 15px rgba(255, 235, 59, 0.5); animation: pulse 1.5s infinite alternate ease-in-out; }
+@keyframes pulse-glow {
+    from { box-shadow: inset 0 0 15px rgba(255, 235, 59, 0.5), 0 0 5px rgba(255, 235, 59, 0.3); }
+    to { box-shadow: inset 0 0 25px rgba(255, 235, 59, 0.8), 0 0 20px rgba(255, 235, 59, 0.6); }
+}
+.back { transform: rotateY(180deg); backface-visibility: hidden; background-color: transparent; }
 
 @keyframes pulse { from { box-shadow: 0 0 5px #FFEB3B; } to { box-shadow: 0 0 20px #FFEB3B, 0 0 10px #FFEB3B; } }
 .faded-out { opacity: 0.5; transition: opacity 0.5s ease-out; transform: scale(0.95); }
