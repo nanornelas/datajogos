@@ -132,46 +132,49 @@ h1 { color: #4CAF50; }
    4. JOGO (ROLETAS, BOTÕES, CONTROLES)
    ======================================================= */
 /* =======================================================
-   BANNER DO JOGO (ADAPTADO PARA IMAGEM QUADRADA/ALTA)
+   BANNER DO JOGO (FUSÃO SUAVE / MASKING)
    ======================================================= */
 .banner-wrapper {
     /* Mantém a sangria total lateral */
     width: calc(100% + 40px); 
-    /* Aumentei a margem inferior de 20px para 30px para dar respiro ao timer */
-    margin: -20px -20px 30px -20px; 
+    margin: -20px -20px 25px -20px; 
     
-    /* 🟢 MUDANÇA 1: Altura fixa maior para acomodar o quadrado */
-    height: 320px; 
+    /* Altura da "faixa" do banner. 220px é um bom equilíbrio. */
+    height: 220px; 
     
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-shrink: 0;
+    display: flex; justify-content: center; align-items: center; flex-shrink: 0;
     
-    border-top-left-radius: 10px; 
-    border-top-right-radius: 10px;
+    border-top-left-radius: 10px; border-top-right-radius: 10px;
     overflow: hidden; 
-    background: #0d0d0d; /* O fundo preto vai preencher as laterais da imagem quadrada */
+    
+    /* 🟢 IMPORTANTE: A cor de fundo da caixa deve ser A MESMA do container do jogo */
+    background-color: #1E1E1E; 
     border-bottom: 2px solid #2a2a2a; 
 }
 
 .banner-image {
     width: 100%;
     height: 100%;
-    /* (Removemos o max-height antigo aqui, a caixa wrapper já controla isso) */
     
-    /* 🟢 MUDANÇA 2: 'contain' para dar o ZOOM OUT e mostrar tudo */
-    object-fit: cover; 
-    object-position: center bottom; /* Alinha a arte mais para baixo, perto do jogo */
-    display: block;
+    /* Volta a preencher tudo para não sobrar laterais vazias */
+    object-fit: cover;
+    /* Centraliza para o texto ficar no meio */
+    object-position: center center; 
+    
+    /* 🟢 A MÁGICA DA FUSÃO (CSS MASK) */
+    /* Cria um degradê que vai de transparente (topo) para preto sólido (meio) e transparente (base) */
+    /* Onde é transparente, a imagem some. Onde é preto, ela aparece. */
+    -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 25%, black 75%, transparent 100%);
+    mask-image: linear-gradient(to bottom, transparent 0%, black 25%, black 75%, transparent 100%);
 }
 
-/* 📱 AJUSTE MOBILE: No celular, o quadrado de 320px é muito alto. Vamos diminuir. */
+/* Ajuste para celular, para o banner não ficar muito alto */
 @media (max-width: 500px) {
     .banner-wrapper {
-        height: 220px; /* Altura mais confortável para telas pequenas */
+        height: 180px;
     }
 }
+
 .page-container { width: 100%; max-width: 480px; margin: 0; padding: 20px; background-color: #1E1E1E; border-radius: 10px; box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);height:100%;}
 .game-container { width: 100%; max-width: 860px; margin-top: 0px; }
 
