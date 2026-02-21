@@ -132,17 +132,16 @@ h1 { color: #4CAF50; }
    4. JOGO (ROLETAS, BOTÕES, CONTROLES)
    ======================================================= */
 /* =======================================================
-   BANNER DO JOGO (SANGRIA TOTAL E PROPORCIONAL)
+   BANNER DO JOGO (ADAPTADO PARA IMAGEM QUADRADA/ALTA)
    ======================================================= */
 .banner-wrapper {
-    /* Puxa para as bordas anulando o padding */
+    /* Mantém a sangria total lateral */
     width: calc(100% + 40px); 
-    margin: -20px -20px 20px -20px; 
+    /* Aumentei a margem inferior de 20px para 30px para dar respiro ao timer */
+    margin: -20px -20px 30px -20px; 
     
-    /* 🟢 A MÁGICA DO MEIO-TERMO: Altura automática! */
-    height: auto; 
-    /* Colocamos um limite máximo de segurança para não engolir o PC inteiro */
-    max-height: 160px; 
+    /* 🟢 MUDANÇA 1: Altura fixa maior para acomodar o quadrado */
+    height: 320px; 
     
     display: flex;
     justify-content: center;
@@ -152,22 +151,27 @@ h1 { color: #4CAF50; }
     border-top-left-radius: 10px; 
     border-top-right-radius: 10px;
     overflow: hidden; 
-    background: #0d0d0d; 
+    background: #0d0d0d; /* O fundo preto vai preencher as laterais da imagem quadrada */
     border-bottom: 2px solid #2a2a2a; 
 }
 
 .banner-image {
     width: 100%;
-    /* 🟢 Acompanha a caixa: cresce na proporção certa sem distorcer */
-    height: auto; 
-    max-height: 160px; /* Garante que respeita o limite do wrapper */
+    height: 100%;
+    /* (Removemos o max-height antigo aqui, a caixa wrapper já controla isso) */
     
-    /* Se por acaso bater no limite máximo, ele usa o cover de forma inteligente */
-    object-fit: cover; 
-    object-position: center; 
-    display: block; /* Remove espaços fantasmas de imagens no HTML */
+    /* 🟢 MUDANÇA 2: 'contain' para dar o ZOOM OUT e mostrar tudo */
+    object-fit: contain; 
+    object-position: center bottom; /* Alinha a arte mais para baixo, perto do jogo */
+    display: block;
 }
 
+/* 📱 AJUSTE MOBILE: No celular, o quadrado de 320px é muito alto. Vamos diminuir. */
+@media (max-width: 500px) {
+    .banner-wrapper {
+        height: 220px; /* Altura mais confortável para telas pequenas */
+    }
+}
 .page-container { width: 100%; max-width: 480px; margin: 0; padding: 20px; background-color: #1E1E1E; border-radius: 10px; box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);height:100%;}
 .game-container { width: 100%; max-width: 860px; margin-top: 0px; }
 
