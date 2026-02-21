@@ -539,6 +539,22 @@ h1 { color: #4CAF50; }
     .front {
         font-size: 1.4em; 
     }
+
+    /* Banner do Jogo */
+.game-banner {
+    width: 100%;
+    max-width: 500px; /* Limite para não ficar gigante no PC */
+    height: auto;
+    margin-bottom: 20px;
+    filter: drop-shadow(0px 4px 10px rgba(0, 0, 0, 0.5)); /* Sombrinha para destacar */
+}
+
+/* Ajuste para telas menores, para o banner não ocupar muito espaço */
+@media (max-width: 500px) {
+    .game-banner {
+        max-width: 350px;
+    }
+}
     
     .social-sidebar { width: 90%; right: 5%; height: 400px; bottom: 10px; }
     .result-sequence { height: 66px; gap: 5px; padding: 8px; }
