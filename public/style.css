@@ -404,7 +404,37 @@ h1 { color: #4CAF50; }
 
 .sidebar-header { display: flex; justify-content: space-between; align-items: center; padding: 0 15px; background-color: #0d0d0d; height: 50px; flex-shrink: 0; cursor: pointer; }
 .sidebar-header h3 { margin: 0; font-size: 1.1em; }
-.toggle-chat-btn { background: #2a2a2a; border: none; color: white; width: 25px; height: 24px; border-radius: 50%; font-size: 1.5em; line-height: 22px; cursor: pointer; transition: transform 0.3s; }
+/* =======================================================
+   BOTÃO DE MINIMIZAR/MAXIMIZAR O CHAT (+ e -)
+   ======================================================= */
+.toggle-chat-btn {
+    /* 🟢 A MÁGICA DO ALINHAMENTO GEOMÉTRICO PERFEITO */
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    
+    /* Mantém o seu botão perfeitamente redondo */
+    width: 32px;  /* Pode ajustar este valor se quiser o círculo maior/menor */
+    height: 32px;
+    border-radius: 50%;
+    
+    /* 🟢 REMOVENDO OS ESPAÇOS FANTASMAS */
+    padding: 0 !important;
+    margin: 0;
+    line-height: 0 !important; /* Mata o espaço invisível da fonte */
+    font-size: 24px; /* Tamanho do ícone */
+    
+    /* Cores (Mantenha as suas se forem diferentes) */
+    background-color: #2a2a2a;
+    color: #E0E0E0;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.toggle-chat-btn:hover {
+    background-color: #444;
+}
 
 .sidebar-content { display: flex; flex-direction: column; flex-grow: 1; overflow: hidden; }
 
