@@ -500,12 +500,49 @@ h1 { color: #4CAF50; }
 .social-tab-pane { flex-grow: 1; display: none; flex-direction: column; background-color: #121212; }
 .social-tab-pane.active { display: flex; }
 
-.chat-messages { flex-grow: 1; overflow-y: auto; padding: 15px; display: flex; flex-direction: column; }
-.chat-message { margin-bottom: 12px; font-size: 0.9em; display: flex; gap: 8px; align-items: flex-start; }
-.chat-message .username { font-weight: bold; }
+.chat-messages { 
+    flex-grow: 1; 
+    overflow-y: auto; 
+    /* 🟢 TRAVA 1: Mata qualquer chance de barra de rolagem horizontal */
+    overflow-x: hidden; 
+    padding: 15px; 
+    display: flex; 
+    flex-direction: column; 
+}
+
+.chat-message { 
+    margin-bottom: 12px; 
+    font-size: 0.9em; 
+    display: flex; 
+    gap: 8px; 
+    align-items: flex-start; 
+    /* 🟢 TRAVA 2: Garante que a linha da mensagem não passe de 100% da caixa */
+    max-width: 100%; 
+}
+
+/* 🟢 TRAVA 3: Impede que o nome do usuário seja "esmagado" por uma mensagem gigante */
+.chat-message .username { 
+    font-weight: bold; 
+    flex-shrink: 0; 
+}
+
 .chat-message .role-admin { color: #E53935; }
 .chat-message .role-influencer { color: #9C27B0; }
-.chat-message .message-text { color: #E0E0E0; word-wrap: break-word; line-height: 1.4; }
+
+.chat-message .message-text { 
+    color: #E0E0E0; 
+    line-height: 1.4; 
+    
+    /* 🟢 TRAVA 4: A Quebra de Palavras Suprema */
+    word-wrap: break-word; 
+    overflow-wrap: break-word; 
+    word-break: break-word; 
+    
+    /* 🟢 TRAVA 5: O Segredo do Flexbox! 
+       Isso diz à mensagem: "Ocupe o espaço que sobrar, mas quebre a linha se bater na parede" */
+    flex: 1; 
+    min-width: 0; 
+}
 
 .chat-form { display: flex; padding: 10px; border-top: 1px solid #2a2a2a; background-color: #0d0d0d; flex-shrink: 0;}
 #chat-input { flex-grow: 1; background-color: #2a2a2a; border: 1px solid #333; color: white; border-radius: 5px; padding: 10px; }

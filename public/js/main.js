@@ -259,9 +259,3 @@ async function initializeApp() {
 }
 
 document.addEventListener('DOMContentLoaded', initializeApp);
-
-// TESTE DE CONEXÃO MULTIPLAYER
-const socket = io('http://localhost:3000');
-socket.on('game_timer', (data) => {
-    console.log(`O Servidor disse: Estado = ${data.state}, Tempo = ${data.time}`);
-});
