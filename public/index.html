@@ -69,28 +69,42 @@
     
     <div class="site-wrapper">
         <div class="main-content-wrapper">
-            <div id="game-page" class="game-container page-container" style="max-width: 860px;">
+           <div id="game-page" class="game-container page-container" style="max-width: 860px;">
+                
                 <div class="banner-wrapper">
-    <img src="assets/banner.png" alt="Banner Cor da Sorte" class="banner-image">
-</div>
+                    <img src="assets/banner.png" alt="Banner Cor da Sorte" class="banner-image">
+                </div>
+                
                 <div id="timer-bar"><div id="progress"></div></div>
+                
                 <div class="trend-history-wrapper">
-    <div id="trend-history-list" class="trend-history-list">
-        </div>
-</div>
-<div class="result-sequence">
-                <div class="result-sequence"><div id="slots-scroller"></div></div>
-                <p id="status-message" style="text-align: center; margin-top: 0px;">Faça login para começar a apostar.</p>
+                    <div id="trend-history-list" class="trend-history-list"></div>
+                </div>
+
+                <div class="result-sequence">
+                    <div id="slots-scroller"></div>
+                    
+                    <div class="slot flip-container" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); z-index: 5;">
+                        <div class="flipper">
+                            <div class="front"><span>?</span></div>
+                            <div class="back"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <p id="status-message" style="text-align: center; margin-top: 15px;">Faça login para começar a apostar.</p>
+
                 <div class="bet-input-container">
-                <div class="bet-input-group">
-                         <span>Apostar: R$</span>
-                         <div class="bet-stepper">
+                    <div class="bet-input-group">
+                        <span class="bet-label">Apostar: R$</span>
+                        <div class="bet-stepper">
                             <button type="button" id="bet-decrease" class="stepper-btn" aria-label="Diminuir aposta" disabled>&minus;</button>
                             <input type="number" id="bet-amount" value="10" min="1" step="1">
                             <button type="button" id="bet-increase" class="stepper-btn" aria-label="Aumentar aposta">&plus;</button>
                         </div>
+                    </div>
                 </div>
-                </div>
+                
                 <div class="bet-area">
                     <div class="bet-group" id="bet-group-colors">
                         <h4 class="bet-group-label">Apostar na Cor</h4>
@@ -108,8 +122,8 @@
                         </div>
                     </div>
                 </div>
-            </div> 
-        </div> 
+                
+            </div>
         
         <aside id="social-sidebar" class="social-sidebar" style="display: none;">
             <div class="sidebar-header">
