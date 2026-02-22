@@ -524,20 +524,70 @@ h1 { color: #4CAF50; }
         width: 100%;
     }
 
-    /* O Chat volta a ser Gaveta Flutuante */
     .social-sidebar {
         position: fixed;
-        right: 10px;
-        bottom: 10px;
-        z-index: 1500;
-        margin-right: 0 !important; /* Desabilita o recuo do desktop */
-        opacity: 1 !important;
-        box-shadow: -5px 0 25px rgba(0,0,0,0.8);
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: 75vh; /* Ocupa 75% da tela para digitar com folga */
+        z-index: 9999;
+        border-radius: 20px 20px 0 0; /* Arredonda o topo */
+        box-shadow: 0 -5px 25px rgba(0,0,0,0.8); /* Sombra projetada para cima */
+        transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
     }
 
     .social-sidebar.minimized {
-        height: 50px !important;
-        transform: none !important; /* Mantém na tela, só encolhe a altura */
+        width: 60px !important;
+        height: 60px !important;
+        min-height: 60px !important;
+        border-radius: 50% !important; /* Corta em círculo */
+        
+        /* Posição no canto inferior direito */
+        bottom: 20px !important;
+        right: 20px !important;
+        left: auto !important; 
+        
+        background-color: #4CAF50 !important; /* Cor verde chamativa para convidar ao clique */
+        border: 2px solid #2a2a2a;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.6);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        overflow: hidden;
+    }
+
+    /* Esconde os painéis internos para não vazar da bolinha */
+    .social-sidebar.minimized .tabs,
+    .social-sidebar.minimized .chat-messages,
+    .social-sidebar.minimized .bets-feed,
+    .social-sidebar.minimized .chat-input-area {
+        display: none !important;
+    }
+
+    /* 3. Transforma o Header no botão clicável */
+    .social-sidebar.minimized .chat-header {
+        width: 100%;
+        height: 100%;
+        padding: 0;
+        margin: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background: transparent !important;
+        border: none !important;
+    }
+
+    /* Esconde o texto "Chat" e o botão de "menos (-)" originais */
+    .social-sidebar.minimized .chat-header h3,
+    .social-sidebar.minimized .chat-header .minimize-btn {
+        display: none !important;
+    }
+
+    /* Adiciona o ícone de balão de fala nativo dentro da bolinha */
+    .social-sidebar.minimized .chat-header::before {
+        content: '💬';
+        font-size: 28px;
+        filter: drop-shadow(0px 2px 2px rgba(0,0,0,0.5));
     }
 }
 
