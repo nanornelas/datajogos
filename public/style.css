@@ -524,10 +524,15 @@ h1 { color: #4CAF50; }
         width: 100%;
     }
 
+    /* =======================================================
+       CHAT MOBILE: BOTÃO FLUTUANTE CENTRALIZADO
+       ======================================================= */
+       
+    /* 1. O Chat Aberto (Painel que sobe da base) */
     .social-sidebar {
         position: fixed;
         bottom: 0;
-        top: auto !important; /* Garante que descola do meio quando abrir */
+        top: auto !important; 
         left: 0;
         width: 100%;
         height: 75vh;
@@ -535,21 +540,22 @@ h1 { color: #4CAF50; }
         border-radius: 20px 20px 0 0;
         box-shadow: 0 -5px 25px rgba(0,0,0,0.8);
         transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-        transform: none !important; /* Reseta qualquer alinhamento */
+        transform: none !important; 
     }
 
+    /* 2. O Chat Minimizado (Botão Flutuante Centro-Direita) */
     .social-sidebar.minimized {
-        width: 55px !important;
-        height: 55px !important;
-        min-height: 55px !important;
+        width: 60px !important;
+        height: 60px !important;
+        min-height: 60px !important;
         border-radius: 50% !important; 
         
-        /* 🟢 NOVA POSIÇÃO: Meio da tela, encostado à direita */
+        /* Posição no meio da tela, encostado à direita */
         top: 50% !important;
         bottom: auto !important;
         right: 15px !important;
         left: auto !important; 
-        transform: translateY(-50%) !important; /* Crava exatamente no centro vertical */
+        transform: translateY(-50%) !important; 
         
         background-color: #4CAF50 !important; 
         border: 2px solid #2a2a2a;
@@ -558,39 +564,38 @@ h1 { color: #4CAF50; }
         overflow: hidden;
     }
 
-    /* Esconde os painéis internos */
-    .social-sidebar.minimized .tabs,
-    .social-sidebar.minimized .chat-messages,
-    .social-sidebar.minimized .bets-feed,
-    .social-sidebar.minimized .chat-input-area {
+    /* 3. A Mágica do seu HTML: Esconde todo o miolo de uma vez! */
+    .social-sidebar.minimized .sidebar-content {
         display: none !important;
     }
 
-    /* 3. Limpeza Total e Ícone Perfeito */
-    .social-sidebar.minimized .chat-header {
+    /* 4. O Cabeçalho (Onde vamos matar o &minus;) */
+    .social-sidebar.minimized .sidebar-header {
         width: 100%;
         height: 100%;
         padding: 0 !important;
         margin: 0 !important;
         background: transparent !important;
         border: none !important;
-        position: relative; /* Base para alinhar o ícone */
+        position: relative; /* Base para o emoji */
     }
 
-    /* 🟢 A FORÇA BRUTA: Esconde tudo (nomes, botões antigos, o X torto) */
-    .social-sidebar.minimized .chat-header > * {
+    /* 🟢 AQUI ESTAVA O SEU VILÃO: Escondemos o h3 e o botão real! */
+    .social-sidebar.minimized .sidebar-header h3,
+    .social-sidebar.minimized .sidebar-header .toggle-chat-btn {
         display: none !important;
     }
 
-    /* 🟢 ÍCONE DE CHAT 100% CENTRALIZADO */
-    .social-sidebar.minimized .chat-header::after {
+    /* 5. Ícone de Chat 100% Centralizado */
+    .social-sidebar.minimized .sidebar-header::after {
         content: '💬';
-        font-size: 26px;
+        font-size: 28px;
         position: absolute;
         top: 50%;
         left: 50%;
-        transform: translate(-50%, -50%); /* Centralização geométrica perfeita */
+        transform: translate(-50%, -50%); /* Centralização perfeita */
         line-height: 1;
+        cursor: pointer;
     }
 
 /* Quebra para Celular Médio (<= 890px) */
