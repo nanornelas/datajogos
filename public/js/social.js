@@ -76,6 +76,10 @@ async function sendChatMessage(e) {
     e.preventDefault();
     const token = Auth.JWT_TOKEN;
     const input = document.getElementById('chat-input');
+    
+    // 🟢 AQUI ESTÁ A CORREÇÃO: Definindo o submitBtn corretamente!
+    const submitBtn = document.querySelector('#chat-form button[type="submit"]'); 
+    
     if (!input) return;
     
     const message = input.value.trim();
@@ -96,7 +100,7 @@ async function sendChatMessage(e) {
         return;
     }
 
-    // Bloqueia o input e o botão enquanto envia
+    // Bloqueia o input e o botão enquanto envia para evitar cliques duplos
     input.disabled = true;
     if (submitBtn) submitBtn.disabled = true;
 
@@ -104,21 +108,21 @@ async function sendChatMessage(e) {
         const response = await fetch(`${API_BASE_URL}/chat`, {
             method: 'POST',
             headers: getAuthHeaders(token),
-            // Corta a mensagem por segurança extra antes de enviar
+            // Envia a mensagem com segurança
             body: JSON.stringify({ message: message.substring(0, 50) }) 
         });
 
         if (response.ok) {
             input.value = ''; 
-            // 🟢 Atualiza o relógio apenas se a mensagem foi enviada com sucesso
+            // Atualiza o relógio apenas se a mensagem foi enviada com sucesso
             lastMessageTime = Date.now(); 
         } else {
             alert('Erro ao enviar mensagem. Tente novamente.');
         }
     } catch (error) {
-        console.error("[sendChatMessage] Erro rede:", error);
+        console.error("[sendChatMessage] Erro de rede:", error);
     } finally {
-        // Desbloqueia a caixa de texto para o jogador
+        // Desbloqueia a caixa de texto e o botão para o jogador continuar
         input.disabled = false;
         if (submitBtn) submitBtn.disabled = false;
         input.focus();
