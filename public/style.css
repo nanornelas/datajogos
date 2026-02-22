@@ -306,7 +306,7 @@ h1 { color: #4CAF50; }
 #progress { height: 100%; width: 100%; background-color: #00BCD4; border-radius: 5px; transition: width 8s linear; box-shadow: 0 0 10px rgba(0, 188, 212, 0.6);}
 
 /* Inputs e Stepper (O Visor Digital) */
-.bet-input-container { display: flex; justify-content: flex-start; width: 100%; margin-bottom: 0px; position: relative; z-index: 2; align-items: center; gap: 12px;}
+.bet-input-container { display: flex; justify-content: center; width: 100%; margin-bottom: 0px; position: relative; z-index: 2; align-items: center; gap: 12px;}
 .bet-input-container span { color: #888; font-weight: bold; font-size: 0.9em; text-transform: uppercase; letter-spacing: 1px;}
 
 .bet-stepper { 
