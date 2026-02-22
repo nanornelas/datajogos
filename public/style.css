@@ -227,13 +227,14 @@ h1 { color: #4CAF50; }
 
 /* 🟢 ESFERA VERDE CORINGA */
 .color-GREEN { 
-    background: radial-gradient(circle at 30% 30%, #4dff4d 0%, #00b300 50%, #003300 100%);
+    /* Gradiente mais claro e radiante (menos preto, mais luz) */
+    background: radial-gradient(circle at 35% 35%, #80ff80 0%, #00e600 45%, #006600 100%);
     color: white; 
-    border: 2px solid #00ff00;
+    border: 2px solid #4dff4d; /* Borda mais clara */
     box-shadow: 
-        inset -10px -10px 20px rgba(0, 0, 0, 0.8), 
-        inset 10px 10px 15px rgba(100, 255, 100, 0.4),
-        0px 0px 15px rgba(0, 255, 0, 0.5); 
+        inset -6px -6px 12px rgba(0, 0, 0, 0.3), /* 🟢 Sombra escura muito mais fraca, só para dar um leve volume */
+        inset 10px 10px 20px rgba(150, 255, 150, 0.7), /* Luz interna muito mais forte e espalhada */
+        0px 0px 25px rgba(0, 255, 0, 0.7); /* Brilho neon externo mais poderoso */
 }
 .slot.last-drawn { 
     opacity: 1; 
@@ -675,6 +676,7 @@ h1 { color: #4CAF50; }
     }
     .slot.color-GREEN .value.coringa-icon .coringa-svg-img, .back.color-GREEN .value.coringa-icon .coringa-svg-img {
         max-height: 28px;
+        filter: drop-shadow(0px 4px 6px rgba(0, 0, 0, 0.8));
     }
 
     /* O '?' flutuante menorzinho */
