@@ -8,11 +8,13 @@
 </head>
 <body>
     <div id="particles-container"></div>
+    
     <header class="top-nav-bar">
         <div class="header-content">
             <a class="navbar-brand" href="#">
                 <img src="assets/logo.svg" alt="iGaming Logo" class="logo-svg">
             </a>
+            
             <div id="rollover-progress-container" class="rollover-progress-container" style="display: none;">
                 <span class="rollover-label">Desbloqueio do Bônus</span>
                 <div class="progress-bar-background">
@@ -25,10 +27,12 @@
                     <span class="nav-balance-label">Saldo</span>
                     <span id="nav-balance-real" class="nav-balance-value">R$ 0,00</span>
                 </div>
-                <div id="nav-balance-bonus-box" class="nav-balance-box bonus" style="display: none;"> <span class="nav-balance-label">Bónus</span>
+                <div id="nav-balance-bonus-box" class="nav-balance-box bonus" style="display: none;"> 
+                    <span class="nav-balance-label">Bónus</span>
                     <span id="nav-balance-bonus" class="nav-balance-value">R$ 0,00</span>
                 </div>
             </div>
+            
             <div id="user-dropdown" class="user-dropdown" style="display: none;">
                 <button id="user-display-button" class="user-display-button">
                     <span id="user-display-name"></span>
@@ -41,9 +45,7 @@
                     <a id="influencer-panel-link" href="/influencer.html" class="dropdown-item" style="display: none;">Dashboard Influencer</a>
                     <a id="affiliate-panel-link" href="/afiliado.html" class="dropdown-item" style="display: none;">Painel Afiliado</a>
                     <a href="#" id="settings-link" class="dropdown-item">Configurações</a>
-                    
                     <a href="#" id="withdraw-link" class="dropdown-item" style="color: #00BCD4; font-weight: bold;">💰 Saque PIX</a>
-                    
                     <button id="logout-button" class="dropdown-item dropdown-logout-button">Sair</button>
                 </div>
             </div>
@@ -68,8 +70,9 @@
     </div>
     
     <div class="site-wrapper">
+        
         <div class="main-content-wrapper">
-           <div id="game-page" class="game-container page-container" style="max-width: 860px;">
+            <div id="game-page" class="game-container page-container" style="max-width: 860px;">
                 
                 <div class="banner-wrapper">
                     <img src="assets/banner.png" alt="Banner Cor da Sorte" class="banner-image">
@@ -83,7 +86,6 @@
 
                 <div class="result-sequence">
                     <div id="slots-scroller"></div>
-                    
                     <div class="slot flip-container" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); z-index: 5;">
                         <div class="flipper">
                             <div class="front"><span>?</span></div>
@@ -121,7 +123,9 @@
                             <button id="bet-even" class="bet-button bet-parity" data-bet-type="PARITY" data-bet-value="EVEN">Par (2x)</button>
                         </div>
                     </div>
-                    </div> </div> </div> <aside id="social-sidebar" class="social-sidebar" style="display: none;"></aside>
+                </div>
+            </div> 
+        </div> <aside id="social-sidebar" class="social-sidebar" style="display: none;">
             <div class="sidebar-header">
                 <h3> </h3>
                 <button id="toggle-chat-btn" class="toggle-chat-btn">&minus;</button>
@@ -145,9 +149,8 @@
                 </div>
             </div>
         </aside>
-    </div> 
-    
-    <div id="settings-modal" class="settings-modal-overlay" style="display: none;">
+        
+    </div> <div id="settings-modal" class="settings-modal-overlay" style="display: none;">
         <div class="settings-modal-content">
             <button id="settings-modal-close-btn" class="settings-modal-close">&times;</button>
             <div class="settings-sidebar">
@@ -158,7 +161,6 @@
             <div class="settings-main-content">
                 <div id="tab-profile" class="settings-tab-pane active">
                     <h2 style="color: #00BCD4; margin-bottom: 20px;">Perfil do Jogador</h2>
-                    
                     <div class="avatar-section" style="background: rgba(0,0,0,0.3); padding: 15px; border-radius: 10px; border: 1px solid #2a2a2a; margin-bottom: 20px;">
                         <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 15px;">
                             <span id="current-avatar-display" class="current-avatar" style="font-size: 2.5em; background: #111; border: 2px solid #00BCD4; border-radius: 50%; padding: 10px; box-shadow: 0 0 10px rgba(0, 188, 212, 0.3);">👤</span>
@@ -186,13 +188,19 @@
                     </button>
                     <p id="profile-status" style="text-align: center; margin-top: 15px; font-weight: bold; min-height: 20px;"></p>
                 </div>
+                
                 <div id="tab-history" class="settings-tab-pane">
                     <h2>Histórico de Jogos (Últimos 20)</h2>
-                    <div class="history-table-container"><table class="history-table"><thead><tr><th>Data</th><th>Aposta</th><th>Resultado</th><th>Ganhos</th></tr></thead><tbody id="game-history-body"></tbody></table></div>
+                    <div class="history-table-container">
+                        <table class="history-table">
+                            <thead><tr><th>Data</th><th>Aposta</th><th>Resultado</th><th>Ganhos</th></tr></thead>
+                            <tbody id="game-history-body"></tbody>
+                        </table>
+                    </div>
                 </div>
+                
                 <div id="tab-wallet" class="settings-tab-pane">
                     <h2>Carteira</h2>
-                    
                     <div class="wallet-balances">
                         <div class="wallet-card real">
                             <span class="wallet-label">Saldo Real</span>
@@ -220,12 +228,11 @@
                                     <th>Valor</th>
                                 </tr>
                             </thead>
-                            <tbody id="wallet-history-body">
-                                </tbody>
+                            <tbody id="wallet-history-body"></tbody>
                         </table>
                     </div>
                 </div>
-    <div id="withdraw-modal-overlay" class="auth-modal-overlay" style="display: none; z-index: 10000;">
+            </div> </div> </div> <div id="withdraw-modal-overlay" class="auth-modal-overlay" style="display: none; z-index: 10000;">
         <div class="auth-modal-content page-container" style="max-width: 400px; text-align: center;">
             <button id="withdraw-modal-close-btn" class="auth-modal-close">&times;</button>
             <h2 style="color: #00BCD4; margin-bottom: 10px;">Saque via PIX</h2>
@@ -249,6 +256,7 @@
             </form>
         </div>
     </div>
+
     <script src="https://cdn.socket.io/4.7.4/socket.io.min.js"></script>
     <script type="module" src="js/main.js"></script> 
     <script src="https://cdn.jsdelivr.net/npm/tsparticles@3.9.1/tsparticles.bundle.min.js"></script>
