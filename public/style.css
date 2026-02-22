@@ -30,15 +30,20 @@ h1 { color: #4CAF50; }
    ======================================================= */
 .top-nav-bar {
     position: fixed; 
-    top: 10px; left: 50%;
+    top: 0; /* 🟢 Colado no topo absoluto */
+    left: 50%;
     transform: translateX(-50%);
     width: 100%; max-width: 1400px;
     z-index: 1000; 
     background: linear-gradient(to top, rgba(10, 13, 42, 0.7), rgba(24, 27, 57, 0.8));
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
-    border-radius: 15px;
+    
+    /* 🟢 Borda arredondada apenas na parte de baixo */
+    border-radius: 0 0 15px 15px; 
     border: 1px solid rgba(76, 76, 175, 0.2);
+    border-top: none; /* Remove a borda de cima para grudar perfeitamente */
+    
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.37);
     height: 60px;
     display: flex; justify-content: center;
@@ -107,17 +112,20 @@ h1 { color: #4CAF50; }
    3. LAYOUT PRINCIPAL (A MÁGICA RESPONSIVA)
    ======================================================= */
 .site-wrapper {
-    max-width: 1400px; /* Aumentado para caber jogo + chat */
+    max-width: 1400px; 
     margin: 0 auto;
-    display: flex; /* Layout Lado a Lado */
-    align-items: stretch;
+    display: flex; 
+    align-items: stretch; 
     justify-content: center;
     gap: 20px;
-    padding-top: 100px; /* Espaço para o header */
+    
+    /* 🟢 Puxa o conteúdo para cima (Barra tem 60px + 15px de folga = 75px) */
+    padding-top: 75px; 
+    
     padding-left: 20px; padding-right: 20px;
     position: relative; z-index: 2;
     box-sizing: border-box; width: 100%;
-    min-height: calc(100vh - 100px);
+    min-height: calc(100vh - 75px); /* Ajustado para acompanhar a nova altura */
 }
 
 .main-content-wrapper {
@@ -506,7 +514,7 @@ h1 { color: #4CAF50; }
 @media (max-width: 1024px) {
     .site-wrapper {
         display: block; /* Tira o lado a lado */
-        padding-top: 80px;
+        padding-top: 75px;
     }
     
     .main-content-wrapper {
