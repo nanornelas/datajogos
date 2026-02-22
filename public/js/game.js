@@ -317,39 +317,7 @@ export async function initializeSlotsSetup() {
     
     const lastInitialSlot = sequenceElement.lastChild;
     if (lastInitialSlot) { lastInitialSlot.classList.add('last-drawn'); }
-}
     
-    results = initialResults; 
-    // 🟢 POPULA A BARRA DE TENDÊNCIAS INICIAL
-    const trendList = document.getElementById('trend-history-list');
-    if (trendList) {
-        trendList.innerHTML = ''; // Limpa a fita
-        results.forEach(res => addTrendHistory(res)); // Preenche com o array do servidor
-    }
-    let initialScrollerHTML = '';
-    
-    const slotsToRender = results.slice(-slotCountToRender);
-    slotsToRender.forEach((result, index) => {
-        const isFaded = index < slotsToRender.length - 1; 
-        initialScrollerHTML += createSlotHTML(result, false, isFaded);
-    });
-
-    sequenceElement.innerHTML = initialScrollerHTML; 
-    
-    if (!document.querySelector('.slot.flip-container')) {
-        const mysterySlotHTML = createSlotHTML(null);
-        resultSequenceContainer.insertAdjacentHTML('beforeend', mysterySlotHTML);
-    }
-    
-    const mysterySlot = resultSequenceContainer.querySelector('.slot.flip-container');
-    mysterySlot.style.position = 'absolute';
-    mysterySlot.style.left = ''; 
-    mysterySlot.style.right = config.paddingRight;
-    mysterySlot.style.top = '50%';
-    mysterySlot.style.transform = 'translateY(-50%)';
-    
-    const lastInitialSlot = sequenceElement.lastChild;
-    if (lastInitialSlot) { lastInitialSlot.classList.add('last-drawn'); }
 }
 
 // Como o servidor dita o ritmo, iniciar o ciclo agora é apenas carregar os slots.
