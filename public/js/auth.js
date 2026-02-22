@@ -126,7 +126,7 @@ export async function openSettingsModal() {
             const currentAvatarEl = document.querySelector(`.avatar-option[data-avatar="${selectedAvatar}"]`);
             if (currentAvatarEl) currentAvatarEl.classList.add('selected');
 
-            const historyBody = document.getElementById('game-history-body');
+const historyBody = document.getElementById('game-history-body');
             
             if (profileData.history.length > 0) {
                 historyBody.innerHTML = profileData.history.map(log => {
