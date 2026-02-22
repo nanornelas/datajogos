@@ -505,7 +505,7 @@ app.get('/api/user/profile-data', authMiddleware, async (req, res) => {
         const { userId } = req.user;
         // ATUALIZAÇÃO: Adicionado 'cpf' na lista do select para enviar ao front-end
         const user = await User.findOne({ userId }).select('username email avatar cpf role'); 
-        const gameHistory = await GameLog.find({ userId }).sort({ createdAt: -1 }).limit(20);
+        const gameHistory = await GameLog.find({ userId }).sort({ createdAt: -1 }).limit(500);
         
         if (!user) {
             return res.status(404).json({ success: false, message: 'Utilizador não encontrado.' });

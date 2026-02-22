@@ -127,17 +127,48 @@ export async function openSettingsModal() {
             if (currentAvatarEl) currentAvatarEl.classList.add('selected');
 
             const historyBody = document.getElementById('game-history-body');
+            
             if (profileData.history.length > 0) {
-                historyBody.innerHTML = profileData.history.map(log => `
-                    <tr>
-                        <td>${new Date(log.createdAt).toLocaleString('pt-BR', {day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit'})}</td>
-                        <td>R$ ${log.amount.toFixed(2)} em ${log.betValue}</td>
-                        <td>${log.gameResult.color} (${log.gameResult.number})</td>
-                        <td class="${log.isWin ? 'bet-won' : 'bet-lost'}">${log.isWin ? '+' : '-'} R$ ${log.isWin ? log.winnings.toFixed(2) : log.amount.toFixed(2)}</td>
+                historyBody.innerHTML = profileData.history.map(log => {
+                    // 🟢 O DICIONÁRIO DE TRADUÇÃO PROFISSIONAL
+                    const translateBet = (val) => {
+                        const dict = { 'RED': 'Vermelho', 'BLUE': 'Azul', 'GREEN': 'Verde', 'EVEN': 'Par', 'ODD': 'Ímpar' };
+                        return dict[val] || val;
+                    };
+
+                    const translateColor = (color) => {
+                        const dict = { 'RED': 'Vermelho', 'BLUE': 'Azul', 'GREEN': 'Verde' };
+                        return dict[color] || color;
+                    };
+
+                    // Formatação Elegante da Data
+                    const dateObj = new Date(log.createdAt);
+                    const dateStr = dateObj.toLocaleDateString('pt-BR', {day: '2-digit', month: '2-digit'}) + ' ' + dateObj.toLocaleTimeString('pt-BR', {hour: '2-digit', minute: '2-digit'});
+                    
+                    // Traduções aplicadas
+                    const betDisplay = translateBet(log.betValue);
+                    const resultColorDisplay = translateColor(log.gameResult.color);
+                    
+                    // O Coringa não tem número, então colocamos o "?" para ficar estético
+                    const resultNumberDisplay = log.gameResult.color === 'GREEN' ? '?' : log.gameResult.number;
+                    
+                    // Cores de Vitória ou Derrota
+                    const statusColor = log.isWin ? '#4CAF50' : '#E53935'; // Verde para lucro, Vermelho para Red
+                    const statusSignal = log.isWin ? '+' : '-';
+                    const valueDisplay = log.isWin ? log.winnings : log.amount; // Mostra o que ganhou ou o que perdeu
+
+                    return `
+                    <tr style="border-bottom: 1px solid #2a2a2a;">
+                        <td style="padding: 10px 5px; color: #bbb;">${dateStr}</td>
+                        <td style="padding: 10px 5px; color: #E0E0E0;">R$ ${log.amount.toFixed(2).replace('.', ',')} em <b style="color: #FFF;">${betDisplay}</b></td>
+                        <td style="padding: 10px 5px; color: #FFF;">${resultColorDisplay} (${resultNumberDisplay})</td>
+                        <td style="padding: 10px 5px; color: ${statusColor}; font-weight: bold;">${statusSignal} R$ ${valueDisplay.toFixed(2).replace('.', ',')}</td>
                     </tr>
-                `).join('');
-            } else { historyBody.innerHTML = '<tr><td colspan="4" style="text-align: center;">Nenhum jogo registado.</td></tr>'; }
-        }
+                    `;
+                }).join('');
+            } else { 
+                historyBody.innerHTML = '<tr><td colspan="4" style="text-align: center; color: #888; padding: 15px;">Nenhum jogo registado ainda.</td></tr>'; 
+            }
 
         if(walletData.success) {
             const walletHistoryBody = document.getElementById('wallet-history-body');
