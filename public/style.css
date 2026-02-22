@@ -527,36 +527,38 @@ h1 { color: #4CAF50; }
     .social-sidebar {
         position: fixed;
         bottom: 0;
+        top: auto !important; /* Garante que descola do meio quando abrir */
         left: 0;
         width: 100%;
-        height: 75vh; /* Ocupa 75% da tela para digitar com folga */
+        height: 75vh;
         z-index: 9999;
-        border-radius: 20px 20px 0 0; /* Arredonda o topo */
-        box-shadow: 0 -5px 25px rgba(0,0,0,0.8); /* Sombra projetada para cima */
+        border-radius: 20px 20px 0 0;
+        box-shadow: 0 -5px 25px rgba(0,0,0,0.8);
         transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+        transform: none !important; /* Reseta qualquer alinhamento */
     }
 
     .social-sidebar.minimized {
-        width: 60px !important;
-        height: 60px !important;
-        min-height: 60px !important;
-        border-radius: 50% !important; /* Corta em círculo */
+        width: 55px !important;
+        height: 55px !important;
+        min-height: 55px !important;
+        border-radius: 50% !important; 
         
-        /* Posição no canto inferior direito */
-        bottom: 20px !important;
-        right: 20px !important;
+        /* 🟢 NOVA POSIÇÃO: Meio da tela, encostado à direita */
+        top: 50% !important;
+        bottom: auto !important;
+        right: 15px !important;
         left: auto !important; 
+        transform: translateY(-50%) !important; /* Crava exatamente no centro vertical */
         
-        background-color: #4CAF50 !important; /* Cor verde chamativa para convidar ao clique */
+        background-color: #4CAF50 !important; 
         border: 2px solid #2a2a2a;
-        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.6);
-        display: flex;
-        justify-content: center;
-        align-items: center;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+        padding: 0 !important;
         overflow: hidden;
     }
 
-    /* Esconde os painéis internos para não vazar da bolinha */
+    /* Esconde os painéis internos */
     .social-sidebar.minimized .tabs,
     .social-sidebar.minimized .chat-messages,
     .social-sidebar.minimized .bets-feed,
@@ -564,32 +566,32 @@ h1 { color: #4CAF50; }
         display: none !important;
     }
 
-    /* 3. Transforma o Header no botão clicável */
+    /* 3. Limpeza Total e Ícone Perfeito */
     .social-sidebar.minimized .chat-header {
         width: 100%;
         height: 100%;
-        padding: 0;
-        margin: 0;
-        display: flex;
-        justify-content: center;
-        align-items: center;
+        padding: 0 !important;
+        margin: 0 !important;
         background: transparent !important;
         border: none !important;
+        position: relative; /* Base para alinhar o ícone */
     }
 
-    /* Esconde o texto "Chat" e o botão de "menos (-)" originais */
-    .social-sidebar.minimized .chat-header h3,
-    .social-sidebar.minimized .chat-header .minimize-btn {
+    /* 🟢 A FORÇA BRUTA: Esconde tudo (nomes, botões antigos, o X torto) */
+    .social-sidebar.minimized .chat-header > * {
         display: none !important;
     }
 
-    /* Adiciona o ícone de balão de fala nativo dentro da bolinha */
-    .social-sidebar.minimized .chat-header::before {
+    /* 🟢 ÍCONE DE CHAT 100% CENTRALIZADO */
+    .social-sidebar.minimized .chat-header::after {
         content: '💬';
-        font-size: 28px;
-        filter: drop-shadow(0px 2px 2px rgba(0,0,0,0.5));
+        font-size: 26px;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%); /* Centralização geométrica perfeita */
+        line-height: 1;
     }
-}
 
 /* Quebra para Celular Médio (<= 890px) */
 @media (max-width: 890px) {
