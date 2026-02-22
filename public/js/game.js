@@ -266,14 +266,58 @@ export async function initializeSlotsSetup() {
     try {
         const response = await fetch(`${API_BASE_URL}/initial-draw`);
         const data = await response.json();
-        if (data.success && data.gameResult) {
-            for(let i = 0; i < VISIBLE_SLOT_COUNT; i++) { initialResults.push(data.gameResult); }
+        
+        // 🟢 A MÁGICA ACONTECE AQUI: Em vez de multiplicar 1 resultado, 
+        // nós pegamos o array "history" inteiro que vem do servidor!
+        if (data.success && data.history && data.history.length > 0) {
+            initialResults = data.history; 
+        } else {
+            throw new Error("Histórico vazio ou formato antigo retornado pelo servidor.");
         }
     } catch (error) {
-        for(let i = 0; i < VISIBLE_SLOT_COUNT; i++) {
+        console.warn("Usando fallback de segurança:", error);
+        // Fallback: se o servidor falhar ou ainda estiver usando o código antigo, 
+        // ele preenche com bolas azuis para o site não quebrar.
+        for(let i = 0; i < Math.max(VISIBLE_SLOT_COUNT, 10); i++) {
             initialResults.push({ color: 'BLUE', number: '00', parity: 'EVEN', translatedColor: 'AZUL', translatedParity: 'PAR' });
         }
     }
+    
+    results = initialResults; 
+    
+    // 🟢 POPULA A BARRA DE TENDÊNCIAS INICIAL
+    const trendList = document.getElementById('trend-history-list');
+    if (trendList) {
+        trendList.innerHTML = ''; // Limpa a fita
+        results.forEach(res => addTrendHistory(res)); // Preenche com o array do servidor
+    }
+    
+    let initialScrollerHTML = '';
+    
+    // Filtra apenas a quantidade que cabe na tela para as esferas GRANDES
+    const slotsToRender = results.slice(-slotCountToRender);
+    slotsToRender.forEach((result, index) => {
+        const isFaded = index < slotsToRender.length - 1; 
+        initialScrollerHTML += createSlotHTML(result, false, isFaded);
+    });
+
+    sequenceElement.innerHTML = initialScrollerHTML; 
+    
+    if (!document.querySelector('.slot.flip-container')) {
+        const mysterySlotHTML = createSlotHTML(null);
+        resultSequenceContainer.insertAdjacentHTML('beforeend', mysterySlotHTML);
+    }
+    
+    const mysterySlot = resultSequenceContainer.querySelector('.slot.flip-container');
+    mysterySlot.style.position = 'absolute';
+    mysterySlot.style.left = ''; 
+    mysterySlot.style.right = config.paddingRight;
+    mysterySlot.style.top = '50%';
+    mysterySlot.style.transform = 'translateY(-50%)';
+    
+    const lastInitialSlot = sequenceElement.lastChild;
+    if (lastInitialSlot) { lastInitialSlot.classList.add('last-drawn'); }
+}
     
     results = initialResults; 
     // 🟢 POPULA A BARRA DE TENDÊNCIAS INICIAL

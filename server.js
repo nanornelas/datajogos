@@ -45,6 +45,10 @@ let globalGameState = 'BETTING'; // Pode ser 'BETTING' ou 'ROLLING'
 let globalTimeLeft = 15; // 15 segundos para apostar
 let globalCurrentResult = null;
 
+// 🟢 A NOVA MEMÓRIA DO SERVIDOR
+const MAX_HISTORY = 50; // Quantas rodadas vamos lembrar
+let gameHistory = []; // O array que guarda tudo
+
 // Função que roda o relógio do Cassino 24/7
 function startGlobalGameLoop() {
     console.log("⏰ Relógio Global do Cassino Iniciado!");
@@ -59,7 +63,12 @@ function startGlobalGameLoop() {
                 globalGameState = 'ROLLING';
                 globalTimeLeft = 5; // 5 segundos de animação da roleta
                 globalCurrentResult = await generateNewResult(); 
-                
+                // 🟢 GUARDA O RESULTADO NA MEMÓRIA!
+                gameHistory.push(globalCurrentResult);
+                // Se passar do limite, apaga a bolinha mais velha (para não travar o servidor)
+                if (gameHistory.length > MAX_HISTORY) {
+                    gameHistory.shift(); 
+                }
                 // Grita para todos os jogadores: "A roleta girou! Eis o resultado!"
                 io.emit('game_roll', { result: globalCurrentResult });
             }
@@ -166,9 +175,7 @@ async function generateNewResult() {
 // =================================================================================
 // 5. ROTAS (Endpoints da API)
 // =================================================================================
-// (Todas as rotas antigas de login, apostas, perfis e admin continuam normais aqui)
-// Para o código não ficar gigantesco aqui no chat, AS ROTAS SÃO EXATAMENTE AS MESMAS DO ARQUIVO ANTERIOR.
-// Cole o resto do seu arquivo server.js antigo (das rotas para baixo) a partir daqui!
+
 
 app.post('/api/auth/register', async (req, res) => {
     const { username, password, affiliateCode } = req.body;
@@ -289,10 +296,19 @@ app.post('/api/bet', authMiddleware, async (req, res) => {
 
 app.get('/api/initial-draw', async (req, res) => {
     try {
-        const initialDraw = await generateNewResult();
-        res.json({ success: true, gameResult: initialDraw });
+        // Se a memória estiver vazia (porque o servidor acabou de ser ligado), 
+        // gera 10 rodadas rápidas para o site não ficar em branco para o primeiro jogador.
+        if (gameHistory.length === 0) {
+            for(let i = 0; i < 10; i++) {
+                const result = await generateNewResult();
+                gameHistory.push(result);
+            }
+        }
+        
+        // 🟢 Devolve o histórico real completo!
+        res.json({ success: true, history: gameHistory });
     } catch (error) {
-        console.error("Erro ao gerar sorteio inicial:", error);
+        console.error("Erro ao enviar histórico inicial:", error);
         res.status(500).json({ success: false, message: "Erro interno do servidor." });
     }
 });
