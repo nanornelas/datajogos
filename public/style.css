@@ -171,7 +171,7 @@ h1 { color: #4CAF50; }
 /* Ajuste para celular, para o banner não ficar muito alto */
 @media (max-width: 500px) {
     .banner-wrapper {
-        height: 180px;
+        height: 100px;
     }
 }
 
