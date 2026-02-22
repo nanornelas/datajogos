@@ -95,7 +95,6 @@ export async function openSettingsModal() {
     if (walletWithdrawBtn) {
         walletWithdrawBtn.onclick = () => {
             closeSettingsModal(); 
-            // Usa a função blindada que definimos no main.js
             if (typeof window.openWithdrawModal === 'function') {
                 window.openWithdrawModal();
             }
@@ -116,6 +115,9 @@ export async function openSettingsModal() {
         const profileData = await profileRes.json();
         const walletData = await walletRes.json();
 
+        // ==========================================
+        // DADOS DO PERFIL E HISTÓRICO DE JOGOS
+        // ==========================================
         if(profileData.success) {
             document.getElementById('profile-email').value = profileData.profile.email || '';
             document.getElementById('profile-cpf').value = profileData.profile.cpf || '';
@@ -126,11 +128,10 @@ export async function openSettingsModal() {
             const currentAvatarEl = document.querySelector(`.avatar-option[data-avatar="${selectedAvatar}"]`);
             if (currentAvatarEl) currentAvatarEl.classList.add('selected');
 
-const historyBody = document.getElementById('game-history-body');
+            const historyBody = document.getElementById('game-history-body');
             
             if (profileData.history.length > 0) {
                 historyBody.innerHTML = profileData.history.map(log => {
-                    // 🟢 O DICIONÁRIO DE TRADUÇÃO PROFISSIONAL
                     const translateBet = (val) => {
                         const dict = { 'RED': 'Vermelho', 'BLUE': 'Azul', 'GREEN': 'Verde', 'EVEN': 'Par', 'ODD': 'Ímpar' };
                         return dict[val] || val;
@@ -141,21 +142,15 @@ const historyBody = document.getElementById('game-history-body');
                         return dict[color] || color;
                     };
 
-                    // Formatação Elegante da Data
                     const dateObj = new Date(log.createdAt);
                     const dateStr = dateObj.toLocaleDateString('pt-BR', {day: '2-digit', month: '2-digit'}) + ' ' + dateObj.toLocaleTimeString('pt-BR', {hour: '2-digit', minute: '2-digit'});
                     
-                    // Traduções aplicadas
                     const betDisplay = translateBet(log.betValue);
                     const resultColorDisplay = translateColor(log.gameResult.color);
-                    
-                    // O Coringa não tem número, então colocamos o "?" para ficar estético
                     const resultNumberDisplay = log.gameResult.color === 'GREEN' ? '?' : log.gameResult.number;
-                    
-                    // Cores de Vitória ou Derrota
-                    const statusColor = log.isWin ? '#4CAF50' : '#E53935'; // Verde para lucro, Vermelho para Red
+                    const statusColor = log.isWin ? '#4CAF50' : '#E53935'; 
                     const statusSignal = log.isWin ? '+' : '-';
-                    const valueDisplay = log.isWin ? log.winnings : log.amount; // Mostra o que ganhou ou o que perdeu
+                    const valueDisplay = log.isWin ? log.winnings : log.amount; 
 
                     return `
                     <tr style="border-bottom: 1px solid #2a2a2a;">
@@ -169,7 +164,11 @@ const historyBody = document.getElementById('game-history-body');
             } else { 
                 historyBody.innerHTML = '<tr><td colspan="4" style="text-align: center; color: #888; padding: 15px;">Nenhum jogo registado ainda.</td></tr>'; 
             }
+        } // 🟢 ESTE ERA O COLCHETE QUE FALTAVA!
 
+        // ==========================================
+        // DADOS DA CARTEIRA E EXTRATO
+        // ==========================================
         if(walletData.success) {
             const walletHistoryBody = document.getElementById('wallet-history-body');
             
@@ -179,24 +178,22 @@ const historyBody = document.getElementById('game-history-body');
                     let color = '#FFF';
                     let signal = '+';
 
-                    // 🟢 TRADUÇÃO E CORES PARA TODOS OS TIPOS DE TRANSAÇÃO
                     if (tx.type === 'DEPOSIT') {
                         typeLabel = 'Depósito';
-                        color = '#4CAF50'; // Verde
+                        color = '#4CAF50'; 
                     } else if (tx.type === 'WITHDRAWAL') {
                         typeLabel = 'Saque';
-                        color = '#E53935'; // Vermelho
+                        color = '#E53935'; 
                         signal = '-';
                     } else if (tx.type === 'CPA' || tx.type === 'NGR') {
                         typeLabel = 'Comissão Afiliado';
-                        color = '#00BCD4'; // Azul Ciano
+                        color = '#00BCD4'; 
                     } else if (tx.type === 'NGR_DEBIT') {
                         typeLabel = 'Ajuste Comissão';
-                        color = '#E53935'; // Vermelho
+                        color = '#E53935'; 
                         signal = '-';
                     }
 
-                    // Formata a data de forma amigável (Dia/Mês/Ano Hora:Minuto)
                     const dateObj = new Date(tx.createdAt);
                     const dateStr = dateObj.toLocaleDateString('pt-BR', {day: '2-digit', month: '2-digit'}) + ' ' + dateObj.toLocaleTimeString('pt-BR', {hour: '2-digit', minute: '2-digit'});
 
@@ -213,7 +210,9 @@ const historyBody = document.getElementById('game-history-body');
                 walletHistoryBody.innerHTML = '<tr><td colspan="4" style="text-align: center; color: #888; padding: 15px;">Nenhuma transação financeira ainda.</td></tr>'; 
             }
         }
-    } catch (error) { console.error("Erro ao carregar configurações:", error); }
+    } catch (error) { 
+        console.error("Erro ao carregar configurações:", error); 
+    }
 }
 
 export function closeSettingsModal() {
