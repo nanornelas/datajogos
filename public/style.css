@@ -7,8 +7,6 @@ html, body {
     /* 🟢 TRAVA DE MOVIMENTO: Impede a tela de balançar para os lados no celular */
     max-width: 100vw;
     overflow-x: hidden; 
-    overflow-y: scroll; 
-    
     font-family: 'Arial', sans-serif;
     background-color: #111; 
     background-image: linear-gradient(135deg, #000000 0%, #333333 100%);
@@ -129,11 +127,16 @@ h1 { color: #4CAF50; }
 }
 
 .main-content-wrapper {
-    flex: 1; /* Ocupa todo o espaço que sobrar */
-    display: flex; flex-direction: column;
+    flex: 1; 
+    display: flex; 
+    flex-direction: column;
     align-items: center;
     min-width: 0; 
-    transition: all 0.3s ease; /* Animação suave ao expandir */
+    
+    /* 🟢 A MÁGICA 2: Garantimos que não há nenhum 'overflow' aqui. 
+       O jogo vai rolar naturalmente com a página inteira. */
+       
+    transition: all 0.3s ease; 
 }
 
 /* =======================================================
