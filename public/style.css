@@ -653,6 +653,15 @@ h1 { color: #4CAF50; }
         grid-template-columns: 1fr 1fr; /* Duas colunas perfeitas */
         gap: 12px;
     }
+    .banner-wrapper {
+        /* Reduzimos o recuo e a largura extra para encaixar na borda mobile */
+        width: calc(100% + 20px); 
+        margin: -10px -10px 20px -10px; 
+        
+        /* 🟢 A TRAVA DE SEGURANÇA: Garante que nunca ultrapasse a largura do próprio site */
+        max-width: 100vw; 
+        box-sizing: border-box;
+    }
     /* O Coringa Verde ganha a linha de baixo inteira para destaque máximo */
     #bet-green {
         grid-column: 1 / span 2; 
