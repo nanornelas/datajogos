@@ -141,21 +141,46 @@ export async function openSettingsModal() {
 
         if(walletData.success) {
             const walletHistoryBody = document.getElementById('wallet-history-body');
+            
             if (walletData.transactions.length > 0) {
                 walletHistoryBody.innerHTML = walletData.transactions.map(tx => {
-                    const isWithdraw = tx.type === 'WITHDRAWAL';
-                    const typeLabel = isWithdraw ? 'Saque' : 'Depósito';
-                    const typeClass = isWithdraw ? 'tx-type-withdraw' : 'tx-type-deposit';
-                    const signal = isWithdraw ? '-' : '+';
+                    let typeLabel = tx.type;
+                    let color = '#FFF';
+                    let signal = '+';
+
+                    // 🟢 TRADUÇÃO E CORES PARA TODOS OS TIPOS DE TRANSAÇÃO
+                    if (tx.type === 'DEPOSIT') {
+                        typeLabel = 'Depósito';
+                        color = '#4CAF50'; // Verde
+                    } else if (tx.type === 'WITHDRAWAL') {
+                        typeLabel = 'Saque';
+                        color = '#E53935'; // Vermelho
+                        signal = '-';
+                    } else if (tx.type === 'CPA' || tx.type === 'NGR') {
+                        typeLabel = 'Comissão Afiliado';
+                        color = '#00BCD4'; // Azul Ciano
+                    } else if (tx.type === 'NGR_DEBIT') {
+                        typeLabel = 'Ajuste Comissão';
+                        color = '#E53935'; // Vermelho
+                        signal = '-';
+                    }
+
+                    // Formata a data de forma amigável (Dia/Mês/Ano Hora:Minuto)
+                    const dateObj = new Date(tx.createdAt);
+                    const dateStr = dateObj.toLocaleDateString('pt-BR', {day: '2-digit', month: '2-digit'}) + ' ' + dateObj.toLocaleTimeString('pt-BR', {hour: '2-digit', minute: '2-digit'});
+
                     return `
-                    <tr>
-                        <td>${new Date(tx.createdAt).toLocaleString('pt-BR', {day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit'})}</td>
-                        <td class="${typeClass}">${typeLabel}</td>
-                        <td><span class="tx-status-completed">Concluído</span></td>
-                        <td class="${typeClass}">${signal} R$ ${tx.amount.toFixed(2)}</td>
+                    <tr style="border-bottom: 1px solid #2a2a2a;">
+                        <td style="padding: 10px 5px; color: #bbb;">${dateStr}</td>
+                        <td style="padding: 10px 5px; color: ${color}; font-weight: bold;">${typeLabel}</td>
+                        <td style="padding: 10px 5px; color: #4CAF50;">Concluído</td>
+                        <td style="padding: 10px 5px; color: ${color}; font-weight: bold;">${signal} R$ ${tx.amount.toFixed(2).replace('.', ',')}</td>
                     </tr>
-                `}).join('');
-            } else { walletHistoryBody.innerHTML = '<tr><td colspan="4" style="text-align: center;">Nenhuma transação financeira ainda.</td></tr>'; }
+                    `;
+                }).join('');
+            } else { 
+                walletHistoryBody.innerHTML = '<tr><td colspan="4" style="text-align: center; color: #888; padding: 15px;">Nenhuma transação financeira ainda.</td></tr>'; 
+            }
         }
     } catch (error) { console.error("Erro ao carregar configurações:", error); }
 }
