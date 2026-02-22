@@ -2,6 +2,9 @@ import { API_BASE_URL, getAuthHeaders } from './utils.js';
 import * as Auth from './auth.js';
 import { socket } from './game.js'; // Importamos o "Rádio" do Cassino
 
+// 🟢 VARIÁVEL DE CONTROLE DE SPAM
+let lastMessageTime = 0;
+
 // Função para renderizar uma única mensagem de chat no HTML
 function renderChatMessage(msg) {
     const roleClass = `role-${msg.role || 'affiliate'}`;
@@ -78,25 +81,46 @@ async function sendChatMessage(e) {
     const message = input.value.trim();
     if (!token || !message) return;
 
+    // 🟢 REGRA 1: Limite de Caracteres (50)
+    if (message.length > 50) {
+        alert('A sua mensagem excedeu o limite máximo de 50 caracteres.');
+        return;
+    }
+
+    // 🟢 REGRA 2: Cooldown de 10 Segundos (Anti-Spam)
+    const now = Date.now();
+    const timeDiff = now - lastMessageTime;
+    if (timeDiff < 10000) { // 10000 milissegundos = 10 segundos
+        const waitTime = Math.ceil((10000 - timeDiff) / 1000);
+        alert(`Calma lá! Aguarde mais ${waitTime} segundos para enviar outra mensagem.`);
+        return;
+    }
+
+    // Bloqueia o input e o botão enquanto envia
     input.disabled = true;
+    if (submitBtn) submitBtn.disabled = true;
 
     try {
         const response = await fetch(`${API_BASE_URL}/chat`, {
             method: 'POST',
             headers: getAuthHeaders(token),
-            body: JSON.stringify({ message })
+            // Corta a mensagem por segurança extra antes de enviar
+            body: JSON.stringify({ message: message.substring(0, 50) }) 
         });
 
         if (response.ok) {
-            // Limpa o input imediatamente. A mensagem vai aparecer quando o servidor gritar de volta pelo Socket!
             input.value = ''; 
+            // 🟢 Atualiza o relógio apenas se a mensagem foi enviada com sucesso
+            lastMessageTime = Date.now(); 
         } else {
-            alert('Erro ao enviar mensagem.');
+            alert('Erro ao enviar mensagem. Tente novamente.');
         }
     } catch (error) {
         console.error("[sendChatMessage] Erro rede:", error);
     } finally {
+        // Desbloqueia a caixa de texto para o jogador
         input.disabled = false;
+        if (submitBtn) submitBtn.disabled = false;
         input.focus();
     }
 }
