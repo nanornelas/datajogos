@@ -130,7 +130,33 @@ function createSlotHTML(result, isNew = false, isFaded = false) {
         return `<div class="${classList}">${contentHTML}</div>`;
     }
 }
+// ==========================================
+// MICRO-HISTÓRICO (BARRA DE TENDÊNCIAS)
+// ==========================================
+function addTrendHistory(result) {
+    const trendList = document.getElementById('trend-history-list');
+    if (!trendList) return;
 
+    const dot = document.createElement('div');
+    dot.className = `trend-dot color-${result.color}`;
+    
+    // O Coringa usa o SVG, os outros usam o número
+    if (result.color === 'GREEN') {
+        dot.innerHTML = `<img src="assets/joker.svg" alt="Coringa">`; 
+    } else {
+        dot.textContent = result.number;
+    }
+    
+    trendList.appendChild(dot);
+    
+    // 🟢 TRAVA DE MEMÓRIA: Mantém apenas os últimos 50 resultados na fita
+    if (trendList.children.length > 50) {
+        trendList.removeChild(trendList.firstChild);
+    }
+    
+    // Rola a fita suavemente para a direita para ver a bola nova
+    trendList.scrollTo({ left: trendList.scrollWidth, behavior: 'smooth' });
+}
 export async function renderSequence(newResult) { 
     const oldLastDrawn = sequenceElement.querySelector('.slot.last-drawn');
     if(oldLastDrawn) { 
@@ -181,6 +207,7 @@ export async function renderSequence(newResult) {
 
     results.shift(); 
     results.push(newResult); 
+    addTrendHistory(newResult);
 
     const slotToRemove = sequenceElement.querySelector('.slot');
     if (slotToRemove) { sequenceElement.removeChild(slotToRemove); }
@@ -249,6 +276,12 @@ export async function initializeSlotsSetup() {
     }
     
     results = initialResults; 
+    // 🟢 POPULA A BARRA DE TENDÊNCIAS INICIAL
+    const trendList = document.getElementById('trend-history-list');
+    if (trendList) {
+        trendList.innerHTML = ''; // Limpa a fita
+        results.forEach(res => addTrendHistory(res)); // Preenche com o array do servidor
+    }
     let initialScrollerHTML = '';
     
     const slotsToRender = results.slice(-slotCountToRender);
