@@ -158,6 +158,11 @@ function addTrendHistory(result) {
     trendList.scrollTo({ left: trendList.scrollWidth, behavior: 'smooth' });
 }
 export async function renderSequence(newResult) { 
+    if (!sequenceElement || !resultSequenceContainer) {
+        results.shift(); 
+        results.push(newResult); 
+        return; 
+    }
     const oldLastDrawn = sequenceElement.querySelector('.slot.last-drawn');
     if(oldLastDrawn) { 
         oldLastDrawn.classList.remove('last-drawn'); 
@@ -259,6 +264,9 @@ function getResponsiveConfig() {
 // FUNÇÃO DE CRIAÇÃO DE SLOTS INICIAL (SETUP)
 // ==========================================
 export async function initializeSlotsSetup() {
+    if (!sequenceElement || !resultSequenceContainer) {
+        return;
+    }
     const config = getResponsiveConfig();
     const slotCountToRender = config.slotCount;
     let initialResults = [];
