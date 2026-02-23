@@ -1,92 +1,143 @@
-// js/afiliado.js
+import { API_BASE_URL, getAuthHeaders } from './utils.js';
 
-// API_BASE_URL é agora GLOBAL, não precisa ser redeclarada se main.js a carregar.
-// Mas para manter o módulo independente, vamos re-importar:
-import { API_BASE_URL } from './utils.js';
-
-// Função para buscar e exibir os dados do afiliado
-export async function loadAffiliateData() { // <-- Adicionado EXPORT
+// ==========================================
+// 1. CARREGAMENTO DOS DADOS E EXTRATO
+// ==========================================
+export async function loadAffiliateData() { 
     const token = localStorage.getItem('jwtToken');
 
     if (!token) {
-        // A verificação de login agora é (provavelmente) feita pelo auth.js/main.js
-        // Mas podemos manter por segurança se a página for acedida diretamente
-        // window.location.href = '/'; 
+        window.location.href = '/'; 
         return;
     }
 
     try {
-        const response = await fetch(`${API_BASE_URL}/affiliate/dashboard?cacheBust=${new Date().getTime()}`, {
-            method: 'GET',
-            headers: {
-                'Authorization': `Bearer ${token}`,
-                'Cache-Control': 'no-cache'
-            }
-        });
+        // A SUA BOA PRÁTICA: Cache-Busting para garantir saldo atualizado!
+        const headers = { ...getAuthHeaders(token), 'Cache-Control': 'no-cache' };
+        const cacheBust = `?t=${new Date().getTime()}`;
 
-        if (!response.ok) {
-            throw new Error('Falha ao buscar dados do afiliado.');
-        }
+        // Faz as duas requisições (Dashboard + Extrato) em paralelo para ser mais rápido
+        const [dashRes, historyRes] = await Promise.all([
+            fetch(`${API_BASE_URL}/affiliate/dashboard${cacheBust}`, { headers }),
+            fetch(`${API_BASE_URL}/influencer/statement${cacheBust}`, { headers })
+        ]);
 
-        const data = await response.json();
+        const dashData = await dashRes.json();
+        const historyData = await historyRes.json();
 
-        if (data.success) {
+        // --- PREENCHE OS CARDS SUPERIORES E LINKS ---
+        if (dashData.success) {
             const referralCodeInput = document.getElementById('referral-code-input');
             const commissionBalanceDisplay = document.getElementById('commission-balance-display');
             const referralCountDisplay = document.getElementById('referral-count-display');
             const referralLinkInput = document.getElementById('referral-link-input');
 
-            if (referralCodeInput) referralCodeInput.value = data.referralCode;
-            if (commissionBalanceDisplay) commissionBalanceDisplay.textContent = `R$ ${data.commissionBalance.replace('.', ',')}`;
-            if (referralCountDisplay) referralCountDisplay.textContent = data.referralCount;
+            if (referralCodeInput) referralCodeInput.value = dashData.referralCode;
+            if (commissionBalanceDisplay) commissionBalanceDisplay.textContent = `R$ ${dashData.commissionBalance.replace('.', ',')}`;
+            if (referralCountDisplay) referralCountDisplay.textContent = dashData.referralCount;
 
-            const siteBaseURL = window.location.origin; // Usa o URL atual do site (ex: https://datajogos.vercel.app)
+            const siteBaseURL = window.location.origin; 
             if (referralLinkInput) {
-                referralLinkInput.value = `${siteBaseURL}/?ref=${data.referralCode}`;
+                referralLinkInput.value = `${siteBaseURL}/?ref=${dashData.referralCode}`;
+            }
+        }
+
+        // --- PREENCHE A NOVA TABELA DE EXTRATO DE GANHOS ---
+        const historyBody = document.getElementById('affiliate-history-body');
+        if (historyBody) {
+            if (historyData.success && historyData.statement && historyData.statement.length > 0) {
+                historyBody.innerHTML = historyData.statement.map(tx => {
+                    const dateObj = new Date(tx.createdAt);
+                    const dateStr = dateObj.toLocaleDateString('pt-BR', {day: '2-digit', month: '2-digit'}) + ' ' + dateObj.toLocaleTimeString('pt-BR', {hour: '2-digit', minute: '2-digit'});
+
+                    let typeDisplay = tx.type;
+                    let color = '#4CAF50';
+                    let signal = '+';
+
+                    if (tx.type === 'CPA') { typeDisplay = 'CPA (Novo Jogador)'; color = '#4CAF50'; } 
+                    else if (tx.type === 'NGR') { typeDisplay = 'RevShare (Lucro)'; color = '#00BCD4'; } 
+                    else if (tx.type === 'NGR_DEBIT') { typeDisplay = 'Ajuste RevShare'; color = '#E53935'; signal = '-'; }
+
+                    const sourceUser = tx.sourceUsername || 'Jogador Oculto';
+
+                    return `
+                        <tr style="border-bottom: 1px solid #2a2a2a;">
+                            <td style="padding: 12px 5px; color: #bbb; font-size: 0.9em;">${dateStr}</td>
+                            <td style="padding: 12px 5px; color: #E0E0E0;">${sourceUser}</td>
+                            <td style="padding: 12px 5px; color: ${color}; font-weight: bold;">${typeDisplay}</td>
+                            <td style="padding: 12px 5px; color: ${color}; font-weight: bold;">${signal} R$ ${tx.amount.toFixed(2).replace('.', ',')}</td>
+                        </tr>
+                    `;
+                }).join('');
+            } else {
+                historyBody.innerHTML = '<tr><td colspan="4" style="text-align: center; color: #888; padding: 20px;">Nenhum ganho registado ainda. Comece a divulgar!</td></tr>';
             }
         }
 
     } catch (error) {
         console.error('Erro ao carregar dados de afiliado:', error);
-        alert('Não foi possível carregar seus dados de afiliado.');
+        const historyBody = document.getElementById('affiliate-history-body');
+        if(historyBody) historyBody.innerHTML = '<tr><td colspan="4" style="text-align: center; color: #E53935; padding: 20px;">Erro de conexão com o servidor.</td></tr>';
     }
 }
 
-// Função para o botão "Copiar" (CÓDIGO)
-export function setupCopyButton() { // <-- Adicionado EXPORT
-    const copyButton = document.getElementById('copy-button');
-    const referralInput = document.getElementById('referral-code-input');
-
-    if (!copyButton || !referralInput) return; 
-
-    copyButton.addEventListener('click', () => {
-        navigator.clipboard.writeText(referralInput.value).then(() => {
-            copyButton.textContent = 'Copiado!';
-            setTimeout(() => { copyButton.textContent = 'Copiar'; }, 2000);
-        }).catch(err => {
-            console.error('Erro ao copiar código: ', err);
-            alert('Não foi possível copiar o código.');
-        });
+// ==========================================
+// 2. FUNÇÃO AUXILIAR PARA OS BOTÕES DE COPIAR (Com Feedback Visual)
+// ==========================================
+function copyAction(inputEl, btnEl) {
+    if (!inputEl || !btnEl) return;
+    
+    // O select() facilita a vida em dispositivos móveis
+    inputEl.select();
+    inputEl.setSelectionRange(0, 99999); 
+    
+    navigator.clipboard.writeText(inputEl.value).then(() => {
+        const originalText = btnEl.textContent;
+        const originalBg = btnEl.style.backgroundColor;
+        
+        // Fica verde piscando sucesso
+        btnEl.textContent = 'Copiado! ✓';
+        btnEl.style.backgroundColor = '#4CAF50';
+        btnEl.style.color = '#FFF';
+        
+        setTimeout(() => {
+            btnEl.textContent = originalText;
+            btnEl.style.backgroundColor = originalBg;
+        }, 2000);
+    }).catch(err => {
+        console.error('Erro ao copiar: ', err);
+        alert('Não foi possível copiar o texto.');
     });
 }
 
-// Função para o botão "Copiar Link"
-export function setupCopyLinkButton() { // <-- Adicionado EXPORT
+// Mantendo os seus exports exatos para não quebrar o main.js
+export function setupCopyButton() { 
+    const copyBtn = document.getElementById('copy-button');
+    const codeInput = document.getElementById('referral-code-input');
+    if (copyBtn) copyBtn.addEventListener('click', () => copyAction(codeInput, copyBtn));
+}
+
+export function setupCopyLinkButton() { 
     const copyLinkBtn = document.getElementById('copy-link-btn');
-    const referralLinkInput = document.getElementById('referral-link-input');
-
-    if (!copyLinkBtn || !referralLinkInput) return; 
-
-    copyLinkBtn.addEventListener('click', () => {
-        navigator.clipboard.writeText(referralLinkInput.value).then(() => {
-            copyLinkBtn.textContent = 'Copiado!';
-            setTimeout(() => { copyLinkBtn.textContent = 'Copiar Link'; }, 2000);
-        }).catch(err => {
-            console.error('Erro ao copiar link: ', err);
-            alert('Não foi possível copiar o link.');
-        });
-    });
+    const linkInput = document.getElementById('referral-link-input');
+    if (copyLinkBtn) copyLinkBtn.addEventListener('click', () => copyAction(linkInput, copyLinkBtn));
 }
 
-// REMOVIDO o 'DOMContentLoaded' daqui
-// document.addEventListener('DOMContentLoaded', () => { ... });
+// 🟢 NOVO EXPORT: Função para ativar o botão de Saque da tela de Afiliados
+export function setupWithdrawalModal() {
+    const withdrawBtn = document.getElementById('btn-withdraw-commission');
+    const modal = document.getElementById('withdraw-modal-overlay');
+    const closeBtn = document.getElementById('withdraw-modal-close-btn');
+    const form = document.getElementById('withdraw-form');
+
+    if (withdrawBtn && modal) withdrawBtn.addEventListener('click', () => { modal.style.display = 'flex'; });
+    if (closeBtn && modal) closeBtn.addEventListener('click', () => { modal.style.display = 'none'; });
+
+    if (form) {
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            alert('A sua solicitação de Saque de Comissões foi recebida! (Integração PIX real na Fase 4.1)');
+            modal.style.display = 'none';
+        });
+    }
+}

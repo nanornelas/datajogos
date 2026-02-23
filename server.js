@@ -599,7 +599,9 @@ app.get('/api/affiliate/dashboard', authMiddleware, async (req, res) => {
 });
 
 app.get('/api/influencer/statement', authMiddleware, async (req, res) => {
-    if (req.user.role !== 'influencer' && req.user.role !== 'admin') { return res.status(403).json({ success: false, message: 'Acesso negado.' }); }
+    if (req.user.role !== 'influencer' && req.user.role !== 'admin' && req.user.role !== 'affiliate') { 
+    return res.status(403).json({ success: false, message: 'Acesso negado.' }); 
+}
     try {
         const { userId } = req.user;
         const transactions = await Transaction.find({ recipientId: userId }).sort({ createdAt: -1 });

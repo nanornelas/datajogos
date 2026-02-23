@@ -214,6 +214,7 @@ async function initializeApp() {
         if (isLoggedIn) loadAffiliateData(); 
         setupCopyButton();
         setupCopyLinkButton();
+        setupWithdrawalModal();
     } else if (currentPath.includes('admin.html')) {
         // Scripts do Admin
     } else {
