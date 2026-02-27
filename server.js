@@ -301,19 +301,19 @@ app.post('/api/bet', authMiddleware, async (req, res) => {
 
 app.get('/api/initial-draw', async (req, res) => {
     try {
-        // Se a memória estiver vazia (porque o servidor acabou de ser ligado), 
-        // gera 10 rodadas rápidas para o site não ficar em branco para o primeiro jogador.
-        if (gameHistory.length === 0) {
-            for(let i = 0; i < 10; i++) {
-                const result = await generateNewResult();
-                gameHistory.push(result);
-            }
+        // 🟢 A CORREÇÃO: Enquanto a memória tiver menos de 10 rodadas, 
+        // ele vai injetar bolas no "passado" (início da lista) para a tela nunca ficar vazia!
+        while (gameHistory.length < 10) {
+            const fakeResult = await generateNewResult();
+            // unshift coloca a bola no início do array, garantindo que a última bola sorteada
+            // no presente (no final do array) continue sendo a oficial do jogo.
+            gameHistory.unshift(fakeResult); 
         }
         
-        // 🟢 Devolve o histórico real completo!
+        // Devolve o histórico completo (com no mínimo 10 bolas garantidas)
         res.json({ success: true, history: gameHistory });
     } catch (error) {
-        console.error("Erro ao enviar histórico inicial:", error);
+        console.error("Erro ao gerar sorteio inicial:", error);
         res.status(500).json({ success: false, message: "Erro interno do servidor." });
     }
 });
