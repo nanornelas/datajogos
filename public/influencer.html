@@ -40,96 +40,90 @@
         </div>
     </header>
 
-    <div class="site-wrapper">
-        <div class="main-content-wrapper">
-            <div class="page-container" style="max-width: 860px;"> 
-                <div class="site-wrapper">
-    <div class="main-content-wrapper">
-        <div class="page-container" style="max-width: 860px;"> 
+    <main style="padding: 100px 20px 40px; display: flex; justify-content: center; align-items: flex-start; min-height: 100vh; box-sizing: border-box;">
+        
+        <div class="page-container" style="width: 100%; max-width: 900px; margin: 0;"> 
             
-            <div style="margin-bottom: 20px; text-align: left;">
-                <a href="/" style="display: inline-block; padding: 8px 15px; background: rgba(0, 188, 212, 0.1); color: #00BCD4; text-decoration: none; font-weight: bold; border: 1px solid #00BCD4; border-radius: 6px; transition: 0.2s;">
-                    &larr; Voltar para o Jogo
-                </a>
+            <a href="/" style="display: inline-flex; align-items: center; gap: 5px; color: #9C27B0; text-decoration: none; font-weight: bold; margin-bottom: 20px; font-size: 1.1em; transition: 0.2s;">
+                &larr; Voltar para o Jogo
+            </a>
+            
+            <div style="text-align: center; margin-bottom: 40px;">
+                <h1 style="color: #9C27B0; margin-bottom: 5px; font-size: 2.2em;">Dashboard VIP Influencer</h1>
+                <p style="color: #B0B0B0; font-size: 1.1em;">Acompanhe os seus ganhos de CPA e RevShare em tempo real.</p>
             </div>
 
-            <div style="text-align: center; margin-bottom: 30px;">
-                <h1 style="color: #9C27B0; margin-bottom: 5px;">Dashboard...</h1>
-                <div style="text-align: center; margin-bottom: 30px;">
-                    <h1 style="color: #9C27B0; margin-bottom: 5px;">Dashboard VIP Influencer</h1>
-                    <p style="color: #B0B0B0;">Acompanhe os seus ganhos em tempo real.</p>
+            <div class="wallet-balances" style="margin-bottom: 40px; display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px;">
+                <div class="wallet-card" style="background: rgba(76, 175, 80, 0.1); border-color: #4CAF50; padding: 25px;">
+                    <span class="wallet-label" style="color: #4CAF50; font-size: 1.1em;">Comissão Disponível</span>
+                    <span class="wallet-amount" id="commission-balance-display" style="color: #4CAF50; font-size: 2.2em;">R$ 0,00</span>
                 </div>
-
-                <div class="wallet-balances" style="margin-bottom: 30px; display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
-                    <div class="wallet-card" style="background: rgba(76, 175, 80, 0.1); border-color: #4CAF50;">
-                        <span class="wallet-label" style="color: #4CAF50;">Comissão Disponível</span>
-                        <span class="wallet-amount" id="commission-balance-display" style="color: #4CAF50;">R$ 0,00</span>
-                    </div>
-                    <div class="wallet-card" style="background: rgba(156, 39, 176, 0.1); border-color: #9C27B0;">
-                        <span class="wallet-label" style="color: #9C27B0;">Total de Indicados</span>
-                        <span class="wallet-amount" id="referral-count-display" style="color: #9C27B0;">0</span>
-                    </div>
+                <div class="wallet-card" style="background: rgba(156, 39, 176, 0.1); border-color: #9C27B0; padding: 25px;">
+                    <span class="wallet-label" style="color: #9C27B0; font-size: 1.1em;">Total de Indicados</span>
+                    <span class="wallet-amount" id="referral-count-display" style="color: #9C27B0; font-size: 2.2em;">0</span>
                 </div>
+            </div>
 
-                <div style="text-align: center; margin-bottom: 40px;">
-                    <button id="btn-withdraw-commission" style="padding: 15px 30px; background-color: #4CAF50; color: white; border: none; border-radius: 8px; font-weight: bold; font-size: 1.1em; cursor: pointer; box-shadow: 0 4px 15px rgba(76, 175, 80, 0.4); transition: 0.2s;">
-                        💸 Solicitar Saque das Comissões
-                    </button>
-                </div>
+            <div style="text-align: center; margin-bottom: 50px;">
+                <button id="btn-withdraw-commission" style="padding: 15px 40px; background-color: #4CAF50; color: white; border: none; border-radius: 8px; font-weight: bold; font-size: 1.2em; cursor: pointer; box-shadow: 0 4px 15px rgba(76, 175, 80, 0.4); transition: transform 0.2s;">
+                    💸 Solicitar Saque das Comissões
+                </button>
+            </div>
 
-                <div style="background: rgba(0,0,0,0.3); padding: 25px; border-radius: 10px; border: 1px solid #2a2a2a; margin-bottom: 40px;">
-                    <h3 style="color: #E0E0E0; margin-top: 0; margin-bottom: 20px;">🔗 Ferramentas de Divulgação</h3>
-                    
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
-                        <div>
-                            <label style="display: block; margin-bottom: 8px; color: #B0B0B0; font-size: 0.9em;">Seu Link Exclusivo:</label>
-                            <div style="display: flex; gap: 10px;">
-                                <input type="text" id="referral-link-input" readonly style="flex-grow: 1; padding: 12px; background-color: #111; border: 1px solid #444; color: #00BCD4; border-radius: 6px; font-size: 0.95em;">
-                                <button id="copy-link-btn" style="padding: 0 20px; background-color: #2a2a2a; color: white; border: 1px solid #444; border-radius: 6px; cursor: pointer; font-weight: bold; transition: 0.2s;">Copiar</button>
-                            </div>
-                        </div>
+            <hr style="border: none; border-top: 1px solid #2a2a2a; margin: 40px 0;">
 
-                        <div>
-                            <label style="display: block; margin-bottom: 8px; color: #B0B0B0; font-size: 0.9em;">Seu Código Manual:</label>
-                            <div style="display: flex; gap: 10px;">
-                                <input type="text" id="referral-code-input" readonly style="flex-grow: 1; padding: 12px; background-color: #111; border: 1px solid #444; color: #FFEB3B; font-weight: bold; border-radius: 6px; text-align: center; font-size: 1.1em;">
-                                <button id="copy-button" style="padding: 0 20px; background-color: #2a2a2a; color: white; border: 1px solid #444; border-radius: 6px; cursor: pointer; font-weight: bold; transition: 0.2s;">Copiar</button>
-                            </div>
-                        </div>
+            <h3 style="color: #E0E0E0; margin-top: 0; margin-bottom: 25px; font-size: 1.4em;">🔗 Ferramentas de Divulgação</h3>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; margin-bottom: 50px;">
+                <div>
+                    <label style="display: block; margin-bottom: 8px; color: #B0B0B0; font-size: 0.95em;">Seu Link Exclusivo:</label>
+                    <div style="display: flex; gap: 10px;">
+                        <input type="text" id="referral-link-input" readonly style="flex-grow: 1; padding: 15px; background-color: #111; border: 1px solid #444; color: #00BCD4; border-radius: 6px; font-size: 1em;">
+                        <button id="copy-link-btn" style="padding: 0 25px; background-color: #2a2a2a; color: white; border: 1px solid #444; border-radius: 6px; cursor: pointer; font-weight: bold; transition: 0.2s;">Copiar</button>
                     </div>
                 </div>
 
-                <h3 style="color: #E0E0E0; margin-bottom: 15px;">📊 Extrato Detalhado de Comissões</h3>
-                <div class="history-table-container" style="margin-bottom: 40px;">
-                    <table class="history-table">
-                        <thead>
-                            <tr>
-                                <th>Data</th>
-                                <th>Origem (Jogador)</th>
-                                <th>Tipo de Ganho</th>
-                                <th>Detalhes</th>
-                                <th>Valor (R$)</th>
-                            </tr>
-                        </thead>
-                        <tbody id="statement-body">
-                            <tr><td colspan="5" style="text-align: center; color: #888; padding: 15px;">Carregando extrato...</td></tr>
-                        </tbody>
-                    </table>
+                <div>
+                    <label style="display: block; margin-bottom: 8px; color: #B0B0B0; font-size: 0.95em;">Seu Código Manual:</label>
+                    <div style="display: flex; gap: 10px;">
+                        <input type="text" id="referral-code-input" readonly style="flex-grow: 1; padding: 15px; background-color: #111; border: 1px solid #444; color: #FFEB3B; font-weight: bold; border-radius: 6px; text-align: center; font-size: 1.2em;">
+                        <button id="copy-button" style="padding: 0 25px; background-color: #2a2a2a; color: white; border: 1px solid #444; border-radius: 6px; cursor: pointer; font-weight: bold; transition: 0.2s;">Copiar</button>
+                    </div>
                 </div>
+            </div>
 
-                <div style="padding: 20px; background: rgba(0, 0, 0, 0.4); border: 1px solid #2a2a2a; border-left: 4px solid #9C27B0; border-radius: 8px; text-align: left;">
-                    <h4 style="color: #9C27B0; margin-top: 0; margin-bottom: 10px; display: flex; align-items: center; gap: 8px; font-size: 1.1em;">
-                        <span>💎</span> Como funcionam os seus Ganhos VIP?
-                    </h4>
-                    <p style="color: #B0B0B0; font-size: 0.95em; line-height: 1.6; margin: 0;">
-                        1. <strong>CPA:</strong> Ganha <strong style="color: #FFF;">R$ 5,00</strong> fixos pelo primeiro depósito/aposta do seu indicado.<br>
-                        2. <strong>RevShare:</strong> Você recebe <strong style="color: #4CAF50;">5%</strong> sobre as perdas da casa (Ganhos) e partilha <strong style="color: #E53935;">3%</strong> nos ganhos dos seus jogadores (Ajustes).<br>
-                        Tudo é calculado e creditado na sua conta em tempo real!
-                    </p>
-                </div>
-            </div> 
+            <hr style="border: none; border-top: 1px solid #2a2a2a; margin: 40px 0;">
+
+            <h3 style="color: #E0E0E0; margin-bottom: 20px; font-size: 1.4em;">📊 Extrato Detalhado de Comissões</h3>
+            <div class="history-table-container" style="margin-bottom: 50px;">
+                <table class="history-table">
+                    <thead>
+                        <tr>
+                            <th>Data</th>
+                            <th>Origem (Jogador)</th>
+                            <th>Tipo de Ganho</th>
+                            <th>Detalhes</th>
+                            <th>Valor (R$)</th>
+                        </tr>
+                    </thead>
+                    <tbody id="statement-body">
+                        <tr><td colspan="5" style="text-align: center; color: #888; padding: 15px;">Carregando extrato...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div style="padding-left: 20px; border-left: 4px solid #9C27B0; margin-bottom: 20px;">
+                <h4 style="color: #9C27B0; margin-top: 0; margin-bottom: 10px; font-size: 1.1em;">
+                    💎 Como funcionam os seus Ganhos VIP?
+                </h4>
+                <p style="color: #888; font-size: 0.95em; line-height: 1.6; margin: 0;">
+                    1. <strong>CPA:</strong> Ganha <strong style="color: #FFF;">R$ 5,00</strong> fixos pelo primeiro depósito/aposta do seu indicado.<br>
+                    2. <strong>RevShare (NGR):</strong> Você recebe <strong style="color: #4CAF50;">5%</strong> sobre as perdas da casa (Ganhos) e partilha <strong style="color: #E53935;">3%</strong> nos ganhos dos seus jogadores (Ajustes).<br>
+                    Tudo é calculado e creditado na sua conta em tempo real!
+                </p>
+            </div>
+
         </div> 
-    </div> 
+    </main> 
 
     <div id="withdraw-modal-overlay" class="auth-modal-overlay" style="display: none; z-index: 10000;">
         <div class="auth-modal-content page-container" style="max-width: 400px; text-align: center;">
