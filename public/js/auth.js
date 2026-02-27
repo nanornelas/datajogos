@@ -302,7 +302,7 @@ export function updateRolloverUI(progress, target) {
     } else { container.style.display = 'none'; }
 }
 
-export function handleLogout() {
+eexport function handleLogout() {
     JWT_TOKEN = null;
     CURRENT_USER_ID = null;
     USER_ROLE = null; 
@@ -310,6 +310,15 @@ export function handleLogout() {
     currentBonusBalance = 0.00;
     localStorage.clear(); 
 
+    // 🟢 A REGRA DE REDIRECIONAMENTO DE SEGURANÇA
+    const currentPath = window.location.pathname;
+    // Se o utilizador estiver em qualquer página que não seja a principal, joga-o para lá!
+    if (currentPath.includes('afiliado.html') || currentPath.includes('influencer.html') || currentPath.includes('admin.html')) {
+        window.location.href = '/';
+        return; // Pára a execução aqui, pois a página vai recarregar
+    }
+
+    // Se ele já estiver na página principal, apenas atualiza a interface
     updateUserUI(null, null); 
     updateRolloverUI(0, 0); 
     updateGameUI.updateBalanceDisplay(0, 0); 
@@ -322,6 +331,7 @@ export function handleLogout() {
     const registerLink = document.getElementById('show-register-link');
     const groupConfirmPass = document.getElementById('group-confirm-password');
     const groupAffiliateCode = document.getElementById('group-affiliate-code');
+    
     if (button && button.dataset.action === 'register') {
         button.dataset.action = 'login';
         button.textContent = 'Entrar';
@@ -329,6 +339,7 @@ export function handleLogout() {
         if (groupConfirmPass) groupConfirmPass.style.display = 'none';
         if (groupAffiliateCode) groupAffiliateCode.style.display = 'none';
     }
+    
     const loginForm = document.getElementById('login-form');
     if (loginForm) loginForm.reset(); 
     const errorMessageEl = document.getElementById('auth-error-message');
