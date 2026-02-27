@@ -302,7 +302,7 @@ export function updateRolloverUI(progress, target) {
     } else { container.style.display = 'none'; }
 }
 
-eexport function handleLogout() {
+export function handleLogout() {
     JWT_TOKEN = null;
     CURRENT_USER_ID = null;
     USER_ROLE = null; 
