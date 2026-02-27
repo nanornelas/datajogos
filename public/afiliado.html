@@ -17,7 +17,7 @@
             
             <div class="nav-balance-area">
                 <div id="nav-balance-real-box" class="nav-balance-box real">
-                    <span class="nav-balance-label">Saldo</span>
+                    <span class="nav-balance-label">Saldo de Jogo</span>
                     <span id="nav-balance-real" class="nav-balance-value">R$ 0,00</span>
                 </div>
             </div>
@@ -32,6 +32,7 @@
                 <div id="user-dropdown-menu" class="dropdown-menu">
                     <a id="admin-panel-link" href="/admin.html" class="dropdown-item" style="display: none;">Painel Admin</a>
                     <a id="influencer-panel-link" href="/influencer.html" class="dropdown-item" style="display: none;">Dashboard Influencer</a>
+                    <a id="affiliate-panel-link" href="/afiliado.html" class="dropdown-item" style="display: none;">Painel Afiliado</a>
                     <a href="/" class="dropdown-item">Ir para o Jogo</a>
                     <a href="#" id="withdraw-link" class="dropdown-item" style="color: #00BCD4; font-weight: bold;">💰 Saque PIX</a>
                     <button id="logout-button" class="dropdown-item dropdown-logout-button">Sair</button>
@@ -40,95 +41,89 @@
         </div>
     </header>
 
-    <div class="site-wrapper">
-        <div class="main-content-wrapper">
-            <div class="page-container" style="max-width: 860px;"> 
-                <div class="site-wrapper">
-    <div class="main-content-wrapper">
-        <div class="page-container" style="max-width: 860px;"> 
+    <main style="position: relative; z-index: 2; padding: 100px 20px 40px; display: flex; justify-content: center; align-items: flex-start; min-height: 100vh; box-sizing: border-box;">
+        
+        <div class="page-container" style="width: 100%; max-width: 900px; margin: 0;"> 
             
-            <div style="margin-bottom: 20px; text-align: left;">
-                <a href="/" style="display: inline-block; padding: 8px 15px; background: rgba(0, 188, 212, 0.1); color: #00BCD4; text-decoration: none; font-weight: bold; border: 1px solid #00BCD4; border-radius: 6px; transition: 0.2s;">
-                    &larr; Voltar para o Jogo
-                </a>
+            <a href="/" style="display: inline-flex; align-items: center; gap: 5px; color: #00BCD4; text-decoration: none; font-weight: bold; margin-bottom: 20px; font-size: 1.1em; transition: 0.2s;">
+                &larr; Voltar para o Jogo
+            </a>
+            
+            <div style="text-align: center; margin-bottom: 40px;">
+                <h1 style="color: #00BCD4; margin-bottom: 5px; font-size: 2.2em;">Dashboard do Afiliado</h1>
+                <p style="color: #B0B0B0; font-size: 1.1em;">Acompanhe os seus ganhos e referências em tempo real.</p>
             </div>
 
-            <div style="text-align: center; margin-bottom: 30px;">
-                <h1 style="color: #9C27B0; margin-bottom: 5px;">Dashboard...</h1>
-                <div style="text-align: center; margin-bottom: 30px;">
-                    <h1 style="color: #9C27B0; margin-bottom: 5px;">Dashboard do Afiliado</h1>
-                    <p style="color: #B0B0B0;">Acompanhe os seus ganhos e referências em tempo real.</p>
+            <div class="wallet-balances" style="margin-bottom: 40px; display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px;">
+                <div class="wallet-card" style="background: rgba(76, 175, 80, 0.1); border-color: #4CAF50; padding: 25px;">
+                    <span class="wallet-label" style="color: #4CAF50; font-size: 1.1em;">Comissão Disponível</span>
+                    <span class="wallet-amount" id="commission-balance-display" style="color: #4CAF50; font-size: 2.2em;">R$ 0,00</span>
                 </div>
-
-                <div class="wallet-balances" style="margin-bottom: 30px; display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
-                    <div class="wallet-card" style="background: rgba(76, 175, 80, 0.1); border-color: #4CAF50;">
-                        <span class="wallet-label" style="color: #4CAF50;">Comissão Disponível</span>
-                        <span class="wallet-amount" id="commission-balance-display" style="color: #4CAF50;">R$ 0,00</span>
-                    </div>
-                    <div class="wallet-card" style="background: rgba(0, 188, 212, 0.1); border-color: #00BCD4;">
-                        <span class="wallet-label" style="color: #00BCD4;">Total de Indicados</span>
-                        <span class="wallet-amount" id="referral-count-display" style="color: #00BCD4;">0</span>
-                    </div>
+                <div class="wallet-card" style="background: rgba(0, 188, 212, 0.1); border-color: #00BCD4; padding: 25px;">
+                    <span class="wallet-label" style="color: #00BCD4; font-size: 1.1em;">Total de Indicados</span>
+                    <span class="wallet-amount" id="referral-count-display" style="color: #00BCD4; font-size: 2.2em;">0</span>
                 </div>
+            </div>
 
-                <div style="text-align: center; margin-bottom: 40px;">
-                    <button id="btn-withdraw-commission" style="padding: 15px 30px; background-color: #4CAF50; color: white; border: none; border-radius: 8px; font-weight: bold; font-size: 1.1em; cursor: pointer; box-shadow: 0 4px 15px rgba(76, 175, 80, 0.4); transition: 0.2s;">
-                        💸 Solicitar Saque das Comissões
-                    </button>
-                </div>
+            <div style="text-align: center; margin-bottom: 50px;">
+                <button id="btn-withdraw-commission" style="padding: 15px 40px; background-color: #4CAF50; color: white; border: none; border-radius: 8px; font-weight: bold; font-size: 1.2em; cursor: pointer; box-shadow: 0 4px 15px rgba(76, 175, 80, 0.4); transition: transform 0.2s;">
+                    💸 Solicitar Saque das Comissões
+                </button>
+            </div>
 
-                <div style="background: rgba(0,0,0,0.3); padding: 25px; border-radius: 10px; border: 1px solid #2a2a2a; margin-bottom: 40px;">
-                    <h3 style="color: #E0E0E0; margin-top: 0; margin-bottom: 20px;">🔗 Ferramentas de Divulgação</h3>
-                    
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
-                        <div>
-                            <label style="display: block; margin-bottom: 8px; color: #B0B0B0; font-size: 0.9em;">Seu Link Exclusivo:</label>
-                            <div style="display: flex; gap: 10px;">
-                                <input type="text" id="referral-link-input" readonly style="flex-grow: 1; padding: 12px; background-color: #111; border: 1px solid #444; color: #00BCD4; border-radius: 6px; font-size: 0.95em;">
-                                <button id="copy-link-btn" style="padding: 0 20px; background-color: #2a2a2a; color: white; border: 1px solid #444; border-radius: 6px; cursor: pointer; font-weight: bold; transition: 0.2s;">Copiar</button>
-                            </div>
-                        </div>
+            <hr style="border: none; border-top: 1px solid #2a2a2a; margin: 40px 0;">
 
-                        <div>
-                            <label style="display: block; margin-bottom: 8px; color: #B0B0B0; font-size: 0.9em;">Seu Código Manual:</label>
-                            <div style="display: flex; gap: 10px;">
-                                <input type="text" id="referral-code-input" readonly style="flex-grow: 1; padding: 12px; background-color: #111; border: 1px solid #444; color: #FFEB3B; font-weight: bold; border-radius: 6px; text-align: center; font-size: 1.1em;">
-                                <button id="copy-button" style="padding: 0 20px; background-color: #2a2a2a; color: white; border: 1px solid #444; border-radius: 6px; cursor: pointer; font-weight: bold; transition: 0.2s;">Copiar</button>
-                            </div>
-                        </div>
+            <h3 style="color: #E0E0E0; margin-top: 0; margin-bottom: 25px; font-size: 1.4em;">🔗 Ferramentas de Divulgação</h3>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; margin-bottom: 50px;">
+                <div>
+                    <label style="display: block; margin-bottom: 8px; color: #B0B0B0; font-size: 0.95em;">Seu Link Exclusivo:</label>
+                    <div style="display: flex; gap: 10px;">
+                        <input type="text" id="referral-link-input" readonly style="flex-grow: 1; padding: 15px; background-color: #111; border: 1px solid #444; color: #00BCD4; border-radius: 6px; font-size: 1em;">
+                        <button id="copy-link-btn" style="padding: 0 25px; background-color: #2a2a2a; color: white; border: 1px solid #444; border-radius: 6px; cursor: pointer; font-weight: bold; transition: 0.2s;">Copiar</button>
                     </div>
                 </div>
 
-                <h3 style="color: #E0E0E0; margin-bottom: 15px;">📊 Extrato de Ganhos</h3>
-                <div class="history-table-container" style="margin-bottom: 40px;">
-                    <table class="history-table">
-                        <thead>
-                            <tr>
-                                <th>Data</th>
-                                <th>Jogador</th>
-                                <th>Tipo de Ganho</th>
-                                <th>Comissão (R$)</th>
-                            </tr>
-                        </thead>
-                        <tbody id="affiliate-history-body">
-                            <tr><td colspan="4" style="text-align: center; color: #888; padding: 15px;">Carregando histórico...</td></tr>
-                        </tbody>
-                    </table>
+                <div>
+                    <label style="display: block; margin-bottom: 8px; color: #B0B0B0; font-size: 0.95em;">Seu Código Manual:</label>
+                    <div style="display: flex; gap: 10px;">
+                        <input type="text" id="referral-code-input" readonly style="flex-grow: 1; padding: 15px; background-color: #111; border: 1px solid #444; color: #FFEB3B; font-weight: bold; border-radius: 6px; text-align: center; font-size: 1.2em;">
+                        <button id="copy-button" style="padding: 0 25px; background-color: #2a2a2a; color: white; border: 1px solid #444; border-radius: 6px; cursor: pointer; font-weight: bold; transition: 0.2s;">Copiar</button>
+                    </div>
                 </div>
+            </div>
 
-                <div style="padding: 20px; background: rgba(0, 0, 0, 0.4); border: 1px solid #2a2a2a; border-left: 4px solid #00BCD4; border-radius: 8px; text-align: left;">
-                    <h4 style="color: #00BCD4; margin-top: 0; margin-bottom: 10px; display: flex; align-items: center; gap: 8px; font-size: 1.1em;">
-                        <span>💡</span> Como funciona?
-                    </h4>
-                    <p style="color: #B0B0B0; font-size: 0.95em; line-height: 1.6; margin: 0;">
-                        1. Divulgue o seu <strong>Link</strong> ou <strong>Código</strong> para novos jogadores.<br>
-                        2. <strong>CPA:</strong> Ganhe <strong style="color: #FFF;">R$ 5,00</strong> fixos assim que o seu indicado fizer a primeira aposta.<br>
-                        3. Acompanhe os seus ganhos em tempo real na tabela acima e solicite saques sempre que quiser.
-                    </p>
-                </div>
-            </div> 
+            <hr style="border: none; border-top: 1px solid #2a2a2a; margin: 40px 0;">
+
+            <h3 style="color: #E0E0E0; margin-bottom: 20px; font-size: 1.4em;">📊 Extrato de Ganhos</h3>
+            <div class="history-table-container" style="margin-bottom: 50px;">
+                <table class="history-table">
+                    <thead>
+                        <tr>
+                            <th>Data</th>
+                            <th>Jogador</th>
+                            <th>Tipo de Ganho</th>
+                            <th>Comissão (R$)</th>
+                        </tr>
+                    </thead>
+                    <tbody id="affiliate-history-body">
+                        <tr><td colspan="4" style="text-align: center; color: #888; padding: 15px;">Carregando extrato...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div style="padding-left: 20px; border-left: 4px solid #00BCD4; margin-bottom: 20px;">
+                <h4 style="color: #00BCD4; margin-top: 0; margin-bottom: 10px; font-size: 1.1em;">
+                    💡 Como funciona a sua comissão?
+                </h4>
+                <p style="color: #888; font-size: 0.95em; line-height: 1.6; margin: 0;">
+                    1. Divulgue o seu <strong>Link</strong> ou <strong>Código de Afiliado</strong> para novos jogadores.<br>
+                    2. Assim que o seu convidado criar uma conta e fizer a sua primeira aposta, você ganha <strong style="color: #FFF;">R$ 5,00 (CPA)</strong> de comissão.<br>
+                    3. O valor é creditado automaticamente no seu saldo e você pode sacar a qualquer momento!
+                </p>
+            </div>
+
         </div> 
-    </div> 
+    </main> 
 
     <div id="withdraw-modal-overlay" class="auth-modal-overlay" style="display: none; z-index: 10000;">
         <div class="auth-modal-content page-container" style="max-width: 400px; text-align: center;">
@@ -152,6 +147,7 @@
             </form>
         </div>
     </div>
+
     <script src="https://cdn.socket.io/4.7.4/socket.io.min.js"></script>
     <script type="module" src="js/main.js"></script> 
     <script type="module" src="js/afiliado.js"></script> 
