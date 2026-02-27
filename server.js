@@ -221,13 +221,18 @@ app.post('/api/bet', authMiddleware, async (req, res) => {
     }
 
     try {
-        let betFromReal = 0, betFromBonus = 0;
-        if (user.balance >= amount) { user.balance -= amount; betFromReal = amount; } 
-        else { betFromReal = user.balance; betFromBonus = amount - betFromReal; user.balance = 0; user.bonusBalance -= betFromBonus; }
-        if (user.wageringTarget > 0) { user.wageringProgress += amount; }
-        
-        const finalResult = await generateNewResult();
-       let isWin = false;
+            let betFromReal = 0, betFromBonus = 0;
+            if (user.balance >= amount) { user.balance -= amount; betFromReal = amount; } 
+            else { betFromReal = user.balance; betFromBonus = amount - betFromReal; user.balance = 0; user.bonusBalance -= betFromBonus; }
+            if (user.wageringTarget > 0) { user.wageringProgress += amount; }
+            
+            // 🟢 A MÁGICA: O servidor agora usa EXATAMENTE a última bola que foi sorteada no histórico global!
+            if (gameHistory.length === 0) {
+                return res.status(400).json({ success: false, message: "Aguarde o primeiro sorteio da rodada." });
+            }
+            const finalResult = gameHistory[gameHistory.length - 1]; 
+            
+            let isWin = false;
         if (betType === 'COLOR') { 
             isWin = (betValue === finalResult.color); 
         } 
