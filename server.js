@@ -590,6 +590,39 @@ app.get('/api/live-feed', authMiddleware, async (req, res) => {
 });
 
 // ===== ROTAS DE AFILIADO / INFLUENCER =====
+// ROTA: Transferir Comissão para Saldo de Jogo
+app.post('/api/affiliate/transfer-to-balance', authMiddleware, async (req, res) => {
+    try {
+        const { userId } = req.user;
+        const { amount } = req.body;
+
+        if (!amount || amount <= 0) {
+            return res.status(400).json({ success: false, message: 'Valor inválido.' });
+        }
+
+        const user = await User.findOne({ userId });
+
+        if (!user || user.commissionBalance < amount) {
+            return res.status(400).json({ success: false, message: 'Saldo de comissão insuficiente.' });
+        }
+
+        // Faz a matemática: tira da comissão, põe no saldo real
+        user.commissionBalance -= amount;
+        user.balance += amount;
+        await user.save();
+
+        res.json({ 
+            success: true, 
+            message: 'Transferência concluída!', 
+            newCommissionBalance: user.commissionBalance,
+            newBalance: user.balance
+        });
+
+    } catch (error) {
+        console.error("Erro ao transferir comissão:", error);
+        res.status(500).json({ success: false, message: 'Erro interno no servidor.' });
+    }
+});
 app.get('/api/affiliate/dashboard', authMiddleware, async (req, res) => {
     try {
         const { userId } = req.user;
