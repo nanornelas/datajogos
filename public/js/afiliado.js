@@ -1,31 +1,37 @@
 import { API_BASE_URL, getAuthHeaders } from './utils.js';
 
-// ==========================================
-// 1. CARREGAMENTO DOS DADOS E EXTRATO
-// ==========================================
-export async function loadAffiliateData() { 
+document.addEventListener('DOMContentLoaded', async () => {
     const token = localStorage.getItem('jwtToken');
 
+    // 1. Barreira de Segurança
     if (!token) {
         window.location.href = '/'; 
         return;
     }
 
+    // 2. Carrega as métricas e o extrato de forma resiliente
+    await loadInfluencerDashboard(token);
+
+    // 3. Ativa os botões de "Copiar"
+    setupCopyButtons();
+
+    // 4. Ativa os Modais
+    setupWithdrawalModal();
+    setupTransferModal();
+});
+
+// ==========================================
+// PUXAR DADOS DO SERVIDOR
+// ==========================================
+async function loadInfluencerDashboard(token) {
+    const headers = { ...getAuthHeaders(token), 'Cache-Control': 'no-cache' };
+    const cacheBust = `?t=${new Date().getTime()}`;
+
+    // 🟢 PASSO 1: CARREGA O PAINEL E OS LINKS
     try {
-        // A SUA BOA PRÁTICA: Cache-Busting para garantir saldo atualizado!
-        const headers = { ...getAuthHeaders(token), 'Cache-Control': 'no-cache' };
-        const cacheBust = `?t=${new Date().getTime()}`;
-
-        // Faz as duas requisições (Dashboard + Extrato) em paralelo para ser mais rápido
-        const [dashRes, historyRes] = await Promise.all([
-            fetch(`${API_BASE_URL}/affiliate/dashboard${cacheBust}`, { headers }),
-            fetch(`${API_BASE_URL}/influencer/statement${cacheBust}`, { headers })
-        ]);
-
+        const dashRes = await fetch(`${API_BASE_URL}/affiliate/dashboard${cacheBust}`, { headers });
         const dashData = await dashRes.json();
-        const historyData = await historyRes.json();
 
-        // --- PREENCHE OS CARDS SUPERIORES E LINKS ---
         if (dashData.success) {
             const referralCodeInput = document.getElementById('referral-code-input');
             const commissionBalanceDisplay = document.getElementById('commission-balance-display');
@@ -36,51 +42,16 @@ export async function loadAffiliateData() {
             if (commissionBalanceDisplay) commissionBalanceDisplay.textContent = `R$ ${dashData.commissionBalance.replace('.', ',')}`;
             if (referralCountDisplay) referralCountDisplay.textContent = dashData.referralCount;
 
-            const siteBaseURL = window.location.origin; 
+            // Preenche o Link automaticamente com o domínio atual
             if (referralLinkInput) {
-                referralLinkInput.value = `${siteBaseURL}/?ref=${dashData.referralCode}`;
+                referralLinkInput.value = `${window.location.origin}/?ref=${dashData.referralCode}`;
             }
         }
-
-        // --- PREENCHE A NOVA TABELA DE EXTRATO DE GANHOS ---
-        const historyBody = document.getElementById('affiliate-history-body');
-        if (historyBody) {
-            if (historyData.success && historyData.statement && historyData.statement.length > 0) {
-                historyBody.innerHTML = historyData.statement.map(tx => {
-                    const dateObj = new Date(tx.createdAt);
-                    const dateStr = dateObj.toLocaleDateString('pt-BR', {day: '2-digit', month: '2-digit'}) + ' ' + dateObj.toLocaleTimeString('pt-BR', {hour: '2-digit', minute: '2-digit'});
-
-                    let typeDisplay = tx.type;
-                    let color = '#4CAF50';
-                    let signal = '+';
-
-                    if (tx.type === 'CPA') { typeDisplay = 'CPA (Novo Jogador)'; color = '#4CAF50'; } 
-                    else if (tx.type === 'NGR') { typeDisplay = 'RevShare (Lucro)'; color = '#00BCD4'; } 
-                    else if (tx.type === 'NGR_DEBIT') { typeDisplay = 'Ajuste RevShare'; color = '#E53935'; signal = '-'; }
-
-                    const sourceUser = tx.sourceUsername || 'Jogador Oculto';
-
-                    return `
-                        <tr style="border-bottom: 1px solid #2a2a2a;">
-                            <td style="padding: 12px 5px; color: #bbb; font-size: 0.9em;">${dateStr}</td>
-                            <td style="padding: 12px 5px; color: #E0E0E0;">${sourceUser}</td>
-                            <td style="padding: 12px 5px; color: ${color}; font-weight: bold;">${typeDisplay}</td>
-                            <td style="padding: 12px 5px; color: ${color}; font-weight: bold;">${signal} R$ ${tx.amount.toFixed(2).replace('.', ',')}</td>
-                        </tr>
-                    `;
-                }).join('');
-            } else {
-                historyBody.innerHTML = '<tr><td colspan="4" style="text-align: center; color: #888; padding: 20px;">Nenhum ganho registado ainda. Comece a divulgar!</td></tr>';
-            }
-        }
-
     } catch (error) {
-        console.error('Erro ao carregar dados de afiliado:', error);
-        const historyBody = document.getElementById('affiliate-history-body');
-        if(historyBody) historyBody.innerHTML = '<tr><td colspan="4" style="text-align: center; color: #E53935; padding: 20px;">Erro de conexão com o servidor.</td></tr>';
+        console.error('Erro ao carregar o dashboard principal:', error);
     }
-}
-// 🟢 PASSO 1.5: CARREGA O SALDO PRINCIPAL NA BARRA DO TOPO
+
+    // 🟢 PASSO 1.5: CARREGA O SALDO PRINCIPAL NA BARRA DO TOPO
     try {
         const userId = localStorage.getItem('userId');
         const balRes = await fetch(`${API_BASE_URL}/balance/${userId}`, { headers });
@@ -95,50 +66,102 @@ export async function loadAffiliateData() {
     } catch (error) {
         console.error('Erro ao sincronizar saldo principal:', error);
     }
-// ==========================================
-// 2. FUNÇÃO AUXILIAR PARA OS BOTÕES DE COPIAR (Com Feedback Visual)
-// ==========================================
-function copyAction(inputEl, btnEl) {
-    if (!inputEl || !btnEl) return;
-    
-    // O select() facilita a vida em dispositivos móveis
-    inputEl.select();
-    inputEl.setSelectionRange(0, 99999); 
-    
-    navigator.clipboard.writeText(inputEl.value).then(() => {
-        const originalText = btnEl.textContent;
-        const originalBg = btnEl.style.backgroundColor;
+
+    // 🟢 PASSO 2: CARREGA O EXTRATO DETALHADO
+    try {
+        const historyRes = await fetch(`${API_BASE_URL}/influencer/statement${cacheBust}`, { headers });
+        const historyData = await historyRes.json();
         
-        // Fica verde piscando sucesso
-        btnEl.textContent = 'Copiado! ✓';
-        btnEl.style.backgroundColor = '#4CAF50';
-        btnEl.style.color = '#FFF';
+        const historyBody = document.getElementById('statement-body');
         
-        setTimeout(() => {
-            btnEl.textContent = originalText;
-            btnEl.style.backgroundColor = originalBg;
-        }, 2000);
-    }).catch(err => {
-        console.error('Erro ao copiar: ', err);
-        alert('Não foi possível copiar o texto.');
-    });
+        if (historyBody) {
+            if (historyData.success && historyData.statement && historyData.statement.length > 0) {
+                historyBody.innerHTML = historyData.statement.map(tx => {
+                    const dateObj = new Date(tx.createdAt);
+                    const dateStr = dateObj.toLocaleDateString('pt-BR', {day: '2-digit', month: '2-digit'}) + ' ' + dateObj.toLocaleTimeString('pt-BR', {hour: '2-digit', minute: '2-digit'});
+
+                    let typeDisplay = tx.type;
+                    let color = '#4CAF50';
+                    let signal = '+';
+                    let details = '-';
+
+                    // Lógica VIP: Tradução, Cores e Detalhamento da Aposta
+                    if (tx.type === 'NGR') {
+                        typeDisplay = 'RevShare (Lucro)';
+                        color = '#9C27B0'; // Roxo VIP
+                        details = `Perda da banca: R$ ${tx.sourceBetAmount ? tx.sourceBetAmount.toFixed(2).replace('.', ',') : '0,00'}`;
+                    } else if (tx.type === 'NGR_DEBIT') {
+                        typeDisplay = 'Ajuste RevShare';
+                        color = '#E53935'; // Vermelho
+                        signal = '-';
+                        details = `Ganho do jogador: R$ ${tx.sourcePlayerProfit ? tx.sourcePlayerProfit.toFixed(2).replace('.', ',') : '0,00'}`;
+                    } else if (tx.type === 'CPA') {
+                        typeDisplay = 'CPA (Indicação)';
+                        color = '#4CAF50'; // Verde
+                        details = 'Primeira aposta do indicado';
+                    }
+
+                    const sourceUser = tx.sourceUsername || 'Jogador Oculto';
+
+                    return `
+                        <tr style="border-bottom: 1px solid #2a2a2a;">
+                            <td style="padding: 12px 5px; color: #bbb; font-size: 0.9em;">${dateStr}</td>
+                            <td style="padding: 12px 5px; color: #E0E0E0;">${sourceUser}</td>
+                            <td style="padding: 12px 5px; color: ${color}; font-weight: bold;">${typeDisplay}</td>
+                            <td style="padding: 12px 5px; color: #B0B0B0; font-size: 0.9em;">${details}</td>
+                            <td style="padding: 12px 5px; color: ${color}; font-weight: bold;">${signal} R$ ${tx.amount.toFixed(2).replace('.', ',')}</td>
+                        </tr>
+                    `;
+                }).join('');
+            } else {
+                historyBody.innerHTML = '<tr><td colspan="5" style="text-align: center; color: #888; padding: 20px;">Nenhum ganho registado ainda. Comece a divulgar!</td></tr>';
+            }
+        }
+    } catch (error) {
+        console.error('Erro ao carregar o extrato de ganhos:', error);
+        const historyBody = document.getElementById('statement-body');
+        if (historyBody) historyBody.innerHTML = '<tr><td colspan="5" style="text-align: center; color: #E53935; padding: 20px;">Sem histórico no momento.</td></tr>';
+    }
 }
 
-// Mantendo os seus exports exatos para não quebrar o main.js
-export function setupCopyButton() { 
-    const copyBtn = document.getElementById('copy-button');
-    const codeInput = document.getElementById('referral-code-input');
-    if (copyBtn) copyBtn.addEventListener('click', () => copyAction(codeInput, copyBtn));
-}
-
-export function setupCopyLinkButton() { 
+// ==========================================
+// BOTÕES DE COPIAR LINK E CÓDIGO
+// ==========================================
+function setupCopyButtons() {
     const copyLinkBtn = document.getElementById('copy-link-btn');
+    const copyCodeBtn = document.getElementById('copy-button');
     const linkInput = document.getElementById('referral-link-input');
+    const codeInput = document.getElementById('referral-code-input');
+
+    const copyAction = (inputEl, btnEl) => {
+        if (!inputEl || !btnEl) return;
+        
+        inputEl.select();
+        inputEl.setSelectionRange(0, 99999); 
+        
+        navigator.clipboard.writeText(inputEl.value).then(() => {
+            const originalText = btnEl.textContent;
+            const originalBg = btnEl.style.backgroundColor;
+            
+            btnEl.textContent = 'Copiado! ✓';
+            btnEl.style.backgroundColor = '#9C27B0'; // Roxo VIP no feedback
+            btnEl.style.color = '#FFF';
+            
+            setTimeout(() => {
+                btnEl.textContent = originalText;
+                btnEl.style.backgroundColor = originalBg;
+            }, 2000);
+        });
+    };
+
     if (copyLinkBtn) copyLinkBtn.addEventListener('click', () => copyAction(linkInput, copyLinkBtn));
+    if (copyCodeBtn) copyCodeBtn.addEventListener('click', () => copyAction(codeInput, copyCodeBtn));
 }
 
-// 🟢 NOVO EXPORT: Função para ativar o botão de Saque da tela de Afiliados
-export function setupWithdrawalModal() {
+// ==========================================
+// MODAL DE SAQUE
+// ==========================================
+function setupWithdrawalModal() {
     const withdrawBtn = document.getElementById('btn-withdraw-commission');
     const modal = document.getElementById('withdraw-modal-overlay');
     const closeBtn = document.getElementById('withdraw-modal-close-btn');
@@ -147,34 +170,34 @@ export function setupWithdrawalModal() {
     if (withdrawBtn && modal) withdrawBtn.addEventListener('click', () => { modal.style.display = 'flex'; });
     if (closeBtn && modal) closeBtn.addEventListener('click', () => { modal.style.display = 'none'; });
 
-    if (form) {
+    if (form && modal) {
         form.addEventListener('submit', async (e) => {
             e.preventDefault();
-            alert('A sua solicitação de Saque de Comissões foi recebida! (Integração PIX real na Fase 4.1)');
+            alert('A sua solicitação de Saque VIP foi recebida! (Integração PIX real na Fase 4.1)');
             modal.style.display = 'none';
         });
     }
 }
 
-/// ==========================================
-// TRANSFERÊNCIA PARA O SALDO DE JOGO (MODAL PREMIUM)
 // ==========================================
-export function setupTransferModal() {
+// TRANSFERÊNCIA PARA O SALDO DE JOGO (MODAL VIP)
+// ==========================================
+function setupTransferModal() {
     const transferBtn = document.getElementById('btn-transfer-commission');
     
     if (transferBtn) {
         transferBtn.addEventListener('click', () => {
-            // 1. Remove qualquer versão antiga presa na tela
+            // Remove qualquer versão antiga presa na tela
             const oldModal = document.getElementById('transfer-modal-custom');
             if (oldModal) oldModal.remove();
 
-            // 2. Desenha o Modal Premium (Estilo Afiliado - Ciano)
+            // Desenha o Modal Premium (Estilo VIP - Roxo)
             const modalHtml = `
                 <div id="transfer-modal-custom" style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background-color: rgba(0, 0, 0, 0.85); z-index: 2147483647; display: flex; justify-content: center; align-items: center; backdrop-filter: blur(5px);">
-                    <div style="background-color: #1A1A1D; border: 1px solid #00BCD4; border-radius: 12px; padding: 30px; width: 90%; max-width: 400px; box-shadow: 0 10px 40px rgba(0, 188, 212, 0.3); text-align: center; position: relative;">
+                    <div style="background-color: #1A1A1D; border: 1px solid #9C27B0; border-radius: 12px; padding: 30px; width: 90%; max-width: 400px; box-shadow: 0 10px 40px rgba(156, 39, 176, 0.3); text-align: center; position: relative;">
                         <button id="close-transfer-btn" style="position: absolute; top: 15px; right: 20px; background: none; border: none; font-size: 2em; color: #888; cursor: pointer; padding: 0; line-height: 1;">&times;</button>
                         
-                        <h2 style="color: #00BCD4; margin-top: 0; margin-bottom: 10px;">Transferir Comissão</h2>
+                        <h2 style="color: #9C27B0; margin-top: 0; margin-bottom: 10px;">Transferir Comissão</h2>
                         <p style="color: #aaa; font-size: 0.9em; margin-bottom: 25px;">Envie os seus ganhos direto para o Saldo de Jogo para apostar.</p>
 
                         <div style="margin-bottom: 20px; text-align: left;">
@@ -186,7 +209,7 @@ export function setupTransferModal() {
 
                         <div style="display: flex; gap: 10px;">
                             <button id="cancel-transfer-btn" style="flex: 1; padding: 12px; background: transparent; color: #888; border: 1px solid #444; border-radius: 6px; font-weight: bold; cursor: pointer; transition: 0.2s;">Cancelar</button>
-                            <button id="confirm-transfer-btn" style="flex: 1; padding: 12px; background-color: #00BCD4; color: #121212; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; box-shadow: 0 4px 10px rgba(0, 188, 212, 0.3);">Confirmar</button>
+                            <button id="confirm-transfer-btn" style="flex: 1; padding: 12px; background-color: #9C27B0; color: #FFF; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; box-shadow: 0 4px 10px rgba(156, 39, 176, 0.3);">Confirmar</button>
                         </div>
                     </div>
                 </div>
@@ -195,7 +218,7 @@ export function setupTransferModal() {
             // Injeta o modal no HTML
             document.body.insertAdjacentHTML('beforeend', modalHtml);
 
-            // 3. Controlos do Modal
+            // Controlos do Modal
             const modal = document.getElementById('transfer-modal-custom');
             const closeBtn = document.getElementById('close-transfer-btn');
             const cancelBtn = document.getElementById('cancel-transfer-btn');
@@ -203,7 +226,7 @@ export function setupTransferModal() {
             const amountInput = document.getElementById('transfer-amount-input');
             const statusMsg = document.getElementById('transfer-status-msg');
 
-            // Foco automático no input para facilitar a vida do utilizador
+            // Foco automático
             setTimeout(() => amountInput.focus(), 100);
 
             const closeModal = () => modal.remove();
@@ -211,7 +234,7 @@ export function setupTransferModal() {
             cancelBtn.onclick = closeModal;
             modal.onclick = (e) => { if (e.target === modal) closeModal(); };
 
-            // 4. Lógica de Envio
+            // Lógica de Envio
             confirmBtn.onclick = async () => {
                 const amount = parseFloat(amountInput.value);
 
@@ -221,8 +244,8 @@ export function setupTransferModal() {
                 }
 
                 statusMsg.style.color = 'white';
-                statusMsg.textContent = 'Processando...';
-                confirmBtn.disabled = true; // Evita duplo clique
+                statusMsg.textContent = 'A processar...';
+                confirmBtn.disabled = true; 
 
                 const token = localStorage.getItem('jwtToken');
 
@@ -241,7 +264,6 @@ export function setupTransferModal() {
                     if (data.success) {
                         statusMsg.style.color = '#4CAF50';
                         statusMsg.textContent = `Sucesso! R$ ${amount.toFixed(2)} transferidos.`;
-                        // Recarrega a página após 1.5 segundos para atualizar os saldos
                         setTimeout(() => {
                             closeModal();
                             window.location.reload(); 
