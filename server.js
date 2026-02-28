@@ -273,7 +273,16 @@ app.post('/api/bet', authMiddleware, async (req, res) => {
                     const playerProfit = winnings - amount;
                     if (playerProfit > 0) {
                         const commissionDebit = playerProfit * INFLUENCER_NGR_WIN_RATE;
+                        
+                        // Debita o valor do influencer
                         partner.commissionBalance -= commissionDebit;
+                        
+                        // 🟢 A TRAVA BLINDADA (No Negative Carryover)
+                        // Se a conta der negativo, trava no zero!
+                        if (partner.commissionBalance < 0) {
+                            partner.commissionBalance = 0;
+                        }
+
                         await Transaction.create({ recipientId: partner.userId, sourceUserId: user.userId, sourceUsername: user.username, type: 'NGR_DEBIT', amount: commissionDebit, sourceBetAmount: amount, sourcePlayerProfit: playerProfit });
                     }
                 } else {
