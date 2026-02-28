@@ -221,18 +221,18 @@ app.post('/api/bet', authMiddleware, async (req, res) => {
     }
 
     try {
-            let betFromReal = 0, betFromBonus = 0;
-            if (user.balance >= amount) { user.balance -= amount; betFromReal = amount; } 
-            else { betFromReal = user.balance; betFromBonus = amount - betFromReal; user.balance = 0; user.bonusBalance -= betFromBonus; }
-            if (user.wageringTarget > 0) { user.wageringProgress += amount; }
-            
-            // 🟢 A MÁGICA: O servidor agora usa EXATAMENTE a última bola que foi sorteada no histórico global!
-            if (gameHistory.length === 0) {
-                return res.status(400).json({ success: false, message: "Aguarde o primeiro sorteio da rodada." });
-            }
-            const finalResult = gameHistory[gameHistory.length - 1]; 
-            
-            let isWin = false;
+        let betFromReal = 0, betFromBonus = 0;
+        if (user.balance >= amount) { user.balance -= amount; betFromReal = amount; } 
+        else { betFromReal = user.balance; betFromBonus = amount - betFromReal; user.balance = 0; user.bonusBalance -= betFromBonus; }
+        if (user.wageringTarget > 0) { user.wageringProgress += amount; }
+        
+        // 🟢 A MÁGICA: O servidor usa EXATAMENTE a última bola sorteada
+        if (gameHistory.length === 0) {
+            return res.status(400).json({ success: false, message: "Aguarde o primeiro sorteio da rodada." });
+        }
+        const finalResult = gameHistory[gameHistory.length - 1]; 
+        
+        let isWin = false;
         if (betType === 'COLOR') { 
             isWin = (betValue === finalResult.color); 
         } 
@@ -261,6 +261,8 @@ app.post('/api/bet', authMiddleware, async (req, res) => {
         await GameLog.create({ userId, betType, betValue, amount, isWin, winnings, gameResult: { color: finalResult.color, number: finalResult.number } });
         await PublicBet.create({ userId, username, avatar, betValue, amount, isWin, winnings });
         io.emit('new_bet', { username, avatar, betValue, amount, isWin, winnings });
+
+        // ===== LÓGICA DE AFILIADOS E INFLUENCERS =====
         const partner = user.affiliateId ? await User.findOne({ userId: user.affiliateId }) : null;
         if (partner) {
             if (!user.hasGeneratedCPA) {
@@ -274,11 +276,8 @@ app.post('/api/bet', authMiddleware, async (req, res) => {
                     if (playerProfit > 0) {
                         const commissionDebit = playerProfit * INFLUENCER_NGR_WIN_RATE;
                         
-                        // Debita o valor do influencer
+                        // 🟢 TRAVA DE SEGURANÇA (No Negative Carryover)
                         partner.commissionBalance -= commissionDebit;
-                        
-                        // 🟢 A TRAVA BLINDADA (No Negative Carryover)
-                        // Se a conta der negativo, trava no zero!
                         if (partner.commissionBalance < 0) {
                             partner.commissionBalance = 0;
                         }
@@ -307,7 +306,6 @@ app.post('/api/bet', authMiddleware, async (req, res) => {
         res.status(500).json({ success: false, message: "Erro interno do servidor." });
     }
 });
-
 app.get('/api/initial-draw', async (req, res) => {
     try {
         // 🟢 A CORREÇÃO: Enquanto a memória tiver menos de 10 rodadas, 
