@@ -145,7 +145,7 @@ export function setupWithdrawalModal() {
 // ==========================================
 // TRANSFERÊNCIA PARA O SALDO DE JOGO
 // ==========================================
-function setupTransferModal() {
+export function setupTransferModal() {
     const transferBtn = document.getElementById('btn-transfer-commission');
     
     if (transferBtn) {

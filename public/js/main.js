@@ -1,7 +1,7 @@
 import * as Auth from './auth.js'; 
 import { handleBet, initializeGameCycle } from './game.js'; 
 import { initializeSocialFeatures, stopLiveFeed } from './social.js'; 
-import { loadAffiliateData, setupCopyButton, setupCopyLinkButton } from './afiliado.js';
+import { loadAffiliateData, setupCopyButton, setupCopyLinkButton, setupTransferModal } from './afiliado.js';
 import { hideAuthModal, openSettingsModal, initializeSettingsModal } from './auth.js'; 
 import { API_BASE_URL, getAuthHeaders } from './utils.js'; 
 
@@ -215,6 +215,7 @@ async function initializeApp() {
         setupCopyButton();
         setupCopyLinkButton();
         setupWithdrawalModal();
+        setupTransferModal();
     } else if (currentPath.includes('admin.html')) {
         // Scripts do Admin
     } else {

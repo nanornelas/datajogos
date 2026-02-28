@@ -17,6 +17,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     // 4. Ativa o Modal de Saque
     setupWithdrawalModal();
+    setupTransferModal();
 });
 
 // ==========================================
@@ -158,6 +159,53 @@ function setupWithdrawalModal() {
             e.preventDefault();
             alert('A sua solicitação de Saque VIP foi recebida! (Integração PIX real na Fase 4.1)');
             modal.style.display = 'none';
+        });
+    }
+}
+// ==========================================
+// TRANSFERÊNCIA PARA O SALDO DE JOGO
+// ==========================================
+function setupTransferModal() {
+    const transferBtn = document.getElementById('btn-transfer-commission');
+    
+    if (transferBtn) {
+        transferBtn.addEventListener('click', async () => {
+            const token = localStorage.getItem('jwtToken');
+            
+            // Pergunta quanto ele quer transferir (pode ser aprimorado com um Modal depois)
+            const amountStr = prompt('Quanto da sua comissão deseja enviar para o Saldo de Jogo? (Ex: 10.50)');
+            if (!amountStr) return; // Utilizador cancelou
+
+            const amount = parseFloat(amountStr.replace(',', '.'));
+
+            if (isNaN(amount) || amount <= 0) {
+                alert('Por favor, digite um valor válido.');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/affiliate/transfer-to-balance`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ amount: amount })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    alert(`Sucesso! R$ ${amount.toFixed(2)} transferidos para a sua carteira de jogo.`);
+                    // Atualiza a tela recarregando os dados
+                    window.location.reload(); 
+                } else {
+                    alert(`Erro: ${data.message}`);
+                }
+            } catch (error) {
+                console.error('Erro na transferência:', error);
+                alert('Falha ao comunicar com o servidor.');
+            }
         });
     }
 }
