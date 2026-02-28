@@ -80,7 +80,21 @@ export async function loadAffiliateData() {
         if(historyBody) historyBody.innerHTML = '<tr><td colspan="4" style="text-align: center; color: #E53935; padding: 20px;">Erro de conexão com o servidor.</td></tr>';
     }
 }
-
+// 🟢 PASSO 1.5: CARREGA O SALDO PRINCIPAL NA BARRA DO TOPO
+    try {
+        const userId = localStorage.getItem('userId');
+        const balRes = await fetch(`${API_BASE_URL}/balance/${userId}`, { headers });
+        const balData = await balRes.json();
+        
+        if (balData.success) {
+            const navBalanceReal = document.getElementById('nav-balance-real');
+            if (navBalanceReal) {
+                navBalanceReal.textContent = `R$ ${parseFloat(balData.balance).toFixed(2).replace('.', ',')}`;
+            }
+        }
+    } catch (error) {
+        console.error('Erro ao sincronizar saldo principal:', error);
+    }
 // ==========================================
 // 2. FUNÇÃO AUXILIAR PARA OS BOTÕES DE COPIAR (Com Feedback Visual)
 // ==========================================
@@ -207,7 +221,7 @@ export function setupTransferModal() {
                 }
 
                 statusMsg.style.color = 'white';
-                statusMsg.textContent = 'A processar...';
+                statusMsg.textContent = 'Processando...';
                 confirmBtn.disabled = true; // Evita duplo clique
 
                 const token = localStorage.getItem('jwtToken');

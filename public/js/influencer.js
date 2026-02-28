@@ -50,7 +50,21 @@ async function loadInfluencerDashboard(token) {
     } catch (error) {
         console.error('Erro ao carregar o dashboard principal:', error);
     }
-
+// 🟢 PASSO 1.5: CARREGA O SALDO PRINCIPAL NA BARRA DO TOPO
+    try {
+        const userId = localStorage.getItem('userId');
+        const balRes = await fetch(`${API_BASE_URL}/balance/${userId}`, { headers });
+        const balData = await balRes.json();
+        
+        if (balData.success) {
+            const navBalanceReal = document.getElementById('nav-balance-real');
+            if (navBalanceReal) {
+                navBalanceReal.textContent = `R$ ${parseFloat(balData.balance).toFixed(2).replace('.', ',')}`;
+            }
+        }
+    } catch (error) {
+        console.error('Erro ao sincronizar saldo principal:', error);
+    }
     // 🟢 PASSO 2: CARREGA O EXTRATO DETALHADO
     try {
         const historyRes = await fetch(`${API_BASE_URL}/influencer/statement${cacheBust}`, { headers });
@@ -228,7 +242,7 @@ function setupTransferModal() {
                 }
 
                 statusMsg.style.color = 'white';
-                statusMsg.textContent = 'A processar...';
+                statusMsg.textContent = 'Processando...';
                 confirmBtn.disabled = true; 
 
                 const token = localStorage.getItem('jwtToken');
