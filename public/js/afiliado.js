@@ -142,50 +142,108 @@ export function setupWithdrawalModal() {
     }
 }
 
-// ==========================================
-// TRANSFERÊNCIA PARA O SALDO DE JOGO
+/// ==========================================
+// TRANSFERÊNCIA PARA O SALDO DE JOGO (MODAL PREMIUM)
 // ==========================================
 export function setupTransferModal() {
     const transferBtn = document.getElementById('btn-transfer-commission');
     
     if (transferBtn) {
-        transferBtn.addEventListener('click', async () => {
-            const token = localStorage.getItem('jwtToken');
-            
-            // Pergunta quanto ele quer transferir (pode ser aprimorado com um Modal depois)
-            const amountStr = prompt('Quanto da sua comissão deseja enviar para o Saldo de Jogo? (Ex: 10.50)');
-            if (!amountStr) return; // Utilizador cancelou
+        transferBtn.addEventListener('click', () => {
+            // 1. Remove qualquer versão antiga presa na tela
+            const oldModal = document.getElementById('transfer-modal-custom');
+            if (oldModal) oldModal.remove();
 
-            const amount = parseFloat(amountStr.replace(',', '.'));
+            // 2. Desenha o Modal Premium (Estilo Afiliado - Ciano)
+            const modalHtml = `
+                <div id="transfer-modal-custom" style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background-color: rgba(0, 0, 0, 0.85); z-index: 2147483647; display: flex; justify-content: center; align-items: center; backdrop-filter: blur(5px);">
+                    <div style="background-color: #1A1A1D; border: 1px solid #00BCD4; border-radius: 12px; padding: 30px; width: 90%; max-width: 400px; box-shadow: 0 10px 40px rgba(0, 188, 212, 0.3); text-align: center; position: relative;">
+                        <button id="close-transfer-btn" style="position: absolute; top: 15px; right: 20px; background: none; border: none; font-size: 2em; color: #888; cursor: pointer; padding: 0; line-height: 1;">&times;</button>
+                        
+                        <h2 style="color: #00BCD4; margin-top: 0; margin-bottom: 10px;">Transferir Comissão</h2>
+                        <p style="color: #aaa; font-size: 0.9em; margin-bottom: 25px;">Envie os seus ganhos direto para o Saldo de Jogo para apostar.</p>
 
-            if (isNaN(amount) || amount <= 0) {
-                alert('Por favor, digite um valor válido.');
-                return;
-            }
+                        <div style="margin-bottom: 20px; text-align: left;">
+                            <label style="color: #B0B0B0; font-size: 0.9em; font-weight: bold;">Valor a transferir (R$)</label>
+                            <input type="number" id="transfer-amount-input" placeholder="Ex: 50.00" min="1" step="0.01" style="width: 100%; padding: 12px; margin-top: 8px; background: #111; border: 1px solid #444; color: white; border-radius: 6px; box-sizing: border-box; font-size: 1.2em; font-weight: bold;">
+                        </div>
 
-            try {
-                const response = await fetch(`${API_BASE_URL}/affiliate/transfer-to-balance`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${token}`
-                    },
-                    body: JSON.stringify({ amount: amount })
-                });
+                        <div id="transfer-status-msg" style="min-height: 20px; font-weight: bold; margin-bottom: 15px; color: #E53935;"></div>
 
-                const data = await response.json();
+                        <div style="display: flex; gap: 10px;">
+                            <button id="cancel-transfer-btn" style="flex: 1; padding: 12px; background: transparent; color: #888; border: 1px solid #444; border-radius: 6px; font-weight: bold; cursor: pointer; transition: 0.2s;">Cancelar</button>
+                            <button id="confirm-transfer-btn" style="flex: 1; padding: 12px; background-color: #00BCD4; color: #121212; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; box-shadow: 0 4px 10px rgba(0, 188, 212, 0.3);">Confirmar</button>
+                        </div>
+                    </div>
+                </div>
+            `;
 
-                if (data.success) {
-                    alert(`Sucesso! R$ ${amount.toFixed(2)} transferidos para a sua carteira de jogo.`);
-                    // Atualiza a tela recarregando os dados
-                    window.location.reload(); 
-                } else {
-                    alert(`Erro: ${data.message}`);
+            // Injeta o modal no HTML
+            document.body.insertAdjacentHTML('beforeend', modalHtml);
+
+            // 3. Controlos do Modal
+            const modal = document.getElementById('transfer-modal-custom');
+            const closeBtn = document.getElementById('close-transfer-btn');
+            const cancelBtn = document.getElementById('cancel-transfer-btn');
+            const confirmBtn = document.getElementById('confirm-transfer-btn');
+            const amountInput = document.getElementById('transfer-amount-input');
+            const statusMsg = document.getElementById('transfer-status-msg');
+
+            // Foco automático no input para facilitar a vida do utilizador
+            setTimeout(() => amountInput.focus(), 100);
+
+            const closeModal = () => modal.remove();
+            closeBtn.onclick = closeModal;
+            cancelBtn.onclick = closeModal;
+            modal.onclick = (e) => { if (e.target === modal) closeModal(); };
+
+            // 4. Lógica de Envio
+            confirmBtn.onclick = async () => {
+                const amount = parseFloat(amountInput.value);
+
+                if (isNaN(amount) || amount <= 0) {
+                    statusMsg.textContent = 'Por favor, digite um valor válido.';
+                    return;
                 }
-            } catch (error) {
-                console.error('Erro na transferência:', error);
-                alert('Falha ao comunicar com o servidor.');
-            }
+
+                statusMsg.style.color = 'white';
+                statusMsg.textContent = 'A processar...';
+                confirmBtn.disabled = true; // Evita duplo clique
+
+                const token = localStorage.getItem('jwtToken');
+
+                try {
+                    const response = await fetch(`${API_BASE_URL}/affiliate/transfer-to-balance`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${token}`
+                        },
+                        body: JSON.stringify({ amount: amount })
+                    });
+
+                    const data = await response.json();
+
+                    if (data.success) {
+                        statusMsg.style.color = '#4CAF50';
+                        statusMsg.textContent = `Sucesso! R$ ${amount.toFixed(2)} transferidos.`;
+                        // Recarrega a página após 1.5 segundos para atualizar os saldos
+                        setTimeout(() => {
+                            closeModal();
+                            window.location.reload(); 
+                        }, 1500);
+                    } else {
+                        statusMsg.style.color = '#E53935';
+                        statusMsg.textContent = `Erro: ${data.message}`;
+                        confirmBtn.disabled = false;
+                    }
+                } catch (error) {
+                    console.error('Erro na transferência:', error);
+                    statusMsg.style.color = '#E53935';
+                    statusMsg.textContent = 'Falha de comunicação com o servidor.';
+                    confirmBtn.disabled = false;
+                }
+            };
         });
     }
 }
