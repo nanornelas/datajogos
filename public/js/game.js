@@ -244,7 +244,14 @@ function getCalculatedScrollDistance() {
 export async function processWinLoss(gameResult, isWin, winnings) {
     const resultColor = gameResult.translatedColor || gameResult.color; 
     const resultParity = gameResult.translatedParity || gameResult.parity; 
-    let resultMsg = `Resultado: ${resultColor} (${resultParity}, ${gameResult.number}).`;
+    
+    // 🟢 A MÁGICA DO CORINGA
+    let resultMsg = '';
+    if (gameResult.color === 'GREEN') {
+        resultMsg = 'Resultado: (CORINGA).';
+    } else {
+        resultMsg = `Resultado: ${resultColor} (${resultParity}, ${gameResult.number}).`;
+    }
     
     if (isWin) {
         updateGameUI.updateStatus(`🎉 VOCÊ VENCEU! Ganho de R$ ${winnings.toFixed(2)}. ${resultMsg}`, '#4CAF50');
