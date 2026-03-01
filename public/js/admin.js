@@ -1,17 +1,11 @@
 import { API_BASE_URL, getAuthHeaders } from './utils.js';
 
-let financialChart = null; // Variável global para o gráfico não se duplicar
+let financialChart = null; 
 
 document.addEventListener('DOMContentLoaded', async () => {
     const token = localStorage.getItem('jwtToken');
+    if (!token) { window.location.href = '/'; return; }
 
-    // 1. Barreira de Segurança
-    if (!token) {
-        window.location.href = '/'; 
-        return;
-    }
-
-    // 2. Inicializa todos os módulos
     await loadAdminStats(token);
     await loadUsersTable(token);
     setupForceDraw(token);
@@ -21,36 +15,31 @@ document.addEventListener('DOMContentLoaded', async () => {
 });
 
 // ==========================================
-// MÓDULO 1: ESTATÍSTICAS DO TOPO
+// MÓDULO 1: ESTATÍSTICAS
 // ==========================================
 async function loadAdminStats(token) {
     try {
         const res = await fetch(`${API_BASE_URL}/admin/stats`, { headers: getAuthHeaders(token) });
         const data = await res.json();
-        
         if (data.success) {
             document.getElementById('admin-total-balance').textContent = `R$ ${data.totalPlatformBalance.replace('.', ',')}`;
             document.getElementById('admin-total-commissions').textContent = `R$ ${data.totalCommissionsPaid.replace('.', ',')}`;
             document.getElementById('admin-total-users').textContent = data.totalUsers;
         }
-    } catch (error) {
-        console.error('Erro ao carregar estatísticas:', error);
-    }
+    } catch (error) { console.error(error); }
 }
 
 // ==========================================
-// MÓDULO 2: TABELA DE UTILIZADORES E AUTO-PREENCHIMENTO
+// MÓDULO 2: TABELA E AUTO-PREENCHIMENTO DE USERNAME
 // ==========================================
-
-// Função global para clicar na tabela e preencher os inputs de ID automaticamente
-window.populateAdminForms = (userId) => {
-    const txInput = document.getElementById('admin-tx-userid');
-    const roleInput = document.getElementById('admin-role-userid');
+window.populateAdminForms = (username) => {
+    const txInput = document.getElementById('admin-tx-username');
+    const roleInput = document.getElementById('admin-role-username');
     
-    if (txInput) txInput.value = userId;
-    if (roleInput) roleInput.value = userId;
+    // Agora preenche o campo com o nome do jogador (ex: "Maria123")
+    if (txInput) txInput.value = username;
+    if (roleInput) roleInput.value = username;
 
-    // Rola a tela suavemente para cima para o Admin fazer a ação
     window.scrollTo({ top: 0, behavior: 'smooth' });
 };
 
@@ -70,12 +59,12 @@ async function loadUsersTable(token) {
                 else if (user.role === 'influencer') { roleDisplay = 'Influencer VIP'; roleColor = '#9C27B0'; }
                 else if (user.role === 'affiliate') { roleDisplay = 'Afiliado'; roleColor = '#00BCD4'; }
 
-                // Repare no onclick="populateAdminForms('${user.userId}')"
+                // 🟢 CORREÇÃO: Passamos o 'user.username' no clique!
                 return `
                     <tr style="border-bottom: 1px solid #2a2a2a; transition: background 0.2s; cursor: pointer;" 
                         onmouseover="this.style.background='#1a1a1a'" 
                         onmouseout="this.style.background='transparent'"
-                        onclick="populateAdminForms('${user.userId}')">
+                        onclick="populateAdminForms('${user.username}')">
                         <td style="padding: 12px 5px; color: #888; font-size: 0.9em;">${date}</td>
                         <td style="padding: 12px 5px; color: #E0E0E0; font-family: monospace; font-size: 0.9em;">${user.userId}</td>
                         <td style="padding: 12px 5px; color: #FFF; font-weight: bold;">${user.username}</td>
@@ -86,9 +75,7 @@ async function loadUsersTable(token) {
                 `;
             }).join('');
         }
-    } catch (error) {
-        console.error('Erro ao carregar tabela:', error);
-    }
+    } catch (error) { console.error(error); }
 }
 
 // ==========================================
@@ -96,9 +83,8 @@ async function loadUsersTable(token) {
 // ==========================================
 function setupForceDraw(token) {
     const msgEl = document.getElementById('force-draw-msg');
-    
     const forceColor = async (color, colorName, hexCode) => {
-        msgEl.textContent = 'A comunicar com a roleta...';
+        msgEl.textContent = 'A comunicar...';
         msgEl.style.color = 'white';
         try {
             const res = await fetch(`${API_BASE_URL}/admin/set-draw`, {
@@ -112,42 +98,36 @@ function setupForceDraw(token) {
                 msgEl.style.color = hexCode;
                 setTimeout(() => msgEl.textContent = '', 4000);
             }
-        } catch (error) {
-            msgEl.textContent = 'Erro de conexão com a roleta.';
-            msgEl.style.color = '#E53935';
-        }
+        } catch (error) {}
     };
 
     const btnRed = document.getElementById('btn-force-red');
     const btnBlue = document.getElementById('btn-force-blue');
     const btnGreen = document.getElementById('btn-force-green');
-
     if(btnRed) btnRed.addEventListener('click', () => forceColor('RED', 'VERMELHO', '#E53935'));
     if(btnBlue) btnBlue.addEventListener('click', () => forceColor('BLUE', 'AZUL', '#1E88E5'));
     if(btnGreen) btnGreen.addEventListener('click', () => forceColor('GREEN', 'VERDE', '#4CAF50'));
 }
 
 // ==========================================
-// MÓDULO 4: INJECTAR/REMOVER SALDO E BÓNUS
+// MÓDULO 4: INJECTAR/REMOVER SALDO
 // ==========================================
 function setupTransactionForm(token) {
     const form = document.getElementById('form-admin-transaction');
     const msgEl = document.getElementById('admin-tx-msg');
-
     if(!form) return;
 
     form.addEventListener('submit', async (e) => {
         e.preventDefault();
-        const userId = document.getElementById('admin-tx-userid').value.trim();
+        const username = document.getElementById('admin-tx-username').value.trim();
         const type = document.getElementById('admin-tx-type').value;
         const amount = parseFloat(document.getElementById('admin-tx-amount').value);
         
-        // Verifica a nova Checkbox!
         const bonusCheckbox = document.getElementById('admin-tx-bonus');
         const addBonus = bonusCheckbox ? bonusCheckbox.checked && type === 'DEPOSIT' : false;
 
-        if (!userId || isNaN(amount) || amount <= 0) {
-            msgEl.textContent = 'Preencha todos os campos corretamente.';
+        if (!username || isNaN(amount) || amount <= 0) {
+            msgEl.textContent = 'Preencha todos os campos.';
             msgEl.style.color = '#E53935';
             return;
         }
@@ -159,58 +139,53 @@ function setupTransactionForm(token) {
             const res = await fetch(`${API_BASE_URL}/admin/transaction`, {
                 method: 'POST',
                 headers: { ...getAuthHeaders(token), 'Content-Type': 'application/json' },
-                body: JSON.stringify({ userId, type, amount, addBonus }) 
+                body: JSON.stringify({ username, type, amount, addBonus }) 
             });
             const data = await res.json();
 
             if (data.success) {
-                msgEl.textContent = `✅ Transação de R$ ${amount.toFixed(2)} ${addBonus ? '(Bónus)' : ''} concluída!`;
+                msgEl.textContent = `✅ Transação concluída!`;
                 msgEl.style.color = '#4CAF50';
                 form.reset();
-                
                 loadAdminStats(token);
                 loadUsersTable(token);
-                renderFinancialChart(token); // Atualiza o gráfico na hora!
-                
+                renderFinancialChart(token);
                 setTimeout(() => msgEl.textContent = '', 4000);
             } else {
                 msgEl.textContent = `Erro: ${data.message}`;
                 msgEl.style.color = '#E53935';
             }
-        } catch (error) {
-            msgEl.textContent = 'Falha na comunicação financeira.';
-            msgEl.style.color = '#E53935';
-        }
+        } catch (error) {}
     });
 }
 
 // ==========================================
-// MÓDULO 5: PROMOVER CARGOS (Role)
+// MÓDULO 5: PROMOVER CARGOS
 // ==========================================
 function setupRoleForm(token) {
     const form = document.getElementById('form-admin-role');
     const msgEl = document.getElementById('admin-role-msg');
-
     if(!form) return;
 
     form.addEventListener('submit', async (e) => {
         e.preventDefault();
-        const userId = document.getElementById('admin-role-userid').value.trim();
+        const username = document.getElementById('admin-role-username').value.trim();
         const role = document.getElementById('admin-role-select').value;
 
         msgEl.textContent = 'A atualizar privilégios...';
         msgEl.style.color = 'white';
 
         try {
-            const res = await fetch(`${API_BASE_URL}/admin/user/${userId}`, {
+            // 🟢 MUDAMOS PARA O NOVO ENDPOINT DE UPDATE-ROLE
+            const res = await fetch(`${API_BASE_URL}/admin/update-role`, {
                 method: 'PUT',
                 headers: { ...getAuthHeaders(token), 'Content-Type': 'application/json' },
-                body: JSON.stringify({ role })
+                body: JSON.stringify({ username, role })
             });
             const data = await res.json();
 
             if (data.success) {
-                msgEl.textContent = `👑 Conta promovida com sucesso!`;
+                msgEl.textContent = `👑 ${username} promovido com sucesso!`;
                 msgEl.style.color = '#FFC107';
                 form.reset();
                 loadUsersTable(token);
@@ -219,15 +194,12 @@ function setupRoleForm(token) {
                 msgEl.textContent = `Erro: ${data.message}`;
                 msgEl.style.color = '#E53935';
             }
-        } catch (error) {
-            msgEl.textContent = 'Falha ao promover utilizador.';
-            msgEl.style.color = '#E53935';
-        }
+        } catch (error) {}
     });
 }
 
 // ==========================================
-// MÓDULO 6: GRÁFICO FINANCEIRO (Chart.js)
+// MÓDULO 6: GRÁFICO FINANCEIRO
 // ==========================================
 async function renderFinancialChart(token) {
     try {
@@ -239,7 +211,7 @@ async function renderFinancialChart(token) {
         if (!ctxEl) return;
         
         const ctx = ctxEl.getContext('2d');
-        if (financialChart) { financialChart.destroy(); } // Evita bugar sobrepondo gráficos
+        if (financialChart) { financialChart.destroy(); }
         
         financialChart = new Chart(ctx, {
             type: 'bar',
@@ -262,7 +234,5 @@ async function renderFinancialChart(token) {
                 plugins: { legend: { labels: { color: '#E0E0E0' } } }
             }
         });
-    } catch (error) {
-        console.error("Erro ao desenhar o gráfico:", error);
-    }
+    } catch (error) {}
 }

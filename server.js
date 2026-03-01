@@ -433,47 +433,59 @@ app.get('/api/admin/users', authMiddleware, async (req, res) => {
     }
 });
 
-app.put('/api/admin/user/:userId', authMiddleware, async (req, res) => {
+// ROTA: MUDAR CARGO PELO USERNAME
+app.put('/api/admin/update-role', authMiddleware, async (req, res) => {
     if (req.user.role !== 'admin') { return res.status(403).json({ success: false, message: 'Acesso negado.' }); }
     try {
-        const { userId } = req.params;
-        const { role } = req.body;
-        const userToUpdate = await User.findOne({ userId: userId });
-        if (!userToUpdate) { return res.status(404).json({ success: false, message: 'Utilizador não encontrado.' }); }
+        const { username, role } = req.body;
+        // Procura ignorando maiúsculas e minúsculas (se digitar "joao" acha o "Joao")
+        const userToUpdate = await User.findOne({ username: { $regex: new RegExp(`^${username}$`, 'i') } });
+        
+        if (!userToUpdate) { return res.status(404).json({ success: false, message: 'Jogador não encontrado.' }); }
+        
         if (role) { userToUpdate.role = role; }
         await userToUpdate.save();
-        res.json({ success: true, message: 'Role do utilizador atualizada com sucesso.' });
+        res.json({ success: true, message: `Cargo de ${userToUpdate.username} atualizado para ${role}!` });
     } catch (error) {
-        console.error("Erro ao atualizar role do utilizador:", error);
+        console.error("Erro ao atualizar cargo do utilizador:", error);
         res.status(500).json({ success: false, message: 'Erro interno do servidor.' });
     }
 });
 
+// ROTA: TRANSAÇÃO FINANCEIRA PELO USERNAME
 app.post('/api/admin/transaction', authMiddleware, async (req, res) => {
     if (req.user.role !== 'admin') { return res.status(403).json({ success: false, message: 'Acesso negado.' }); }
-    const { userId, type, amount, addBonus } = req.body;
+    
+    const { username, type, amount, addBonus } = req.body;
     const adminId = req.user.userId;
-    if (!userId || !type || !amount || amount <= 0) { return res.status(400).json({ success: false, message: 'Dados da transação inválidos.' }); }
+    
+    if (!username || !type || !amount || amount <= 0) { 
+        return res.status(400).json({ success: false, message: 'Dados da transação inválidos.' }); 
+    }
+    
     try {
-        const user = await User.findOne({ userId: userId });
-        if (!user) { return res.status(404).json({ success: false, message: 'Utilizador não encontrado.' }); }
+        const user = await User.findOne({ username: { $regex: new RegExp(`^${username}$`, 'i') } });
+        
+        if (!user) { return res.status(404).json({ success: false, message: 'Jogador não encontrado.' }); }
+        
         if (type === 'DEPOSIT') {
             user.balance += amount;
             if (addBonus) {
-                const bonusAmount = amount;
-                user.bonusBalance += bonusAmount;
-                user.wageringTarget += bonusAmount * BONUS_ROLLOVER_MULTIPLIER;
+                user.bonusBalance += amount;
+                user.wageringTarget += amount * BONUS_ROLLOVER_MULTIPLIER;
             }
             await FinancialTransaction.create({ userId: user.userId, username: user.username, type: 'DEPOSIT', amount: amount, initiatedBy: adminId });
         } else if (type === 'WITHDRAWAL') {
-            if (user.balance < amount) { return res.status(400).json({ success: false, message: `Saldo sacável insuficiente. Saldo real: R$ ${user.balance.toFixed(2)}` }); }
+            if (user.balance < amount) { 
+                return res.status(400).json({ success: false, message: `Saldo insuficiente. Saldo real: R$ ${user.balance.toFixed(2)}` }); 
+            }
             user.balance -= amount;
             await FinancialTransaction.create({ userId: user.userId, username: user.username, type: 'WITHDRAWAL', amount: amount, initiatedBy: adminId });
         }
         await user.save();
-        res.json({ success: true, message: `${type} de R$ ${amount.toFixed(2)} registado com sucesso.`, newBalance: user.balance, newBonusBalance: user.bonusBalance });
+        res.json({ success: true, message: `${type} de R$ ${amount.toFixed(2)} na conta de ${user.username} concluído.`, newBalance: user.balance, newBonusBalance: user.bonusBalance });
     } catch (error) {
-        console.error(`Erro ao registar transação para ${userId}:`, error);
+        console.error(`Erro ao registar transação para ${username}:`, error);
         res.status(500).json({ success: false, message: 'Erro interno do servidor.' });
     }
 });
