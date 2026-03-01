@@ -258,7 +258,9 @@ app.post('/api/bet', authMiddleware, async (req, res) => {
             user.wageringProgress = 0;
         }
 
-        await GameLog.create({ userId, betType, betValue, amount, isWin, winnings, gameResult: { color: finalResult.color, number: finalResult.number } });
+        // 🟢 CORREÇÃO: O Banco de dados exige um número. Se for o Verde ('?'), guardamos como 0.
+        const dbNumber = finalResult.number === '?' ? 0 : finalResult.number;
+        await GameLog.create({ userId, betType, betValue, amount, isWin, winnings, gameResult: { color: finalResult.color, number: dbNumber } });
         await PublicBet.create({ userId, username, avatar, betValue, amount, isWin, winnings });
         io.emit('new_bet', { username, avatar, betValue, amount, isWin, winnings });
 
