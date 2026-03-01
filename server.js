@@ -159,8 +159,9 @@ async function generateNewResult() {
     let finalNumber, finalParity, finalTranslatedParity;
     if (color === 'GREEN') {
         finalNumber = '?'; 
-        finalParity = null; 
-        finalTranslatedParity = null; 
+        // 🟢 CORREÇÃO: Damos um nome em vez de 'null' para o Frontend ler bonitinho!
+        finalParity = 'ESPECIAL'; 
+        finalTranslatedParity = 'VERDE'; 
     } else {
         finalNumber = num; 
         finalParity = (num % 2 === 0) ? 'EVEN' : 'ODD'; 
