@@ -433,12 +433,12 @@ app.get('/api/admin/users', authMiddleware, async (req, res) => {
     }
 });
 
-// ROTA: MUDAR CARGO PELO USERNAME
+// ROTA 1: MUDAR CARGO PELO USERNAME
 app.put('/api/admin/update-role', authMiddleware, async (req, res) => {
     if (req.user.role !== 'admin') { return res.status(403).json({ success: false, message: 'Acesso negado.' }); }
     try {
         const { username, role } = req.body;
-        // Procura ignorando maiúsculas e minúsculas (se digitar "joao" acha o "Joao")
+        // Procura ignorando maiúsculas e minúsculas
         const userToUpdate = await User.findOne({ username: { $regex: new RegExp(`^${username}$`, 'i') } });
         
         if (!userToUpdate) { return res.status(404).json({ success: false, message: 'Jogador não encontrado.' }); }
@@ -452,18 +452,21 @@ app.put('/api/admin/update-role', authMiddleware, async (req, res) => {
     }
 });
 
-// ROTA: TRANSAÇÃO FINANCEIRA PELO USERNAME
+// ROTA 2: TRANSAÇÃO FINANCEIRA PELO USERNAME
 app.post('/api/admin/transaction', authMiddleware, async (req, res) => {
     if (req.user.role !== 'admin') { return res.status(403).json({ success: false, message: 'Acesso negado.' }); }
     
+    // 🟢 Agora o servidor aceita 'username' em vez de 'userId'
     const { username, type, amount, addBonus } = req.body;
     const adminId = req.user.userId;
     
+    // 🟢 A validação agora procura pelo 'username'
     if (!username || !type || !amount || amount <= 0) { 
         return res.status(400).json({ success: false, message: 'Dados da transação inválidos.' }); 
     }
     
     try {
+        // Procura o utilizador pelo nome (ignorando maiúsculas/minúsculas)
         const user = await User.findOne({ username: { $regex: new RegExp(`^${username}$`, 'i') } });
         
         if (!user) { return res.status(404).json({ success: false, message: 'Jogador não encontrado.' }); }
@@ -472,7 +475,7 @@ app.post('/api/admin/transaction', authMiddleware, async (req, res) => {
             user.balance += amount;
             if (addBonus) {
                 user.bonusBalance += amount;
-                user.wageringTarget += amount * BONUS_ROLLOVER_MULTIPLIER;
+                user.wageringTarget += amount * BONUS_ROLLOVER_MULTIPLIER; // Aplica o rollover automático!
             }
             await FinancialTransaction.create({ userId: user.userId, username: user.username, type: 'DEPOSIT', amount: amount, initiatedBy: adminId });
         } else if (type === 'WITHDRAWAL') {
