@@ -52,20 +52,50 @@
         </div>
     </header>
     
-    <div id="auth-modal-overlay" class="auth-modal-overlay" style="display: none;">
-        <div id="auth-modal-content" class="auth-modal-content page-container">
-            <button id="auth-modal-close-btn" class="auth-modal-close">&times;</button>
-            <h1>Bem-vindo!</h1>
-            <p style="text-align: center;">Entre ou crie sua conta para jogar.</p>
-            <form id="login-form" class="auth-form">
-                <div class="input-group-auth"><label for="login-username">Utilizador</label><input type="text" id="login-username" placeholder="Seu nome de utilizador" required></div>
-                <div class="input-group-auth"><label for="login-password">Senha</label><input type="password" id="login-password" placeholder="Sua senha" required></div>
-                <div class="input-group-auth" id="group-confirm-password" style="display: none;"><label for="confirm-password">Confirme a Senha</label><input type="password" id="confirm-password" placeholder="Confirme sua senha"></div>
-                <div class="input-group-auth" id="group-affiliate-code" style="display: none;"><label for="affiliate-code">Código Afiliado (Opcional)</label><input type="text" id="affiliate-code" placeholder="Código (Opcional)"></div>
-                <div id="auth-error-message" style="margin-top: 10px; color: #E53935; text-align: center;"></div>
-                <button type="button" id="login-submit-button" data-action="login">Entrar</button> 
+    <div id="auth-modal-overlay" style="display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background-color: rgba(0, 0, 0, 0.85); backdrop-filter: blur(8px); z-index: 9999; justify-content: center; align-items: center;">
+        
+        <div style="background-color: #1A1A1D; border: 1px solid #00BCD4; border-radius: 16px; width: 90%; max-width: 420px; padding: 40px 30px; box-shadow: 0 15px 50px rgba(0, 188, 212, 0.2); position: relative; text-align: center; box-sizing: border-box;">
+            
+            <button id="auth-modal-close-btn" style="position: absolute; top: 15px; right: 20px; background: none; border: none; font-size: 28px; color: #666; cursor: pointer; transition: color 0.2s; line-height: 1;" onmouseover="this.style.color='#FFF'" onmouseout="this.style.color='#666'">&times;</button>
+            
+            <h2 id="auth-modal-title" style="color: #FFF; margin-top: 0; margin-bottom: 5px; font-size: 1.8em; font-weight: 800; letter-spacing: 1px;">Área VIP</h2>
+            <p style="color: #888; margin-bottom: 30px; font-size: 0.95em;">Entre ou crie conta para começar a faturar.</p>
+
+            <form id="auth-form" style="display: flex; flex-direction: column; gap: 15px; text-align: left;">
+                
+                <div>
+                    <label style="color: #B0B0B0; font-size: 0.85em; font-weight: bold; margin-bottom: 5px; display: block;">Usuário</label>
+                    <input type="text" id="login-username" placeholder="Seu nome de jogador" required style="width: 100%; padding: 14px; background: #111; border: 1px solid #333; color: white; border-radius: 8px; font-size: 1em; box-sizing: border-box; outline: none; transition: 0.3s;" onfocus="this.style.borderColor='#00BCD4'" onblur="this.style.borderColor='#333'">
+                </div>
+
+                <div>
+                    <label style="color: #B0B0B0; font-size: 0.85em; font-weight: bold; margin-bottom: 5px; display: block;">Senha</label>
+                    <input type="password" id="login-password" placeholder="••••••••" required style="width: 100%; padding: 14px; background: #111; border: 1px solid #333; color: white; border-radius: 8px; font-size: 1em; box-sizing: border-box; outline: none; transition: 0.3s;" onfocus="this.style.borderColor='#00BCD4'" onblur="this.style.borderColor='#333'">
+                </div>
+
+                <div id="group-confirm-password" style="display: none;">
+                    <label style="color: #B0B0B0; font-size: 0.85em; font-weight: bold; margin-bottom: 5px; display: block;">Confirmar Senha</label>
+                    <input type="password" id="confirm-password" placeholder="••••••••" style="width: 100%; padding: 14px; background: #111; border: 1px solid #333; color: white; border-radius: 8px; font-size: 1em; box-sizing: border-box; outline: none; transition: 0.3s;" onfocus="this.style.borderColor='#00BCD4'" onblur="this.style.borderColor='#333'">
+                </div>
+
+                <div id="group-affiliate-code" style="display: none;">
+                    <label style="color: #B0B0B0; font-size: 0.85em; font-weight: bold; margin-bottom: 5px; display: block;">Código de Afiliado (Opcional)</label>
+                    <input type="text" id="affiliate-code" placeholder="Ex: partner_123" style="width: 100%; padding: 14px; background: #111; border: 1px solid #333; color: white; border-radius: 8px; font-size: 1em; box-sizing: border-box; outline: none; transition: 0.3s;" onfocus="this.style.borderColor='#00BCD4'" onblur="this.style.borderColor='#333'">
+                </div>
+
+                <div id="auth-error-message" style="color: #E53935; font-size: 0.9em; min-height: 20px; font-weight: bold; text-align: center;"></div>
+
+                <button type="submit" id="login-submit-button" data-action="login" style="width: 100%; padding: 15px; background: linear-gradient(90deg, #00BCD4, #1E88E5); color: #FFF; border: none; border-radius: 8px; font-weight: 800; font-size: 1.1em; cursor: pointer; box-shadow: 0 4px 15px rgba(0, 188, 212, 0.4); transition: transform 0.2s, box-shadow 0.2s; margin-top: 5px;" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 6px 20px rgba(0, 188, 212, 0.6)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 15px rgba(0, 188, 212, 0.4)'">
+                    Entrar
+                </button>
             </form>
-            <p style="text-align: center; margin-top: 20px;"><a href="#" id="show-register-link" style="color: #00BCD4;">Criar Conta</a></p>
+
+            <div style="margin-top: 25px; color: #888; font-size: 0.95em;">
+                Ainda não tem conta? 
+                <a href="#" id="show-register-link" style="color: #00BCD4; text-decoration: none; font-weight: bold; margin-left: 5px; transition: color 0.2s;" onmouseover="this.style.color='#FFF'" onmouseout="this.style.color='#00BCD4'">
+                    Criar Conta
+                </a>
+            </div>
         </div>
     </div>
     
@@ -125,7 +155,9 @@
                     </div>
                 </div>
             </div> 
-        </div> <aside id="social-sidebar" class="social-sidebar" style="display: none;">
+        </div> 
+
+        <aside id="social-sidebar" class="social-sidebar" style="display: none;">
             <div class="sidebar-header">
                 <h3> </h3>
                 <button id="toggle-chat-btn" class="toggle-chat-btn">&minus;</button>
@@ -150,7 +182,9 @@
             </div>
         </aside>
         
-    </div> <div id="settings-modal" class="settings-modal-overlay" style="display: none;">
+    </div> 
+    
+    <div id="settings-modal" class="settings-modal-overlay" style="display: none;">
         <div class="settings-modal-content">
             <button id="settings-modal-close-btn" class="settings-modal-close">&times;</button>
             <div class="settings-sidebar">
@@ -232,7 +266,11 @@
                         </table>
                     </div>
                 </div>
-            </div> </div> </div> <div id="withdraw-modal-overlay" class="auth-modal-overlay" style="display: none; z-index: 10000;">
+            </div> 
+        </div> 
+    </div> 
+    
+    <div id="withdraw-modal-overlay" class="auth-modal-overlay" style="display: none; z-index: 10000;">
         <div class="auth-modal-content page-container" style="max-width: 400px; text-align: center;">
             <button id="withdraw-modal-close-btn" class="auth-modal-close">&times;</button>
             <h2 style="color: #00BCD4; margin-bottom: 10px;">Saque via PIX</h2>
