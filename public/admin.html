@@ -3,153 +3,152 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Dashboard</title>
-    <link rel="stylesheet" href="/style.css">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <style>
-        /* Estilos gerais do painel */
-        body { display: flex; background-color: #0d0d0d; }
-        .admin-container { display: flex; width: 100%; height: 100vh; }
-        .sidebar { width: 240px; background-color: #121212; padding: 20px; border-right: 1px solid #2a2a2a; flex-shrink: 0; }
-        .sidebar h2 { color: #4CAF50; text-align: center; }
-        .sidebar nav ul { list-style: none; padding: 0; margin-top: 30px; }
-        .sidebar nav li a { display: block; color: #E0E0E0; padding: 12px 15px; text-decoration: none; border-radius: 5px; margin-bottom: 5px; transition: background-color 0.2s; }
-        .sidebar nav li a:hover, .sidebar nav li a.active { background-color: #2a2a2a; }
-        .main-content { flex-grow: 1; padding: 30px; overflow-y: auto; position: relative; }
-        .admin-view { display: none; }
-        .admin-view.active { display: block; }
-
-        /* Estilos dos cards e tabelas */
-        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; }
-        .stat-card { background-color: #1E1E1E; padding: 25px; border-radius: 8px; border-left: 5px solid #4CAF50;}
-        .stat-card h3 { margin: 0 0 10px; color: #B0B0B0; font-size: 1em; }
-        .stat-card p { margin: 0; font-size: 2em; font-weight: bold; }
-        .users-table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-        .users-table th, .users-table td { padding: 12px; border: 1px solid #2a2a2a; text-align: left; }
-        .users-table th { background-color: #2a2a2a; }
-        .users-table tbody tr:hover { background-color: #2a2a2a; cursor: pointer; }
-        .chart-card { background-color: #1E1E1E; padding: 25px; border-radius: 8px; margin-top: 30px; }
-        .chart-card h2 { margin-top: 0; color: #E0E0E0; }
-
-        /* Estilos do controle de jogo */
-        #game-control-view .bet-button[data-color="RED"] { background-color: #E53935; color: white; }
-        #game-control-view .bet-button[data-color="BLUE"] { background-color: #1976d2; color: white; }
-        #game-control-view .bet-button[data-color="GREEN"] { background-color: #43a047; color: white; }
-        #game-control-view .bet-button:hover { opacity: 0.9; transform: translateY(-1px); }
-        
-        /* Estilos para o Modal de Edição */
-        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.7); display: none; justify-content: center; align-items: center; z-index: 2000; }
-        .modal-content { background-color: #1E1E1E; padding: 30px; border-radius: 10px; width: 90%; max-width: 500px; box-shadow: 0 5px 25px rgba(0,0,0,0.5); position: relative; }
-        .modal-content h2 { margin-top: 0; color: #00BCD4; }
-        .modal-close { position: absolute; top: 15px; right: 15px; background: none; border: none; color: white; font-size: 1.5em; cursor: pointer; }
-        .form-group { margin-bottom: 20px; }
-        .form-group label { display: block; margin-bottom: 8px; color: #B0B0B0; }
-        .form-group select, .form-group input { width: 100%; padding: 10px; background-color: #2a2a2a; border: 1px solid #333; color: white; border-radius: 5px; }
-        .transaction-buttons { display: flex; gap: 10px; margin-top: 10px; }
-        .transaction-buttons button { flex-grow: 1; }
-        .bonus-checkbox { display: flex; align-items: center; gap: 10px; margin-top: 10px; color: #B0B0B0; }
-        .bonus-checkbox input { width: auto; }
-    </style>
+    <title>Painel Admin Global | iGaming</title>
+    <link rel="stylesheet" href="/style.css"> 
 </head>
 <body>
-    <div class="admin-container">
-        <aside class="sidebar">
-            <h2>Admin</h2>
-            <nav>
-                <ul>
-                    <li><a href="#" id="nav-dashboard" class="active">Dashboard</a></li>
-                    <li><a href="#" id="nav-users">Utilizadores</a></li>
-                    <li><a href="#" id="nav-game-control">Controlo do Jogo</a></li>
-                    <li><a href="/" style="color: #00BCD4; margin-top: 30px;">&larr; Voltar ao Site</a></li>
-                </ul>
-            </nav>
-        </aside>
-
-        <main class="main-content">
-            <section id="dashboard-view" class="admin-view active">
-                <h1>Dashboard</h1>
-                <div class="stats-grid">
-                    <div class="stat-card"><h3>Total de Utilizadores</h3><p id="stats-total-users">...</p></div>
-                    <div class="stat-card"><h3>Saldo Total na Plataforma</h3><p id="stats-total-balance">R$ ...</p></div>
-                    <div class="stat-card"><h3>Total de Comissões Pagas</h3><p id="stats-total-commissions">R$ ...</p></div>
+    <div id="particles-container"></div>
+    
+    <header class="top-nav-bar">
+        <div class="header-content">
+            <a class="navbar-brand" href="/"> 
+                <img src="assets/logo.svg" alt="iGaming Logo" class="logo-svg">
+            </a>
+            
+            <div class="nav-balance-area">
+                <div id="nav-balance-real-box" class="nav-balance-box real">
+                    <span class="nav-balance-label">Saldo</span>
+                    <span id="nav-balance-real" class="nav-balance-value">R$ 0,00</span>
                 </div>
-                <div class="chart-card">
-                    <h2>Resumo Financeiro e de Atividade (Últimos 30 dias)</h2>
-                    <div style="position: relative; height: 40vh; width: 100%;">
-                        <canvas id="financial-chart"></canvas>
-                    </div>
+            </div>
+            
+            <div id="user-dropdown" class="user-dropdown" style="display: none;">
+                <button id="user-display-button" class="user-display-button">
+                    <span id="user-display-name"></span>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="chevron-icon" viewBox="0 0 16 16">
+                        <path fill-rule="evenodd" d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z"/>
+                    </svg>
+                </button>
+                <div id="user-dropdown-menu" class="dropdown-menu">
+                    <a id="admin-panel-link" href="/admin.html" class="dropdown-item" style="display: none;">Painel Admin</a>
+                    <a id="influencer-panel-link" href="/influencer.html" class="dropdown-item" style="display: none;">Dashboard Influencer</a>
+                    <a id="affiliate-panel-link" href="/afiliado.html" class="dropdown-item" style="display: none;">Painel Afiliado</a>
+                    <a href="/" class="dropdown-item">Ir para o Jogo</a>
+                    <button id="logout-button" class="dropdown-item dropdown-logout-button">Sair</button>
                 </div>
-            </section>
-
-            <section id="users-view" class="admin-view">
-                <h1>Gestão de Utilizadores</h1>
-                <div style="overflow-x: auto;">
-                    <table class="users-table">
-                        <thead>
-                            <tr>
-                                <th>ID do Utilizador</th>
-                                <th>Nome</th>
-                                <th>Role</th>
-                                <th>Saldo (R$)</th>
-                                <th>Comissão (R$)</th>
-                                <th>Data de Registo</th>
-                            </tr>
-                        </thead>
-                        <tbody id="users-table-body"></tbody>
-                    </table>
-                </div>
-            </section>
-
-            <section id="game-control-view" class="admin-view">
-                <h1>Controlo do Próximo Sorteio</h1>
-                <p>Use os botões abaixo para definir o resultado da próxima ronda.</p>
-                <div class="bet-area" style="justify-content: flex-start;">
-                    <button class="bet-button" data-color="RED">Forçar Vermelho</button>
-                    <button class="bet-button" data-color="BLUE">Forçar Azul</button>
-                    <button class="bet-button" data-color="GREEN">Forçar Verde</button>
-                </div>
-                <p id="admin-status" style="margin-top: 25px; font-size: 1.1em;">A aguardar comando...</p>
-            </section>
-        </main>
-    </div>
-
-    <!-- MODAL DE EDIÇÃO ATUALIZADO COM OPÇÃO DE BÓNUS -->
-    <div id="user-edit-modal" class="modal-overlay">
-        <div class="modal-content">
-            <button id="modal-close-btn" class="modal-close">&times;</button>
-            <h2 id="modal-title">Editar Utilizador</h2>
-            <div id="modal-body">
-                <div class="form-group">
-                    <label for="modal-user-role">Role (Função)</label>
-                    <select id="modal-user-role">
-                        <option value="affiliate">Afiliado</option>
-                        <option value="influencer">Influencer</option>
-                        <option value="admin">Admin</option>
-                    </select>
-                    <button id="modal-save-role-btn" class="bet-button" style="background-color: #00BCD4; width: 100%; margin-top: 10px;">Salvar Role</button>
-                </div>
-                <hr style="border-color: #333; margin: 30px 0;">
-                <div class="form-group">
-                    <label>Saldos: 
-                        <span id="modal-current-balance" style="color: white; font-weight: bold;"></span> (Real) + 
-                        <span id="modal-current-bonus" style="color: #FFEB3B; font-weight: bold;"></span> (Bónus)
-                    </label>
-                    <input type="number" id="modal-transaction-amount" placeholder="Valor da transação">
-                    <div class="bonus-checkbox">
-                        <input type="checkbox" id="modal-add-bonus-checkbox">
-                        <label for="modal-add-bonus-checkbox">Adicionar Bónus de 100% (Apenas Depósito)</label>
-                    </div>
-                    <div class="transaction-buttons">
-                        <button id="modal-deposit-btn" class="bet-button" style="background-color: #4CAF50;">Registar Depósito</button>
-                        <button id="modal-withdrawal-btn" class="bet-button" style="background-color: #E53935;">Registar Saque</button>
-                    </div>
-                </div>
-                <p id="modal-status" style="text-align: center; margin-top: 15px;"></p>
             </div>
         </div>
-    </div>
+    </header>
 
+    <main style="position: relative; z-index: 2; padding: 100px 20px 40px; display: flex; justify-content: center; align-items: flex-start; min-height: 100vh; box-sizing: border-box;">
+        
+        <div class="page-container" style="width: 100%; max-width: 1100px; margin: 0;"> 
+            
+            <a href="/" style="display: inline-flex; align-items: center; gap: 5px; color: #FFC107; text-decoration: none; font-weight: bold; margin-bottom: 20px; font-size: 1.1em; transition: 0.2s;">
+                &larr; Voltar para o Cassino
+            </a>
+            
+            <div style="text-align: center; margin-bottom: 40px;">
+                <h1 style="color: #FFC107; margin-bottom: 5px; font-size: 2.2em;">Centro de Comando</h1>
+                <p style="color: #B0B0B0; font-size: 1.1em;">Visão geral, controlo de jogo e gestão financeira de jogadores.</p>
+            </div>
+
+            <div class="wallet-balances" style="margin-bottom: 50px; display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px;">
+                <div class="wallet-card" style="background: rgba(255, 193, 7, 0.05); border-color: #FFC107; padding: 25px;">
+                    <span class="wallet-label" style="color: #FFC107; font-size: 1em; text-transform: uppercase;">Banca da Plataforma</span>
+                    <span class="wallet-amount" id="admin-total-balance" style="color: #FFC107; font-size: 2em;">R$ 0,00</span>
+                </div>
+                <div class="wallet-card" style="background: rgba(76, 175, 80, 0.05); border-color: #4CAF50; padding: 25px;">
+                    <span class="wallet-label" style="color: #4CAF50; font-size: 1em; text-transform: uppercase;">Comissões Pagas</span>
+                    <span class="wallet-amount" id="admin-total-commissions" style="color: #4CAF50; font-size: 2em;">R$ 0,00</span>
+                </div>
+                <div class="wallet-card" style="background: rgba(0, 188, 212, 0.05); border-color: #00BCD4; padding: 25px;">
+                    <span class="wallet-label" style="color: #00BCD4; font-size: 1em; text-transform: uppercase;">Total de Jogadores</span>
+                    <span class="wallet-amount" id="admin-total-users" style="color: #00BCD4; font-size: 2em;">0</span>
+                </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(450px, 1fr)); gap: 30px; margin-bottom: 50px;">
+                
+                <div style="background: #111; padding: 25px; border-radius: 12px; border: 1px solid #333; box-shadow: 0 10px 30px rgba(0,0,0,0.5);">
+                    <h3 style="color: #E0E0E0; margin-top: 0; margin-bottom: 5px; border-bottom: 1px solid #222; padding-bottom: 10px;">🎯 Forçar Resultado (Roleta)</h3>
+                    <p style="color: #888; font-size: 0.9em; margin-bottom: 20px;">Clique na cor para definir o resultado absoluto da próxima rodada.</p>
+                    
+                    <div style="display: flex; gap: 10px;">
+                        <button id="btn-force-red" style="flex: 1; padding: 15px; background: #E53935; color: white; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; transition: 0.2s; font-size: 1.1em;">🔴 VERMELHO</button>
+                        <button id="btn-force-blue" style="flex: 1; padding: 15px; background: #1E88E5; color: white; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; transition: 0.2s; font-size: 1.1em;">🔵 AZUL</button>
+                        <button id="btn-force-green" style="flex: 1; padding: 15px; background: #4CAF50; color: white; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; transition: 0.2s; font-size: 1.1em;">🟢 VERDE (14x)</button>
+                    </div>
+                    <div id="force-draw-msg" style="margin-top: 15px; font-weight: bold; text-align: center; min-height: 20px;"></div>
+                </div>
+
+                <div style="background: #111; padding: 25px; border-radius: 12px; border: 1px solid #333; box-shadow: 0 10px 30px rgba(0,0,0,0.5);">
+                    <h3 style="color: #E0E0E0; margin-top: 0; margin-bottom: 5px; border-bottom: 1px solid #222; padding-bottom: 10px;">💰 Adicionar / Remover Saldo</h3>
+                    <p style="color: #888; font-size: 0.9em; margin-bottom: 20px;">Altere o saldo de qualquer utilizador pelo seu ID.</p>
+                    
+                    <form id="form-admin-transaction" style="display: flex; flex-direction: column; gap: 15px;">
+                        <div style="display: flex; gap: 10px;">
+                            <input type="text" id="admin-tx-userid" placeholder="ID do Utilizador (ex: user_123)" required style="flex: 2; padding: 12px; background: #1A1A1D; border: 1px solid #444; color: white; border-radius: 6px;">
+                            <select id="admin-tx-type" style="flex: 1; padding: 12px; background: #1A1A1D; border: 1px solid #444; color: white; border-radius: 6px;">
+                                <option value="DEPOSIT">Adicionar</option>
+                                <option value="WITHDRAWAL">Remover</option>
+                            </select>
+                        </div>
+                        <div style="display: flex; gap: 10px;">
+                            <input type="number" id="admin-tx-amount" placeholder="Valor (R$)" min="1" step="0.01" required style="flex: 2; padding: 12px; background: #1A1A1D; border: 1px solid #444; color: white; border-radius: 6px;">
+                            <button type="submit" style="flex: 1; background: #FFC107; color: #121212; border: none; border-radius: 6px; font-weight: bold; cursor: pointer;">Executar</button>
+                        </div>
+                        <div id="admin-tx-msg" style="font-weight: bold; text-align: center; min-height: 20px;"></div>
+                    </form>
+                </div>
+                
+                <div style="background: #111; padding: 25px; border-radius: 12px; border: 1px solid #333; box-shadow: 0 10px 30px rgba(0,0,0,0.5); grid-column: 1 / -1;">
+                    <h3 style="color: #E0E0E0; margin-top: 0; margin-bottom: 5px; border-bottom: 1px solid #222; padding-bottom: 10px;">👑 Promover Contas (Cargos)</h3>
+                    <p style="color: #888; font-size: 0.9em; margin-bottom: 20px;">Transforme jogadores comuns em Afiliados, Influencers VIP ou Administradores.</p>
+                    
+                    <form id="form-admin-role" style="display: flex; gap: 15px; align-items: center; flex-wrap: wrap;">
+                        <input type="text" id="admin-role-userid" placeholder="ID do Utilizador" required style="flex: 2; min-width: 200px; padding: 12px; background: #1A1A1D; border: 1px solid #444; color: white; border-radius: 6px;">
+                        <select id="admin-role-select" required style="flex: 2; min-width: 200px; padding: 12px; background: #1A1A1D; border: 1px solid #444; color: white; border-radius: 6px;">
+                            <option value="user">Jogador Normal</option>
+                            <option value="affiliate">Afiliado (CPA)</option>
+                            <option value="influencer">Influencer VIP (RevShare)</option>
+                            <option value="admin">Administrador</option>
+                        </select>
+                        <button type="submit" style="flex: 1; min-width: 150px; padding: 12px; background: #FFC107; color: #121212; border: none; border-radius: 6px; font-weight: bold; cursor: pointer;">Atualizar Cargo</button>
+                    </form>
+                    <div id="admin-role-msg" style="margin-top: 15px; font-weight: bold; text-align: center; min-height: 20px;"></div>
+                </div>
+            </div>
+
+            <hr style="border: none; border-top: 1px solid #2a2a2a; margin: 40px 0;">
+
+            <h3 style="color: #E0E0E0; margin-bottom: 20px; font-size: 1.4em;">👥 Base de Dados de Utilizadores</h3>
+            <div class="history-table-container" style="margin-bottom: 50px;">
+                <table class="history-table">
+                    <thead>
+                        <tr>
+                            <th>Data Registo</th>
+                            <th>ID Único</th>
+                            <th>Username</th>
+                            <th>Cargo</th>
+                            <th>Saldo Real</th>
+                            <th>Comissões</th>
+                        </tr>
+                    </thead>
+                    <tbody id="admin-users-table-body">
+                        <tr><td colspan="6" style="text-align: center; color: #888; padding: 15px;">Carregando dados da base...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+        </div> 
+    </main> 
+
+    <script src="https://cdn.socket.io/4.7.4/socket.io.min.js"></script>
+    <script type="module" src="/js/main.js"></script>
     <script type="module" src="/js/admin.js"></script>
+    
+    <script src="https://cdn.jsdelivr.net/npm/tsparticles@3.9.1/tsparticles.bundle.min.js"></script>
+    <script src="js/particles-config.js"></script>
 </body>
 </html>
-
