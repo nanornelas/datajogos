@@ -61,25 +61,25 @@
             <h2 id="auth-modal-title" style="color: #FFF; margin-top: 0; margin-bottom: 5px; font-size: 1.8em; font-weight: 800; letter-spacing: 1px;">Área VIP</h2>
             <p style="color: #888; margin-bottom: 30px; font-size: 0.95em;">Entre ou crie conta para começar a faturar.</p>
 
-            <form id="auth-form" style="display: flex; flex-direction: column; gap: 15px; text-align: left;">
+  <form id="auth-form" style="display: flex; flex-direction: column; gap: 15px;">
                 
-                <div>
-                    <label style="color: #B0B0B0; font-size: 0.85em; font-weight: bold; margin-bottom: 5px; display: block;">Usuário</label>
+                <div style="display: flex; flex-direction: column; text-align: left;">
+                    <label for="login-username" style="color: #B0B0B0; font-size: 0.85em; font-weight: bold; margin-bottom: 8px;">Usuário</label>
                     <input type="text" id="login-username" placeholder="Seu nome de jogador" required style="width: 100%; padding: 14px; background: #111; border: 1px solid #333; color: white; border-radius: 8px; font-size: 1em; box-sizing: border-box; outline: none; transition: 0.3s;" onfocus="this.style.borderColor='#00BCD4'" onblur="this.style.borderColor='#333'">
                 </div>
 
-                <div>
-                    <label style="color: #B0B0B0; font-size: 0.85em; font-weight: bold; margin-bottom: 5px; display: block;">Senha</label>
+                <div style="display: flex; flex-direction: column; text-align: left;">
+                    <label for="login-password" style="color: #B0B0B0; font-size: 0.85em; font-weight: bold; margin-bottom: 8px;">Senha</label>
                     <input type="password" id="login-password" placeholder="••••••••" required style="width: 100%; padding: 14px; background: #111; border: 1px solid #333; color: white; border-radius: 8px; font-size: 1em; box-sizing: border-box; outline: none; transition: 0.3s;" onfocus="this.style.borderColor='#00BCD4'" onblur="this.style.borderColor='#333'">
                 </div>
 
-                <div id="group-confirm-password" style="display: none;">
-                    <label style="color: #B0B0B0; font-size: 0.85em; font-weight: bold; margin-bottom: 5px; display: block;">Confirmar Senha</label>
+                <div id="group-confirm-password" style="display: none; flex-direction: column; text-align: left;">
+                    <label for="confirm-password" style="color: #B0B0B0; font-size: 0.85em; font-weight: bold; margin-bottom: 8px;">Confirmar Senha</label>
                     <input type="password" id="confirm-password" placeholder="••••••••" style="width: 100%; padding: 14px; background: #111; border: 1px solid #333; color: white; border-radius: 8px; font-size: 1em; box-sizing: border-box; outline: none; transition: 0.3s;" onfocus="this.style.borderColor='#00BCD4'" onblur="this.style.borderColor='#333'">
                 </div>
 
-                <div id="group-affiliate-code" style="display: none;">
-                    <label style="color: #B0B0B0; font-size: 0.85em; font-weight: bold; margin-bottom: 5px; display: block;">Código de Afiliado (Opcional)</label>
+                <div id="group-affiliate-code" style="display: none; flex-direction: column; text-align: left;">
+                    <label for="affiliate-code" style="color: #B0B0B0; font-size: 0.85em; font-weight: bold; margin-bottom: 8px;">Código de Afiliado (Opcional)</label>
                     <input type="text" id="affiliate-code" placeholder="Ex: partner_123" style="width: 100%; padding: 14px; background: #111; border: 1px solid #333; color: white; border-radius: 8px; font-size: 1em; box-sizing: border-box; outline: none; transition: 0.3s;" onfocus="this.style.borderColor='#00BCD4'" onblur="this.style.borderColor='#333'">
                 </div>
 
